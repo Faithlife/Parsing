@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Faithlife.Parsing</id>
+    <version>$version$</version>
+    <authors>Faithlife Corporation</authors>
+    <owners>Faithlife Corporation</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple library for constructing parsers in C#.</description>
+    <copyright>Copyright 2015 Faithlife Corporation</copyright>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\Faithlife.Parsing\bin\$configuration$\Faithlife.Parsing.*" target="lib\portable-net45+netcore45+wpa81\" />
+  </files>
+</package>
