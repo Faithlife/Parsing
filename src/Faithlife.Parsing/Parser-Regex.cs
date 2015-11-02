@@ -4,11 +4,21 @@ namespace Faithlife.Parsing
 {
 	public static partial class Parser
 	{
+		/// <summary>
+		/// Succeeds if the specified regular expression pattern matches the text.
+		/// </summary>
+		/// <remarks>The regular expression pattern is automatically anchored at the beginning
+		/// of the text, but not at the end of the text. The parsed value is the successful Match.</remarks>
 		public static IParser<Match> Regex(string pattern)
 		{
 			return Regex(pattern, RegexOptions.None);
 		}
 
+		/// <summary>
+		/// Succeeds if the specified regular expression pattern matches the text.
+		/// </summary>
+		/// <remarks>The regular expression pattern is automatically anchored at the beginning
+		/// of the text, but not at the end of the text. The parsed value is the successful Match.</remarks>
 		public static IParser<Match> Regex(string pattern, RegexOptions regexOptions)
 		{
 			Regex regex = new Regex("^(?:" + pattern + ")", regexOptions);
@@ -19,7 +29,7 @@ namespace Faithlife.Parsing
 				string inputText = position.Text;
 				Match match = regex.Match(inputText, inputIndex, inputText.Length - inputIndex);
 				if (match.Success)
-					return ParseResult.Success(match, position.WithIndex(match.Index + match.Length));
+					return ParseResult.Success(match, position.WithNextIndex(match.Length));
 
 				return ParseResult.Failure<Match>(position);
 			});

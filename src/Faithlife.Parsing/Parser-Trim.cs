@@ -5,66 +5,52 @@ namespace Faithlife.Parsing
 {
 	public static partial class Parser
 	{
+		/// <summary>
+		/// Succeeds if the specified parser also succeeds beforehand (ignoring its result).
+		/// </summary>
 		public static IParser<T> PrecededBy<T, U>(this IParser<T> parser, IParser<U> precededBy)
 		{
-			return precededBy.Then(parser);
+			return precededBy.Then(_ => parser);
 		}
 
+		/// <summary>
+		/// Succeeds if the specified parser also succeeds afterward (ignoring its result).
+		/// </summary>
 		public static IParser<T> FollowedBy<T, U>(this IParser<T> parser, IParser<U> followedBy)
 		{
 			return parser.Then(followedBy.Success);
 		}
 
+		/// <summary>
+		/// Succeeds if the specified parsers succeed beforehand and afterward (ignoring their results).
+		/// </summary>
 		public static IParser<T> Bracketed<T, U, V>(this IParser<T> parser, IParser<U> precededBy, IParser<V> followedBy)
 		{
 			return parser.PrecededBy(precededBy).FollowedBy(followedBy);
 		}
 
+		/// <summary>
+		/// Succeeds if the specified parser succeeds, ignoring any whitespace characters beforehand.
+		/// </summary>
 		public static IParser<T> TrimStart<T>(this IParser<T> parser)
 		{
-			return parser.TrimStart(WhiteSpace);
+			return parser.PrecededBy(WhiteSpace.Many());
 		}
 
-		public static IParser<T> TrimStart<T, U>(this IParser<T> parser, IParser<U> trimParser)
-		{
-			return parser.PrecededBy(trimParser.Many());
-		}
-
+		/// <summary>
+		/// Succeeds if the specified parser succeeds, ignoring any whitespace characters afterward.
+		/// </summary>
 		public static IParser<T> TrimEnd<T>(this IParser<T> parser)
 		{
-			return parser.TrimEnd(WhiteSpace);
+			return parser.FollowedBy(WhiteSpace.Many());
 		}
 
-		public static IParser<T> TrimEnd<T, U>(this IParser<T> parser, IParser<U> trimParser)
-		{
-			return parser.FollowedBy(trimParser.Many());
-		}
-
+		/// <summary>
+		/// Succeeds if the specified parser succeeds, ignoring any whitespace characters beforehand or afterward.
+		/// </summary>
 		public static IParser<T> Trim<T>(this IParser<T> parser)
 		{
-			return parser.Trim(WhiteSpace);
-		}
-
-		public static IParser<T> Trim<T, U>(this IParser<T> parser, IParser<U> trimParser)
-		{
-			return parser.TrimStart(trimParser).TrimEnd(trimParser);
-		}
-
-		public static IParser<IReadOnlyList<T>> Delimited<T, U>(this IParser<T> parser, IParser<U> delimiter)
-		{
-			return
-				from first in parser.Once()
-				from rest in parser.PrecededBy(delimiter).Many()
-				select first.Concat(rest).ToList();
-		}
-
-		public static IParser<IReadOnlyList<T>> DelimitedAllowTrailing<T, U>(this IParser<T> parser, IParser<U> delimiter)
-		{
-			return
-				from first in parser.Once()
-				from rest in parser.PrecededBy(delimiter).Many()
-				from trailing in delimiter.OrDefault()
-				select first.Concat(rest).ToList();
+			return parser.TrimStart().TrimEnd();
 		}
 	}
 }

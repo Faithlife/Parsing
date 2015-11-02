@@ -57,6 +57,15 @@ namespace Faithlife.Parsing.Tests
 		}
 
 		[Fact]
+		public void ConcatStrings()
+		{
+			var parser = Parser.String("abc").Many().Concat();
+			parser.TryParse("abcd").ShouldSucceed("abc", 3);
+			parser.TryParse("abcabcd").ShouldSucceed("abcabc", 6);
+			parser.TryParse("ababc").ShouldSucceed("", 0);
+		}
+
+		[Fact]
 		public void JoinStrings()
 		{
 			var parser = Parser.String("abc").Many().Join(";");
