@@ -2,18 +2,12 @@
 
 namespace Faithlife.Parsing
 {
-	public struct Position : IEquatable<Position>
+	public struct LineColumn : IEquatable<LineColumn>
 	{
-		public Position(int index, int lineNumber, int columnNumber)
+		public LineColumn(int lineNumber, int columnNumber)
 		{
-			m_index = index;
 			m_lineNumber = lineNumber;
 			m_columnNumber = columnNumber;
-		}
-
-		public int Index
-		{
-			get { return m_index; }
 		}
 
 		public int LineNumber
@@ -26,19 +20,19 @@ namespace Faithlife.Parsing
 			get { return m_columnNumber; }
 		}
 
-		public bool Equals(Position other)
+		public bool Equals(LineColumn other)
 		{
-			return m_index == other.m_index;
+			return m_lineNumber == other.m_lineNumber && m_columnNumber == other.m_columnNumber;
 		}
 
 		public override bool Equals(object other)
 		{
-			return other is Position && Equals((Position) other);
+			return other is LineColumn && Equals((LineColumn) other);
 		}
 
 		public override int GetHashCode()
 		{
-			return m_index;
+			return (m_lineNumber << 8) ^ m_columnNumber;
 		}
 
 		public override string ToString()
@@ -46,17 +40,16 @@ namespace Faithlife.Parsing
 			return m_lineNumber + "," + m_columnNumber;
 		}
 
-		public static bool operator ==(Position first, Position second)
+		public static bool operator ==(LineColumn first, LineColumn second)
 		{
 			return first.Equals(second);
 		}
 
-		public static bool operator !=(Position first, Position second)
+		public static bool operator !=(LineColumn first, LineColumn second)
 		{
 			return !(first == second);
 		}
 
-		readonly int m_index;
 		readonly int m_lineNumber;
 		readonly int m_columnNumber;
 	}

@@ -41,25 +41,25 @@ namespace Faithlife.Parsing
 
 		public static IParser<IReadOnlyList<T>> Repeat<T>(this IParser<T> parser, int atLeast, int? atMost)
 		{
-			return Parser.Create(input =>
+			return Create(position =>
 			{
 				List<T> values = new List<T>(capacity: atLeast);
-				Input remainder = input;
+				TextPosition remainder = position;
 				int repeated = 0;
 
 				while (true)
 				{
 					if (repeated >= atMost)
 						break;
-					IResult<T> result = parser.TryParse(remainder);
-					if (!result.Success || result.Remainder == remainder)
+					IParseResult<T> result = parser.TryParse(remainder);
+					if (!result.Success || result.NextPosition == remainder)
 						break;
 					values.Add(result.Value);
-					remainder = result.Remainder;
+					remainder = result.NextPosition;
 					repeated++;
 				}
 
-				return repeated >= atLeast ? Result.Success<IReadOnlyList<T>>(values, remainder) : Result.Failure<IReadOnlyList<T>>(input);
+				return repeated >= atLeast ? ParseResult.Success<IReadOnlyList<T>>(values, remainder) : ParseResult.Failure<IReadOnlyList<T>>(position);
 			});
 		}
 	}

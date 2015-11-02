@@ -2,6 +2,6 @@
 {
 	public interface IParser<out T>
 	{
-		IResult<T> TryParse(Input input);
+		IParseResult<T> TryParse(TextPosition position);
 	}
 }

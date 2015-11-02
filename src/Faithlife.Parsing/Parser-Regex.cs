@@ -13,15 +13,15 @@ namespace Faithlife.Parsing
 		{
 			Regex regex = new Regex("^(?:" + pattern + ")", regexOptions);
 
-			return Parser.Create(input =>
+			return Create(position =>
 			{
-				int inputIndex = input.Index;
-				string inputText = input.Text;
+				int inputIndex = position.Index;
+				string inputText = position.Text;
 				Match match = regex.Match(inputText, inputIndex, inputText.Length - inputIndex);
 				if (match.Success)
-					return Result.Success(match, input.AtIndex(match.Index + match.Length));
+					return ParseResult.Success(match, position.WithIndex(match.Index + match.Length));
 
-				return Result.Failure<Match>(input);
+				return ParseResult.Failure<Match>(position);
 			});
 		}
 	}

@@ -4,24 +4,19 @@ namespace Faithlife.Parsing
 {
 	public static partial class Parser
 	{
-		public static IParser<T> Create<T>(Func<Input, IResult<T>> parse)
+		public static IParser<T> Create<T>(Func<TextPosition, IParseResult<T>> parse)
 		{
 			return new SimpleParser<T>(parse);
 		}
 
-		public static IParser<T> Return<T>(T value)
-		{
-			return Parser.Create(input => Result.Success(value, input));
-		}
-
-		public static IResult<T> TryParse<T>(this IParser<T> parser, string text)
+		public static IParseResult<T> TryParse<T>(this IParser<T> parser, string text)
 		{
 			return parser.TryParse(text, 0);
 		}
 
-		public static IResult<T> TryParse<T>(this IParser<T> parser, string text, int startIndex)
+		public static IParseResult<T> TryParse<T>(this IParser<T> parser, string text, int startIndex)
 		{
-			return parser.TryParse(new Input(new Source(text), startIndex));
+			return parser.TryParse(new TextPosition(text, startIndex));
 		}
 
 		public static T Parse<T>(this IParser<T> parser, string text)
@@ -31,30 +26,22 @@ namespace Faithlife.Parsing
 
 		public static T Parse<T>(this IParser<T> parser, string text, int startIndex)
 		{
-			IResult<T> result = parser.TryParse(text, startIndex);
-			if (!result.Success)
-				throw new ParseException(result);
-			return result.Value;
-		}
-
-		public static IParser<T> End<T>(this IParser<T> parser)
-		{
-			return Parser.Create(input => parser.TryParse(input).IfSuccess(result => result.Remainder.AtEnd ? result : Result.Failure<T>(result.Remainder)));
+			return parser.TryParse(text, startIndex).Value;
 		}
 
 		private sealed class SimpleParser<T> : IParser<T>
 		{
-			public SimpleParser(Func<Input, IResult<T>> parse)
+			public SimpleParser(Func<TextPosition, IParseResult<T>> parse)
 			{
 				m_parse = parse;
 			}
 
-			public IResult<T> TryParse(Input input)
+			public IParseResult<T> TryParse(TextPosition position)
 			{
-				return m_parse(input);
+				return m_parse(position);
 			}
 
-			readonly Func<Input, IResult<T>> m_parse;
+			readonly Func<TextPosition, IParseResult<T>> m_parse;
 		}
 	}
 }

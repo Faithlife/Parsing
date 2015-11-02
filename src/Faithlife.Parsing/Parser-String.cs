@@ -8,28 +8,20 @@ namespace Faithlife.Parsing
 	{
 		public static IParser<string> String(string text)
 		{
-			return Parser.Create(input =>
-			{
-				int inputIndex = input.Index;
-				int textLength = text.Length;
-				if (string.CompareOrdinal(input.Text, inputIndex, text, 0, textLength) == 0)
-					return Result.Success(text, input.Advance(textLength));
-
-				return Result.Failure<string>(input);
-			});
+			return String(text, StringComparison.Ordinal);
 		}
 
-		public static IParser<string> StringIgnoreCase(string text)
+		public static IParser<string> String(string text, StringComparison comparison)
 		{
-			return Parser.Create(input =>
+			return Create(position =>
 			{
-				string inputText = input.Text;
-				int inputIndex = input.Index;
+				string inputText = position.Text;
+				int inputIndex = position.Index;
 				int textLength = text.Length;
-				if (string.Compare(inputText, inputIndex, text, 0, textLength, StringComparison.OrdinalIgnoreCase) == 0)
-					return Result.Success(inputText.Substring(inputIndex, textLength), input.Advance(textLength));
+				if (string.Compare(inputText, inputIndex, text, 0, textLength, comparison) == 0)
+					return ParseResult.Success(inputText.Substring(inputIndex, textLength), position.WithNextIndex(textLength));
 
-				return Result.Failure<string>(input);
+				return ParseResult.Failure<string>(position);
 			});
 		}
 

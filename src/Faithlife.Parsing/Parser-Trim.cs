@@ -12,7 +12,7 @@ namespace Faithlife.Parsing
 
 		public static IParser<T> FollowedBy<T, U>(this IParser<T> parser, IParser<U> followedBy)
 		{
-			return parser.Then(followedBy.Return);
+			return parser.Then(followedBy.Success);
 		}
 
 		public static IParser<T> Bracketed<T, U, V>(this IParser<T> parser, IParser<U> precededBy, IParser<V> followedBy)
@@ -22,7 +22,7 @@ namespace Faithlife.Parsing
 
 		public static IParser<T> TrimStart<T>(this IParser<T> parser)
 		{
-			return parser.TrimStart(Parser.WhiteSpace);
+			return parser.TrimStart(WhiteSpace);
 		}
 
 		public static IParser<T> TrimStart<T, U>(this IParser<T> parser, IParser<U> trimParser)
@@ -32,7 +32,7 @@ namespace Faithlife.Parsing
 
 		public static IParser<T> TrimEnd<T>(this IParser<T> parser)
 		{
-			return parser.TrimEnd(Parser.WhiteSpace);
+			return parser.TrimEnd(WhiteSpace);
 		}
 
 		public static IParser<T> TrimEnd<T, U>(this IParser<T> parser, IParser<U> trimParser)
@@ -42,7 +42,7 @@ namespace Faithlife.Parsing
 
 		public static IParser<T> Trim<T>(this IParser<T> parser)
 		{
-			return parser.Trim(Parser.WhiteSpace);
+			return parser.Trim(WhiteSpace);
 		}
 
 		public static IParser<T> Trim<T, U>(this IParser<T> parser, IParser<U> trimParser)
@@ -52,17 +52,19 @@ namespace Faithlife.Parsing
 
 		public static IParser<IReadOnlyList<T>> Delimited<T, U>(this IParser<T> parser, IParser<U> delimiter)
 		{
-			return from first in parser.Once()
-				   from rest in parser.PrecededBy(delimiter).Many()
-				   select first.Concat(rest).ToList();
+			return
+				from first in parser.Once()
+				from rest in parser.PrecededBy(delimiter).Many()
+				select first.Concat(rest).ToList();
 		}
 
 		public static IParser<IReadOnlyList<T>> DelimitedAllowTrailing<T, U>(this IParser<T> parser, IParser<U> delimiter)
 		{
-			return from first in parser.Once()
-				   from rest in parser.PrecededBy(delimiter).Many()
-				   from trailing in delimiter.OrDefault()
-				   select first.Concat(rest).ToList();
+			return
+				from first in parser.Once()
+				from rest in parser.PrecededBy(delimiter).Many()
+				from trailing in delimiter.OrDefault()
+				select first.Concat(rest).ToList();
 		}
 	}
 }

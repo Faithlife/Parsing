@@ -36,28 +36,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Input.cs" />
+    <Compile Include="Json\JsonParsers.cs" />
+    <Compile Include="Parser-Common.cs" />
+    <Compile Include="TextPosition.cs" />
     <Compile Include="IParser.cs" />
-    <Compile Include="IResult.cs" />
+    <Compile Include="IParseResult.cs" />
     <Compile Include="NamedFailure.cs" />
     <Compile Include="ParseException.cs" />
     <Compile Include="Parser-Char.cs" />
-    <Compile Include="Parser-Named.cs" />
     <Compile Include="Parser-Or.cs" />
-    <Compile Include="Parser-Positioned.cs" />
-    <Compile Include="Parser-Ref.cs" />
     <Compile Include="Parser-Regex.cs" />
     <Compile Include="Parser-Repeat.cs" />
     <Compile Include="Parser-String.cs" />
     <Compile Include="Parser-Then.cs" />
     <Compile Include="Parser-Trim.cs" />
-    <Compile Include="Parser-Where.cs" />
     <Compile Include="Parser.cs" />
-    <Compile Include="Position.cs" />
+    <Compile Include="LineColumn.cs" />
     <Compile Include="Positioned.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Result.cs" />
-    <Compile Include="Source.cs" />
+    <Compile Include="ParseResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

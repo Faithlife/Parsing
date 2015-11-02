@@ -8,7 +8,7 @@ namespace Faithlife.Parsing
 	{
 		public static IParser<U> Then<T, U>(this IParser<T> parser, Func<T, IParser<U>> convertValueToNextParser)
 		{
-			return Parser.Create(input => parser.TryParse(input).IfSuccess(result => convertValueToNextParser(result.Value).TryParse(result.Remainder)));
+			return Create(position => parser.TryParse(position).MapSuccess(result => convertValueToNextParser(result.Value).TryParse(result.NextPosition)));
 		}
 
 		public static IParser<U> Then<T, U>(this IParser<T> parser, Func<IParser<U>> createNextParser)
@@ -23,15 +23,15 @@ namespace Faithlife.Parsing
 
 		public static IParser<U> Select<T, U>(this IParser<T> parser, Func<T, U> convertValue)
 		{
-			return parser.Then(value => Parser.Return(convertValue(value)));
+			return parser.Then(value => Success(convertValue(value)));
 		}
 
-		public static IParser<U> Return<T, U>(this IParser<T> parser, Func<U> createValue)
+		public static IParser<U> Success<T, U>(this IParser<T> parser, Func<U> createValue)
 		{
 			return parser.Select(_ => createValue());
 		}
 
-		public static IParser<U> Return<T, U>(this IParser<T> parser, U value)
+		public static IParser<U> Success<T, U>(this IParser<T> parser, U value)
 		{
 			return parser.Select(_ => value);
 		}

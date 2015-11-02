@@ -6,37 +6,37 @@ namespace Faithlife.Parsing
 	{
 		public static IParser<char> Char(Func<char, bool> test)
 		{
-			return Parser.Create(input =>
+			return Create(position =>
 			{
-				if (!input.AtEnd)
+				if (!position.IsAtEnd())
 				{
-					char current = input.Current;
+					char current = position.GetCurrentChar();
 					if (test(current))
-						return Result.Success(current, input.Advance());
+						return ParseResult.Success(current, position.WithNextIndex());
 				}
 
-				return Result.Failure<char>(input);
+				return ParseResult.Failure<char>(position);
 			});
 		}
 
 		public static IParser<char> Char(char ch)
 		{
-			return Parser.Char(x => x == ch);
+			return Char(x => x == ch);
 		}
 
-		public static IParser<char> AnyChar = Parser.Char(x => true);
+		public static IParser<char> AnyChar = Char(x => true);
 
 		public static IParser<char> AnyCharExcept(char ch)
 		{
-			return Parser.Char(x => x != ch);
+			return Char(x => x != ch);
 		}
 
-		public static IParser<char> Digit = Parser.Char(char.IsDigit);
+		public static IParser<char> Digit = Char(char.IsDigit);
 
-		public static IParser<char> Letter = Parser.Char(char.IsLetter);
+		public static IParser<char> Letter = Char(char.IsLetter);
 
-		public static IParser<char> LetterOrDigit = Parser.Char(char.IsLetterOrDigit);
+		public static IParser<char> LetterOrDigit = Char(char.IsLetterOrDigit);
 
-		public static IParser<char> WhiteSpace = Parser.Char(char.IsWhiteSpace);
+		public static IParser<char> WhiteSpace = Char(char.IsWhiteSpace);
 	}
 }

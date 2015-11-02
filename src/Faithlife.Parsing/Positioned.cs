@@ -1,11 +1,12 @@
 ﻿namespace Faithlife.Parsing
 {
-	public class Positioned<T>
+	public sealed class Positioned<T>
 	{
-		public Positioned(T value, Input input)
+		public Positioned(T value, TextPosition position, int length)
 		{
 			m_value = value;
-			m_input = input;
+			m_position = position;
+			m_length = length;
 		}
 
 		public T Value
@@ -13,12 +14,18 @@
 			get { return m_value; }
 		}
 
-		public Input Input
+		public TextPosition Position
 		{
-			get { return m_input; }
+			get { return m_position; }
+		}
+
+		public int Length
+		{
+			get { return m_length; }
 		}
 
 		readonly T m_value;
-		readonly Input m_input;
+		readonly TextPosition m_position;
+		readonly int m_length;
 	}
 }

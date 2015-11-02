@@ -12,33 +12,36 @@ namespace Faithlife.Parsing.Tests
 			Assert.Equal(expected, actual);
 		}
 
-		public static void ShouldSucceed<T>(this IResult<T> actual, T expected, int remainderIndex)
+		public static void ShouldSucceed<T>(this IParseResult<T> actual, T expected, int? remainderIndex = null)
 		{
 			Assert.True(actual.Success, "parse failed");
 			IEnumerable sequence = expected as IEnumerable;
-			if (sequence != null)
+			if (sequence != null && !(expected is string))
 				Assert.True(sequence.Cast<object>().SequenceEqual(((IEnumerable) actual.Value).Cast<object>()));
 			else
 				Assert.Equal(expected, actual.Value);
-			AssertRemainderIndex(actual, remainderIndex);
+			if (remainderIndex != null)
+				AssertRemainderIndex(actual, remainderIndex.Value);
 		}
 
-		public static void ShouldSucceed<T>(this IResult<T> actual, Func<T, bool> expected, int remainderIndex)
+		public static void ShouldSucceed<T>(this IParseResult<T> actual, Func<T, bool> expected, int? remainderIndex = null)
 		{
 			Assert.True(actual.Success, "parse failed");
 			Assert.True(expected(actual.Value), "unexpected value");
-			AssertRemainderIndex(actual, remainderIndex);
+			if (remainderIndex != null)
+				AssertRemainderIndex(actual, remainderIndex.Value);
 		}
 
-		public static void ShouldFail<T>(this IResult<T> actual, int remainderIndex)
+		public static void ShouldFail<T>(this IParseResult<T> actual, int? remainderIndex = null)
 		{
 			Assert.False(actual.Success, "parse succeeded");
-			AssertRemainderIndex(actual, remainderIndex);
+			if (remainderIndex != null)
+				AssertRemainderIndex(actual, remainderIndex.Value);
 		}
 
-		private static void AssertRemainderIndex<T>(IResult<T> actual, int remainderIndex)
+		private static void AssertRemainderIndex<T>(IParseResult<T> actual, int remainderIndex)
 		{
-			Assert.Equal(remainderIndex, actual.Remainder.Index);
+			Assert.Equal(remainderIndex, actual.NextPosition.Index);
 		}
 	}
 }

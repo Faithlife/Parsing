@@ -1,15 +1,15 @@
 ﻿namespace Faithlife.Parsing
 {
-	public interface IResult
+	public interface IParseResult
 	{
 		bool Success { get; }
 
-		Input Remainder { get; }
+		TextPosition NextPosition { get; }
 
 		object Value { get; }
 	}
 
-	public interface IResult<out T> : IResult
+	public interface IParseResult<out T> : IParseResult
 	{
 		new T Value { get; }
 	}

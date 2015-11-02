@@ -1,11 +1,11 @@
 ﻿namespace Faithlife.Parsing
 {
-	public class NamedFailure
+	public sealed class NamedFailure
 	{
-		public NamedFailure(string name, Input remainder)
+		public NamedFailure(string name, TextPosition position)
 		{
 			m_name = name;
-			m_remainder = remainder;
+			m_position = position;
 		}
 
 		public string Name
@@ -13,12 +13,12 @@
 			get { return m_name; }
 		}
 
-		public Input Remainder
+		public TextPosition Position
 		{
-			get { return m_remainder; }
+			get { return m_position; }
 		}
 
 		readonly string m_name;
-		readonly Input m_remainder;
+		readonly TextPosition m_position;
 	}
 }

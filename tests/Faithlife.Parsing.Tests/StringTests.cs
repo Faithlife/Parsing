@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Faithlife.Parsing.Tests
 {
@@ -37,7 +38,7 @@ namespace Faithlife.Parsing.Tests
 		[Fact]
 		public void TestIgnoreCase()
 		{
-			var parser = Parser.StringIgnoreCase("Abc");
+			var parser = Parser.String("Abc", StringComparison.OrdinalIgnoreCase);
 			parser.TryParse("").ShouldFail(0);
 			parser.TryParse("a").ShouldFail(0);
 			parser.TryParse("ab").ShouldFail(0);
@@ -53,6 +54,15 @@ namespace Faithlife.Parsing.Tests
 		{
 			IParser<string> parser = Parser.String("abc").Chars().String();
 			parser.TryParse("abcd").ShouldSucceed("abc", 3);
+		}
+
+		[Fact]
+		public void JoinStrings()
+		{
+			var parser = Parser.String("abc").Many().Join(";");
+			parser.TryParse("abcd").ShouldSucceed("abc", 3);
+			parser.TryParse("abcabcd").ShouldSucceed("abc;abc", 6);
+			parser.TryParse("ababc").ShouldSucceed("", 0);
 		}
 	}
 }

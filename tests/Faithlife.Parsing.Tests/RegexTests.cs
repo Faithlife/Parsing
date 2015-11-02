@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Text.RegularExpressions;
+using Xunit;
 
 namespace Faithlife.Parsing.Tests
 {
@@ -28,6 +29,13 @@ namespace Faithlife.Parsing.Tests
 		public void RegexShouldFailAfterMatch()
 		{
 			Parser.Regex("abc").TryParse("abcd", 1).ShouldFail(1);
+		}
+
+		[Fact]
+		public void RegexShouldRespectOptions()
+		{
+			Parser.Regex("Abc").TryParse("xabcd", 1).ShouldFail(1);
+			Parser.Regex("Abc", RegexOptions.IgnoreCase).TryParse("xabcd", 1).ShouldSucceed(x => x.ToString() == "abc", 4);
 		}
 	}
 }

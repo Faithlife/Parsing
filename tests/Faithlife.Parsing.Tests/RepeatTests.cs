@@ -41,6 +41,18 @@ namespace Faithlife.Parsing.Tests
 		}
 
 		[Fact]
+		public void AtMostOnceShouldAlwaysSucceed()
+		{
+			Parser.String("abc").AtMostOnce().TryParse("bcabc").ShouldSucceed(new string[0], 0);
+		}
+
+		[Fact]
+		public void AtMostOnceShouldOnlyEatOne()
+		{
+			Parser.String("abc").AtMostOnce().TryParse("abcabc").ShouldSucceed(new[] { "abc" }, 3);
+		}
+
+		[Fact]
 		public void ManyShouldAlwaysSucceed()
 		{
 			var parser = Parser.String("abc").Many();

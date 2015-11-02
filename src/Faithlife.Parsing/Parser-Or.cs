@@ -6,23 +6,23 @@ namespace Faithlife.Parsing
 	{
 		public static IParser<T> Or<T>(IEnumerable<IParser<T>> parsers)
 		{
-			return Parser.Create(input =>
+			return Create(position =>
 			{
-				IResult<T> firstEmptySuccess = null;
-				IResult<T> firstFailure = null;
+				IParseResult<T> firstEmptySuccess = null;
+				IParseResult<T> firstFailure = null;
 
 				foreach (IParser<T> parser in parsers)
 				{
-					IResult<T> result = parser.TryParse(input);
+					IParseResult<T> result = parser.TryParse(position);
 					if (!result.Success)
 						firstFailure = firstFailure ?? result;
-					else if (result.Remainder == input)
+					else if (result.NextPosition == position)
 						firstEmptySuccess = firstEmptySuccess ?? result;
 					else
 						return result;
 				}
 
-				return firstEmptySuccess ?? firstFailure ?? Result.Failure<T>(input);
+				return firstEmptySuccess ?? firstFailure ?? ParseResult.Failure<T>(position);
 			});
 		}
 
@@ -43,7 +43,7 @@ namespace Faithlife.Parsing
 
 		public static IParser<T> OrDefault<T>(this IParser<T> parser, T value)
 		{
-			return parser.Or(Parser.Return(value));
+			return parser.Or(Success(value));
 		}
 
 		public static IParser<IEnumerable<T>> OrEmpty<T>(this IParser<IEnumerable<T>> parser)

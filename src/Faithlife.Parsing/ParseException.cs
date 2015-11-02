@@ -2,24 +2,19 @@
 
 namespace Faithlife.Parsing
 {
-	public class ParseException : Exception
+	public sealed class ParseException : Exception
 	{
-		public ParseException(IResult result)
-			: this(result, null)
-		{
-		}
-
-		public ParseException(IResult result, Exception innerException)
-			: base(result.ToMessage(), innerException)
+		public ParseException(IParseResult result)
+			: base(result.ToMessage())
 		{
 			m_result = result;
 		}
 
-		public IResult Result
+		public IParseResult Result
 		{
 			get { return m_result; }
 		}
 
-		readonly IResult m_result;
+		readonly IParseResult m_result;
 	}
 }
