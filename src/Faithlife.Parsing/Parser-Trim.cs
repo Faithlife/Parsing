@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Faithlife.Parsing
+﻿namespace Faithlife.Parsing
 {
 	public static partial class Parser
 	{
