@@ -62,6 +62,14 @@ namespace Faithlife.Parsing
 		}
 
 		/// <summary>
+		/// Succeeds if the parser succeeds the specified number of times. The value is a collection of the parsed items.
+		/// </summary>
+		public static IParser<IReadOnlyList<T>> Repeat<T>(this IParser<T> parser, int atLeast, int atMost)
+		{
+			return parser.DoRepeat(atLeast, atMost);
+		}
+
+		/// <summary>
 		/// Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item.
 		/// </summary>
 		public static IParser<IReadOnlyList<T>> Delimited<T, U>(this IParser<T> parser, IParser<U> delimiter)

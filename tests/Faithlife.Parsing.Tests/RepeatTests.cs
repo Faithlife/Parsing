@@ -87,5 +87,19 @@ namespace Faithlife.Parsing.Tests
 			parser.TryParse("abcabcabc").ShouldSucceed(new[] { "abc", "abc", "abc" }, 9);
 			parser.TryParse("abcabcabcd").ShouldSucceed(new[] { "abc", "abc", "abc" }, 9);
 		}
+
+		[Fact]
+		public void RepeatShouldSucceed()
+		{
+			var parser = Parser.String("abc").Repeat(2);
+			parser.TryParse("abcabcabc").ShouldSucceed(new[] { "abc", "abc" }, 6);
+		}
+
+		[Fact]
+		public void RepeatRangeShouldSucceed()
+		{
+			var parser = Parser.String("abc").Repeat(2, 3);
+			parser.TryParse("abcabcabcabc").ShouldSucceed(new[] { "abc", "abc", "abc" }, 9);
+		}
 	}
 }
