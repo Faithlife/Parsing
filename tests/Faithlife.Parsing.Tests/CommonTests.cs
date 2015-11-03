@@ -26,6 +26,20 @@ namespace Faithlife.Parsing.Tests
 		}
 
 		[Fact]
+		public void ParseThrowsOnFailure()
+		{
+			try
+			{
+				Parser.Success(true).End().Parse("xabc", 1);
+				Assert.True(false);
+			}
+			catch (ParseException exception)
+			{
+				exception.Result.NextPosition.Index.ShouldBe(1);
+			}
+		}
+
+		[Fact]
 		public void NamedShouldNameFailure()
 		{
 			var namedFailure = Parser.String("abc").Named("epic").TryParse("xabc").GetNamedFailures().Single();
