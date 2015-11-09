@@ -21,7 +21,8 @@ namespace Faithlife.Parsing
 		/// of the text, but not at the end of the text. The parsed value is the successful Match.</remarks>
 		public static IParser<Match> Regex(string pattern, RegexOptions regexOptions)
 		{
-			Regex regex = new Regex("^(?:" + pattern + ")", regexOptions);
+			// turn off multiline mode for '^'; wrap pattern in non-capturing group to ensure ungrouped '|' works properly
+			Regex regex = new Regex("(?-m:^)(?:" + pattern + ")", regexOptions);
 
 			return Create(position =>
 			{
