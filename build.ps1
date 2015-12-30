@@ -1,6 +1,6 @@
 properties {
   $configuration = "Release"
-  $gitPath = "C:\Program Files (x86)\Git\bin\git.exe"
+  $gitPath = "git.exe"
   $outputDir = "build"
   $apiKey = $null
   $nugetPackageSource = $null
@@ -8,7 +8,7 @@ properties {
 
 $version = $null
 
-Task Default -depends NuGetPack, NuGetPublish
+Task Default -depends Test
 
 Task Clean {
   Get-ChildItem "src\*\bin" | Remove-Item -force -recurse -ErrorAction Stop
@@ -39,7 +39,8 @@ Task SourceIndex -depends Test {
 
 Task NuGetPack -depends SourceIndex {
   mkdir $outputDir -force
-  $script:version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("src\Faithlife.Parsing\bin\Portable\$configuration\Faithlife.Parsing.dll").FileVersion
+  $filePath = Resolve-Path "src\Faithlife.Parsing\bin\$configuration\Faithlife.Parsing.dll"
+  $script:version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($filePath).FileVersion
   Exec { tools\NuGet\NuGet pack Faithlife.Parsing.nuspec -Version $script:version -Prop Configuration=$configuration -Symbols -OutputDirectory $outputDir }
 }
 
