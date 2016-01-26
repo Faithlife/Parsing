@@ -40,7 +40,8 @@ Task SourceIndex -depends Test {
 Task NuGetPack -depends SourceIndex {
   mkdir $outputDir -force
   $filePath = Resolve-Path "src\Faithlife.Parsing\bin\$configuration\Faithlife.Parsing.dll"
-  $script:version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($filePath).FileVersion
+  $fileVersionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($filePath)
+  $script:version = "$($fileVersionInfo.FileMajorPart).$($fileVersionInfo.FileMinorPart)$($fileVersionInfo.FileBuildPart)"
   Exec { tools\NuGet\NuGet pack Faithlife.Parsing.nuspec -Version $script:version -Prop Configuration=$configuration -Symbols -OutputDirectory $outputDir }
 }
 

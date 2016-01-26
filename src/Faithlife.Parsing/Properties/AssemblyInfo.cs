@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Faithlife.Parsing")]
 [assembly: AssemblyProduct("Faithlife.Parsing")]
-[assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyCompany("Faithlife")]
-[assembly: AssemblyCopyright("Copyright 2015 Faithlife")]
+[assembly: AssemblyVersion("0.1.1.0")]
+[assembly: AssemblyCompany("Faithlife Corporation")]
+[assembly: AssemblyCopyright("Copyright 2016 Faithlife Corporation")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]
