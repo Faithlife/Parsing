@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
 
@@ -39,6 +40,7 @@ namespace Faithlife.Parsing.Tests
 				AssertRemainderIndex(actual, remainderIndex.Value);
 		}
 
+		[SuppressMessage("ReSharper", "UnusedParameter.Local")]
 		private static void AssertRemainderIndex<T>(IParseResult<T> actual, int remainderIndex)
 		{
 			Assert.Equal(remainderIndex, actual.NextPosition.Index);
