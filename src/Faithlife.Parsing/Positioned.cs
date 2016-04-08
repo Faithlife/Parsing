@@ -10,37 +10,24 @@
 		/// </summary>
 		public Positioned(T value, TextPosition position, int length)
 		{
-			m_value = value;
-			m_position = position;
-			m_length = length;
+			Value = value;
+			Position = position;
+			Length = length;
 		}
 
 		/// <summary>
 		/// The parsed value.
 		/// </summary>
-		public T Value
-		{
-			get { return m_value; }
-		}
+		public T Value { get; }
 
 		/// <summary>
 		/// The text position of the parsed value.
 		/// </summary>
-		public TextPosition Position
-		{
-			get { return m_position; }
-		}
+		public TextPosition Position { get; }
 
 		/// <summary>
 		/// The text length of the parsed value.
 		/// </summary>
-		public int Length
-		{
-			get { return m_length; }
-		}
-
-		readonly T m_value;
-		readonly TextPosition m_position;
-		readonly int m_length;
+		public int Length { get; }
 	}
 }

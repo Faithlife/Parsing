@@ -14,18 +14,12 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// The entire text being parsed.
 		/// </summary>
-		public string Text
-		{
-			get { return m_source.Text; }
-		}
+		public string Text => m_source.Text;
 
 		/// <summary>
 		/// The zero-based index into the text being parsed.
 		/// </summary>
-		public int Index
-		{
-			get { return m_index; }
-		}
+		public int Index => m_index;
 
 		/// <summary>
 		/// The line and column number of the text position.
@@ -137,10 +131,7 @@ namespace Faithlife.Parsing
 				m_namedFailures = new List<NamedFailure>();
 			}
 
-			public string Text
-			{
-				get { return m_text; }
-			}
+			public string Text => m_text;
 
 			public ReadOnlyCollection<NamedFailure> GetNamedFailures()
 			{

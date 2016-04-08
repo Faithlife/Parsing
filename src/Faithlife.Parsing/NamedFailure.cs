@@ -10,27 +10,18 @@
 		/// </summary>
 		public NamedFailure(string name, TextPosition position)
 		{
-			m_name = name;
-			m_position = position;
+			Name = name;
+			Position = position;
 		}
 
 		/// <summary>
 		/// The name of the failure, i.e. what was expected.
 		/// </summary>
-		public string Name
-		{
-			get { return m_name; }
-		}
+		public string Name { get; }
 
 		/// <summary>
 		/// The position of the failure.
 		/// </summary>
-		public TextPosition Position
-		{
-			get { return m_position; }
-		}
-
-		readonly string m_name;
-		readonly TextPosition m_position;
+		public TextPosition Position { get; }
 	}
 }

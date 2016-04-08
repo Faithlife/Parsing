@@ -20,18 +20,12 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// The line number (one-based).
 		/// </summary>
-		public int LineNumber
-		{
-			get { return m_lineNumber; }
-		}
+		public int LineNumber => m_lineNumber;
 
 		/// <summary>
 		/// The column number (one-based).
 		/// </summary>
-		public int ColumnNumber
-		{
-			get { return m_columnNumber; }
-		}
+		public int ColumnNumber => m_columnNumber;
 
 		/// <summary>
 		/// Checks for equality.

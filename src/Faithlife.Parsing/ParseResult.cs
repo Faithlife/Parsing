@@ -92,62 +92,36 @@ namespace Faithlife.Parsing
 		{
 			public SuccessResult(T value, TextPosition nextPosition)
 			{
-				m_value = value;
-				m_nextPosition = nextPosition;
+				Value = value;
+				NextPosition = nextPosition;
 			}
 
-			public bool Success
-			{
-				get { return true; }
-			}
+			public bool Success => true;
 
-			public T Value
-			{
-				get { return m_value; }
-			}
+			public T Value { get; }
 
-			public TextPosition NextPosition
-			{
-				get { return m_nextPosition; }
-			}
+			public TextPosition NextPosition { get; }
 
-			object IParseResult.Value
-			{
-				get { return Value; }
-			}
-
-			readonly T m_value;
-			readonly TextPosition m_nextPosition;
+			object IParseResult.Value => Value;
 		}
 
 		private sealed class FailureResult<T> : IParseResult<T>
 		{
 			public FailureResult(TextPosition nextPosition)
 			{
-				m_nextPosition = nextPosition;
+				NextPosition = nextPosition;
 			}
 
-			public bool Success
-			{
-				get { return false; }
-			}
+			public bool Success => false;
 
 			public T Value
 			{
 				get { throw new ParseException(this); }
 			}
 
-			public TextPosition NextPosition
-			{
-				get { return m_nextPosition; }
-			}
+			public TextPosition NextPosition { get; }
 
-			object IParseResult.Value
-			{
-				get { return Value; }
-			}
-
-			readonly TextPosition m_nextPosition;
+			object IParseResult.Value => Value;
 		}
 	}
 }
