@@ -13,26 +13,26 @@ namespace Faithlife.Parsing
 		/// </summary>
 		public LineColumn(int lineNumber, int columnNumber)
 		{
-			m_lineNumber = lineNumber;
-			m_columnNumber = columnNumber;
+			LineNumber = lineNumber;
+			ColumnNumber = columnNumber;
 		}
 
 		/// <summary>
 		/// The line number (one-based).
 		/// </summary>
-		public int LineNumber => m_lineNumber;
+		public int LineNumber { get; }
 
 		/// <summary>
 		/// The column number (one-based).
 		/// </summary>
-		public int ColumnNumber => m_columnNumber;
+		public int ColumnNumber { get; }
 
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
 		public bool Equals(LineColumn other)
 		{
-			return m_lineNumber == other.m_lineNumber && m_columnNumber == other.m_columnNumber;
+			return LineNumber == other.LineNumber && ColumnNumber == other.ColumnNumber;
 		}
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace Faithlife.Parsing
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return (m_lineNumber << 8) ^ m_columnNumber;
+			return (LineNumber << 8) ^ ColumnNumber;
 		}
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace Faithlife.Parsing
 		/// </summary>
 		public override string ToString()
 		{
-			return string.Format(CultureInfo.InvariantCulture, "{0},{1}", m_lineNumber, m_columnNumber);
+			return string.Format(CultureInfo.InvariantCulture, "{0},{1}", LineNumber, ColumnNumber);
 		}
 
 		/// <summary>
@@ -74,8 +74,5 @@ namespace Faithlife.Parsing
 		{
 			return !(first == second);
 		}
-
-		readonly int m_lineNumber;
-		readonly int m_columnNumber;
 	}
 }
