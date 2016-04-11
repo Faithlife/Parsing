@@ -21,8 +21,9 @@ Task Clean {
 }
 
 Task Build -depends Clean {
+  Framework "4.6"
   Exec { tools\NuGet\NuGet restore }
-  Exec { msbuild /m:4 /p:Configuration=$configuration /p:Platform="Any CPU" /p:VisualStudioVersion=12.0 Parsing.sln }
+  Exec { msbuild /m:4 /p:Configuration=$configuration /p:Platform="Any CPU" Parsing.sln }
 }
 
 Task Test -depends Build {
