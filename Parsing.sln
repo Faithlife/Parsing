@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C44A88
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetTools", "tools\NuGetTools\NuGetTools.csproj", "{F2694C26-3425-4B50-95D8-84E2A70AD792}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetPackages", "tools\NuGetPackages\NuGetPackages.csproj", "{F2694C26-3425-4B50-95D8-84E2A70AD792}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
