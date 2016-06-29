@@ -20,8 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{68EEB72A-6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faithlife.Parsing.Tests", "tests\Faithlife.Parsing.Tests\Faithlife.Parsing.Tests.csproj", "{F7583EB0-A6C4-4482-80B6-EF40E46D1A43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetPackages", "tools\NuGetPackages\NuGetPackages.csproj", "{F2694C26-3425-4B50-95D8-84E2A70AD792}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,10 +34,6 @@ Global
 		{F7583EB0-A6C4-4482-80B6-EF40E46D1A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7583EB0-A6C4-4482-80B6-EF40E46D1A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7583EB0-A6C4-4482-80B6-EF40E46D1A43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F2694C26-3425-4B50-95D8-84E2A70AD792}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2694C26-3425-4B50-95D8-84E2A70AD792}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2694C26-3425-4B50-95D8-84E2A70AD792}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2694C26-3425-4B50-95D8-84E2A70AD792}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
