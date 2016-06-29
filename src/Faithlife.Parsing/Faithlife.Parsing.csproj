@@ -40,6 +40,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Json\JsonParsers.cs" />
     <Compile Include="Parser-Common.cs" />
     <Compile Include="TextPosition.cs" />

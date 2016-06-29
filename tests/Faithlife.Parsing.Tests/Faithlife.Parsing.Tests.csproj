@@ -38,6 +38,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="CharTests.cs" />
     <Compile Include="Json\JsonDtoTests.cs" />
     <Compile Include="Json\JsonTests.cs" />

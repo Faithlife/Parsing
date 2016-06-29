@@ -14,6 +14,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="src\Faithlife.Parsing\bin\$configuration$\Faithlife.Parsing.*" target="lib\portable-net45+netcore45+wpa81\" />
+    <file src="src\Faithlife.Parsing\bin\$configuration$\Faithlife.Parsing.*" target="lib/dotnet" />
+    <file src="src\Faithlife.Parsing\bin\$configuration$\Faithlife.Parsing.*" target="lib/portable-net45+netcore45+wpa81" />
   </files>
 </package>
