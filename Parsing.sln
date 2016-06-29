@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faithlife.Parsing", "src\Faithlife.Parsing\Faithlife.Parsing.csproj", "{D813928A-B266-4208-9755-0BD581D1499E}"
 EndProject
@@ -19,11 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{68EEB72A-6
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Faithlife.Parsing.Tests", "tests\Faithlife.Parsing.Tests\Faithlife.Parsing.Tests.csproj", "{F7583EB0-A6C4-4482-80B6-EF40E46D1A43}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C44A8873-49CD-408F-A4B6-04723B1A6F2E}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetPackages", "tools\NuGetPackages\NuGetPackages.csproj", "{F2694C26-3425-4B50-95D8-84E2A70AD792}"
 EndProject
