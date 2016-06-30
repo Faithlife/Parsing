@@ -83,7 +83,6 @@ Task("NuGetPack")
 		{
 			Version = version,
 			ArgumentCustomization = args => args.Append($"-Prop Configuration={configuration}"),
-			Symbols = true,
 			OutputDirectory = "./build",
 		});
 	});
