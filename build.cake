@@ -17,6 +17,7 @@ var solutionPath = "./Parsing.sln";
 var nugetPackageName = "Faithlife.Parsing";
 var assemblyPath = $"./src/Faithlife.Parsing/bin/{configuration}/Faithlife.Parsing.dll";
 var githubApiUri = "https://api.github.com";
+var githubRawUri = "http://raw.githubusercontent.com";
 var githubOwner = "Faithlife";
 var githubRepo = "Parsing";
 
@@ -70,7 +71,10 @@ Task("SourceIndex")
 		var httpResponse = httpClient.GetAsync($"{githubApiUri}/repos/{githubOwner}/{githubRepo}/commits/{headSha}").GetAwaiter().GetResult();
 		VerifyHttpResponse(httpResponse, $"Finding current commit {headSha} at GitHub");
 
-		GitLink(MakeAbsolute(Directory(".")).FullPath);
+		GitLink(MakeAbsolute(Directory(".")).FullPath, new GitLinkSettings
+		{
+			RepositoryUrl = $"{githubRawUri}/{githubOwner}/{githubRepo}",
+		});
 	});
 
 Task("NuGetPack")
