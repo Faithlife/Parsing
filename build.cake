@@ -1,3 +1,4 @@
+#addin "Cake.Git"
 #addin "Cake.Powershell"
 #tool "nuget:?package=xunit.runner.console"
 
@@ -5,7 +6,6 @@ using System.Diagnostics;
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
-var gitPath = Argument("gitPath", "git.exe");
 var nugetSource = Argument("nugetSource", "https://www.nuget.org/api/v2/package");
 var nugetApiKey = Argument("nugetApiKey", "");
 
@@ -46,14 +46,7 @@ Task("SourceIndex")
 	.WithCriteria(() => configuration == "Release")
 	.Does(() =>
 	{
-		IEnumerable<string> gitOutput;
-		var gitSettings = new ProcessSettings { Arguments = "rev-parse HEAD", RedirectStandardOutput = true };
-		var gitExitCode = StartProcess(gitPath, gitSettings, out gitOutput);
-		if (gitExitCode != 0)
-			throw new InvalidOperationException($"Failed to get HEAD SHA from git. (exit code {gitExitCode})");
-		var headSha = gitOutput.FirstOrDefault() ?? "";
-		if (headSha.Length != 40)
-			throw new InvalidOperationException("Failed to get HEAD SHA from git. (got '{headSha}')");
+		var headSha = GitLogTip(Directory(".")).Sha;
 
 		StartPowershellFile("./tools/SourceIndex/github-sourceindexer.ps1", new PowershellSettings()
 			.WithArguments(args =>
