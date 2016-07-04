@@ -5,7 +5,6 @@ obj/
 
 # ignore downloaded tools
 tools/
-!tools/SourceIndex/
 
 # ignore user-specific options/cache files
 packages/

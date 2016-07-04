@@ -1,5 +1,5 @@
 #addin "Cake.Git"
-#addin "Cake.Powershell"
+#tool "nuget:?package=gitlink"
 #tool "nuget:?package=xunit.runner.console"
 #r "System.Net.Http"
 
@@ -16,12 +16,26 @@ var githubApiKey = Argument("githubApiKey", "");
 var solutionPath = "./Parsing.sln";
 var nugetPackageName = "Faithlife.Parsing";
 var assemblyPath = $"./src/Faithlife.Parsing/bin/{configuration}/Faithlife.Parsing.dll";
-var pdbRootPath = $"./src/Faithlife.Parsing/bin/{configuration}";
+var githubApiUri = "https://api.github.com";
+var githubOwner = "Faithlife";
+var githubRepo = "Parsing";
+
+var httpClient = new HttpClient();
+httpClient.DefaultRequestHeaders.Add("User-Agent", "build.cake");
+
+string headSha = null;
+string version = null;
 
 string GetSemVerFromFile(string path)
 {
 	var versionInfo = FileVersionInfo.GetVersionInfo(path);
 	return $"{versionInfo.FileMajorPart}.{versionInfo.FileMinorPart}.{versionInfo.FileBuildPart}";
+}
+
+void VerifyHttpResponse(HttpResponseMessage httpResponse, string description)
+{
+	if (!httpResponse.IsSuccessStatusCode)
+		throw new InvalidOperationException($"{description} failed with {httpResponse.StatusCode}: {httpResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult()}");
 }
 
 Task("Clean")
@@ -50,28 +64,19 @@ Task("SourceIndex")
 	.WithCriteria(() => configuration == "Release")
 	.Does(() =>
 	{
-		var headSha = GitLogTip(Directory(".")).Sha;
-		StartPowershellFile("./tools/SourceIndex/github-sourceindexer.ps1", new PowershellSettings()
-			.WithArguments(args =>
-			{
-				args.AppendQuoted("symbolsFolder", MakeAbsolute(Directory(pdbRootPath)).FullPath)
-					.Append("userId", "Faithlife")
-					.Append("repository", "Parsing")
-					.Append("branch", headSha)
-					.AppendQuoted("sourcesRoot", MakeAbsolute(Directory(".")).FullPath)
-					.AppendQuoted("dbgToolsPath", @"C:\Program Files (x86)\Windows Kits\8.1\Debuggers\x86")
-					.Append("gitHubUrl", "https://raw.github.com")
-					.Append("serverIsRaw", "")
-					.Append("ignoreUnknown", "")
-					.Append("verbose", "");
-			}));
+		headSha = GitLogTip(Directory(".")).Sha;
+		version = GetSemVerFromFile(assemblyPath);
+
+		var httpResponse = httpClient.GetAsync($"{githubApiUri}/repos/{githubOwner}/{githubRepo}/commits/{headSha}").GetAwaiter().GetResult();
+		VerifyHttpResponse(httpResponse, $"Finding current commit {headSha} at GitHub");
+
+		GitLink(MakeAbsolute(Directory(".")).FullPath);
 	});
 
 Task("NuGetPack")
 	.IsDependentOn("SourceIndex")
 	.Does(() =>
 	{
-		var version = GetSemVerFromFile(assemblyPath);
 		CreateDirectory("./build");
 		NuGetPack($"./{nugetPackageName}.nuspec", new NuGetPackSettings
 		{
@@ -86,7 +91,6 @@ Task("NuGetPublishOnly")
 	.WithCriteria(() => !string.IsNullOrEmpty(nugetSource) && !string.IsNullOrEmpty(nugetApiKey))
 	.Does(() =>
 	{
-		var version = GetSemVerFromFile(assemblyPath);
 		NuGetPush($"./build/{nugetPackageName}.{version}.nupkg", new NuGetPushSettings
 		{
 			ApiKey = nugetApiKey,
@@ -99,18 +103,13 @@ Task("NuGetTagOnly")
 	.WithCriteria(() => !string.IsNullOrEmpty(githubApiKey))
 	.Does(() =>
 	{
-		var version = GetSemVerFromFile(assemblyPath);
-		var headSha = GitLogTip(Directory(".")).Sha;
 		var tagName = $"nuget-{version}";
 		Information($"Creating git tag '{tagName}'...");
-		var httpClient = new HttpClient();
-		httpClient.DefaultRequestHeaders.Add("User-Agent", "build.cake");
-		var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://api.github.com/repos/Faithlife/Parsing/git/refs");
+		var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"{githubApiUri}/repos/{githubOwner}/{githubRepo}/git/refs");
 		httpRequest.Headers.Authorization = AuthenticationHeaderValue.Parse($"token {githubApiKey}");
 		httpRequest.Content = new StringContent($"{{\"ref\":\"refs/tags/{tagName}\",\"sha\":\"{headSha}\"}}", Encoding.UTF8, "application/json");
 		var httpResponse = httpClient.SendAsync(httpRequest).GetAwaiter().GetResult();
-		if (!httpResponse.IsSuccessStatusCode)
-			throw new InvalidOperationException($"GitHub tag creation failed with {httpResponse.StatusCode}: {httpResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult()}");
+		VerifyHttpResponse(httpResponse, $"GitHub tag creation at {headSha}");
 	});
 
 Task("NuGetPublish")
