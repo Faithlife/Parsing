@@ -3,6 +3,8 @@
 #tool "nuget:?package=gitlink"
 #tool "nuget:?package=xunit.runner.console"
 
+using LibGit2Sharp;
+
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var nugetApiKey = Argument("nugetApiKey", "");
@@ -15,6 +17,8 @@ var githubOwner = "Faithlife";
 var githubRepo = "Parsing";
 var githubRawUri = "http://raw.githubusercontent.com";
 var nugetSource = "https://www.nuget.org/api/v2/package";
+
+var gitRepository = new LibGit2Sharp.Repository(MakeAbsolute(Directory(".")).FullPath);
 
 var githubClient = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("build.cake"));
 if (!string.IsNullOrEmpty(githubApiKey))
@@ -55,9 +59,11 @@ Task("SourceIndex")
 	.WithCriteria(() => configuration == "Release")
 	.Does(() =>
 	{
-		headSha = GitLogTip(Directory(".")).Sha;
-		version = GetSemVerFromFile(assemblyPath);
+		var dirtyEntry = gitRepository.RetrieveStatus().FirstOrDefault(x => x.State != FileStatus.Unaltered && x.State != FileStatus.Ignored);
+		if (dirtyEntry != null)
+			throw new InvalidOperationException($"The git working directory must be clean, but '{dirtyEntry.FilePath}' is dirty.");
 
+		headSha = gitRepository.Head.Tip.Sha;
 		try
 		{
 			githubClient.Repository.Commit.GetSha1(githubOwner, githubRepo, headSha).GetAwaiter().GetResult();
@@ -71,6 +77,8 @@ Task("SourceIndex")
 		{
 			RepositoryUrl = $"{githubRawUri}/{githubOwner}/{githubRepo}",
 		});
+
+		version = GetSemVerFromFile(assemblyPath);
 	});
 
 Task("NuGetPack")
