@@ -96,13 +96,13 @@ Task("NuGetPack")
 
 Task("NuGetPublishOnly")
 	.IsDependentOn("NuGetPack")
-	.WithCriteria(() => !string.IsNullOrEmpty(nugetSource) && !string.IsNullOrEmpty(nugetApiKey))
+	.WithCriteria(() => !string.IsNullOrEmpty(nugetApiKey))
 	.Does(() =>
 	{
 		NuGetPush($"./build/{nugetPackageName}.{version}.nupkg", new NuGetPushSettings
 		{
 			ApiKey = nugetApiKey,
-			Source = nugetSource.Length == 0 ? null : nugetSource,
+			Source = nugetSource,
 		});
 	});
 
