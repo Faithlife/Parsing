@@ -28,8 +28,6 @@ var githubClient = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("buil
 if (!string.IsNullOrEmpty(githubApiKey))
 	githubClient.Credentials = new Octokit.Credentials(githubApiKey);
 
-var coverageXmlPath = @"build\coverage.xml";
-
 string headSha = null;
 string version = null;
 
@@ -131,28 +129,28 @@ Task("Coverage")
 	.IsDependentOn("Build")
 	.Does(() =>
 	{
-		DeleteFile(coverageXmlPath);
+		CreateDirectory("./build");
+		if (FileExists("./build/coverage.xml"))
+			DeleteFile("./build/coverage.xml");
 		foreach (var testDllPath in GetFiles($"./tests/**/bin/{configuration}/*.Tests.dll"))
 		{
 			StartProcess(@"tools\OpenCover\tools\OpenCover.Console.exe",
-				$@"-register:user -mergeoutput ""-target:tools\xunit.runner.console\tools\xunit.console.exe"" ""-targetargs:{testDllPath} -noshadow"" ""-output:{coverageXmlPath}"" -skipautoprops -returntargetcode ""-filter:+[Faithlife*]*""");
+				$@"-register:user -mergeoutput ""-target:tools\xunit.runner.console\tools\xunit.console.exe"" ""-targetargs:{testDllPath} -noshadow"" ""-output:build\coverage.xml"" -skipautoprops -returntargetcode ""-filter:+[Faithlife*]*""");
 		}
-
-		StartProcess(@"tools\ReportGenerator\tools\ReportGenerator.exe", $@"""-reports:{coverageXmlPath}"" ""-targetdir:build\coverage""");
 	});
 
 Task("CoverageReport")
 	.IsDependentOn("Coverage")
 	.Does(() =>
 	{
-		StartProcess(@"tools\ReportGenerator\tools\ReportGenerator.exe", $@"""-reports:{coverageXmlPath}"" ""-targetdir:build\coverage""");
+		StartProcess(@"tools\ReportGenerator\tools\ReportGenerator.exe", $@"""-reports:build\coverage.xml"" ""-targetdir:build\coverage""");
 	});
 
 Task("CoveragePublish")
 	.IsDependentOn("Coverage")
 	.Does(() =>
 	{
-		StartProcess(@"tools\coveralls.io\tools\coveralls.net.exe", $@"--opencover ""{coverageXmlPath}"" --full-sources --repo-token {coverallsApiKey}");
+		StartProcess(@"tools\coveralls.io\tools\coveralls.net.exe", $@"--opencover ""build\coverage.xml"" --full-sources --repo-token {coverallsApiKey}");
 	});
 
 Task("Default")
