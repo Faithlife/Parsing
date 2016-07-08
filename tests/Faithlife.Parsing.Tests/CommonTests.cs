@@ -54,5 +54,34 @@ namespace Faithlife.Parsing.Tests
 			positioned.Position.Index.ShouldBe(1);
 			positioned.Length.ShouldBe(2);
 		}
+
+		[Fact]
+		public void LineColumnEquality()
+		{
+			var a1 = new LineColumn(1, 2);
+			var a2 = new LineColumn(1, 2);
+			var b = new LineColumn(2, 1);
+			(a1 == a2).ShouldBe(true);
+			(a1 != b).ShouldBe(true);
+			Equals(a1, b).ShouldBe(false);
+			a1.GetHashCode().ShouldBe(a2.GetHashCode());
+		}
+
+		[Fact]
+		public void ParseResult_GetValueOrDefault()
+		{
+			ParseResult.Success(1, new TextPosition()).GetValueOrDefault().ShouldBe(1);
+			ParseResult.Success(1, new TextPosition()).GetValueOrDefault(2).ShouldBe(1);
+			ParseResult.Failure<int>(new TextPosition()).GetValueOrDefault().ShouldBe(0);
+			ParseResult.Failure<int>(new TextPosition()).GetValueOrDefault(2).ShouldBe(2);
+		}
+
+		[Fact]
+		public void ParseResult_ToMessage()
+		{
+			Parser.Char('a').TryParse("a").ToMessage().ShouldBe("success at 1,2");
+			Parser.Char('a').TryParse("b").ToMessage().ShouldBe("failure at 1,1");
+			Parser.Char('a').Named("'a'").TryParse("b").ToMessage().ShouldBe("failure at 1,1; expected 'a' at 1,1");
+		}
 	}
 }
