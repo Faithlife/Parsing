@@ -1,7 +1,8 @@
 # Faithlife.Parsing
 
-**Faithlife.Parsing** is a simple library for constructing parsers in C#. [![NuGet](https://img.shields.io/nuget/v/Faithlife.Parsing.svg)](https://www.nuget.org/packages/Faithlife.Parsing)
-[![Build status](https://ci.appveyor.com/api/projects/status/dj1ngwmdk6vgig7b?svg=true)](https://ci.appveyor.com/project/ejball/parsing)
+**Faithlife.Parsing** is a simple library for constructing parsers in C#.
+
+[![NuGet](https://img.shields.io/nuget/v/Faithlife.Parsing.svg)](https://www.nuget.org/packages/Faithlife.Parsing) [![Build status](https://ci.appveyor.com/api/projects/status/dj1ngwmdk6vgig7b?svg=true)](https://ci.appveyor.com/project/ejball/parsing) [![Coverage Status](https://coveralls.io/repos/github/Faithlife/Parsing/badge.svg?branch=master)](https://coveralls.io/github/Faithlife/Parsing?branch=master)
 
 This library is inspired by, adapted from, and owes its existence to the [Sprache](https://github.com/sprache/Sprache) C# library. Be sure to consult the [Sprache documentation](https://github.com/sprache/Sprache/blob/master/README.md) for more information about the overall strategy used by Faithlife.Parsing, as well as various examples, tutorials, and acknowledgements. Particular thanks go to [Nicholas Blumhardt](http://nblumhardt.com), the author of Sprache.
 
