@@ -1,6 +1,9 @@
 #addin "nuget:?package=Cake.Git"
 #addin "nuget:?package=Octokit"
+#tool "nuget:?package=coveralls.io"
 #tool "nuget:?package=gitlink"
+#tool "nuget:?package=OpenCover"
+#tool "nuget:?package=ReportGenerator"
 #tool "nuget:?package=xunit.runner.console"
 
 using LibGit2Sharp;
@@ -9,6 +12,7 @@ var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var nugetApiKey = Argument("nugetApiKey", "");
 var githubApiKey = Argument("githubApiKey", "");
+var coverallsApiKey = Argument("coverallsApiKey", "");
 
 var solutionPath = "./Parsing.sln";
 var nugetPackageName = "Faithlife.Parsing";
@@ -23,6 +27,8 @@ var gitRepository = new LibGit2Sharp.Repository(MakeAbsolute(Directory(".")).Ful
 var githubClient = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("build.cake"));
 if (!string.IsNullOrEmpty(githubApiKey))
 	githubClient.Credentials = new Octokit.Credentials(githubApiKey);
+
+var coverageXmlPath = @"build\coverage.xml";
 
 string headSha = null;
 string version = null;
@@ -120,6 +126,34 @@ Task("NuGetTagOnly")
 Task("NuGetPublish")
 	.IsDependentOn("NuGetPublishOnly")
 	.IsDependentOn("NuGetTagOnly");
+
+Task("Coverage")
+	.IsDependentOn("Build")
+	.Does(() =>
+	{
+		DeleteFile(coverageXmlPath);
+		foreach (var testDllPath in GetFiles($"./tests/**/bin/{configuration}/*.Tests.dll"))
+		{
+			StartProcess(@"tools\OpenCover\tools\OpenCover.Console.exe",
+				$@"-register:user -mergeoutput ""-target:tools\xunit.runner.console\tools\xunit.console.exe"" ""-targetargs:{testDllPath} -noshadow"" ""-output:{coverageXmlPath}"" -skipautoprops -returntargetcode ""-filter:+[Faithlife*]*""");
+		}
+
+		StartProcess(@"tools\ReportGenerator\tools\ReportGenerator.exe", $@"""-reports:{coverageXmlPath}"" ""-targetdir:build\coverage""");
+	});
+
+Task("CoverageReport")
+	.IsDependentOn("Coverage")
+	.Does(() =>
+	{
+		StartProcess(@"tools\ReportGenerator\tools\ReportGenerator.exe", $@"""-reports:{coverageXmlPath}"" ""-targetdir:build\coverage""");
+	});
+
+Task("CoveragePublish")
+	.IsDependentOn("Coverage")
+	.Does(() =>
+	{
+		StartProcess(@"tools\coveralls.io\tools\coveralls.net.exe", $@"--opencover ""{coverageXmlPath}"" --full-sources --repo-token {coverallsApiKey}");
+	});
 
 Task("Default")
 	.IsDependentOn("Test");
