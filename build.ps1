@@ -66,14 +66,14 @@ $PACKAGES_CONFIG = Join-Path $TOOLS_DIR "packages.config"
 # Should we use mono?
 $UseMono = "";
 if($Mono.IsPresent) {
-    Write-Verbose -Message "Using the Mono based scripting engine."
+    Write-Host "Using the Mono based scripting engine."
     $UseMono = "-mono"
 }
 
 # Should we use the new Roslyn?
 $UseExperimental = "";
 if($Experimental.IsPresent -and !($Mono.IsPresent)) {
-    Write-Verbose -Message "Using experimental version of Roslyn."
+    Write-Host "Using experimental version of Roslyn."
     $UseExperimental = "-experimental"
 }
 
@@ -85,13 +85,13 @@ if($WhatIf.IsPresent) {
 
 # Make sure tools folder exists
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
-    Write-Verbose -Message "Creating tools directory..."
+    Write-Host "Creating tools directory..."
     New-Item -Path $TOOLS_DIR -Type directory | out-null
 }
 
 # Make sure that packages.config exist.
 if (!(Test-Path $PACKAGES_CONFIG)) {
-    Write-Verbose -Message "Downloading packages.config..."
+    Write-Host "Downloading packages.config..."
     try { Invoke-WebRequest -Uri http://cakebuild.net/download/bootstrapper/packages -OutFile $PACKAGES_CONFIG } catch {
         Throw "Could not download packages.config."
     }
@@ -99,18 +99,18 @@ if (!(Test-Path $PACKAGES_CONFIG)) {
 
 # Try find NuGet.exe in path if not exists
 if (!(Test-Path $NUGET_EXE)) {
-    Write-Verbose -Message "Trying to find nuget.exe in PATH..."
+    Write-Host "Trying to find nuget.exe in PATH..."
     $existingPaths = $Env:Path -Split ';' | Where-Object { (![string]::IsNullOrEmpty($_)) -and (Test-Path $_) }
     $NUGET_EXE_IN_PATH = Get-ChildItem -Path $existingPaths -Filter "nuget.exe" | Select -First 1
     if ($NUGET_EXE_IN_PATH -ne $null -and (Test-Path $NUGET_EXE_IN_PATH.FullName)) {
-        Write-Verbose -Message "Found in PATH at $($NUGET_EXE_IN_PATH.FullName)."
+        Write-Host "Found in PATH at $($NUGET_EXE_IN_PATH.FullName)."
         $NUGET_EXE = $NUGET_EXE_IN_PATH.FullName
     }
 }
 
 # Try download NuGet.exe if not exists
 if (!(Test-Path $NUGET_EXE)) {
-    Write-Verbose -Message "Downloading NuGet.exe..."
+    Write-Host "Downloading NuGet.exe..."
     try {
         (New-Object System.Net.WebClient).DownloadFile($NUGET_URL, $NUGET_EXE)
     } catch {
@@ -125,12 +125,12 @@ $ENV:NUGET_EXE = $NUGET_EXE
 if(-Not $SkipToolPackageRestore.IsPresent) {
     Push-Location
     Set-Location $TOOLS_DIR
-    Write-Verbose -Message "Restoring tools from NuGet..."
+    Write-Host "Restoring tools from NuGet..."
     $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
     if ($LASTEXITCODE -ne 0) {
         Throw "An error occured while restoring NuGet tools."
     }
-    Write-Verbose -Message ($NuGetOutput | out-string)
+    Write-Host ($NuGetOutput | out-string)
     Pop-Location
 }
 
