@@ -80,6 +80,7 @@ Task("SourceIndex")
 		GitLink(MakeAbsolute(Directory(".")).FullPath, new GitLinkSettings
 		{
 			RepositoryUrl = $"{githubRawUri}/{githubOwner}/{githubRepo}",
+			ArgumentCustomization = args => args.Append($"-ignore Bom,BomTest"),
 		});
 
 		version = GetSemVerFromFile(assemblyPath);
