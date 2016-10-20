@@ -10,6 +10,12 @@ Faithlife.Parsing allows you to define complex parsers in just a few lines of C#
 
 The Faithlife.Parsing library includes [parsers for JSON](src/Faithlife.Parsing/Json/JsonParsers.cs). Reading this code is a good way to learn how complex parsers are constructed, but you should definitely prefer specialized JSON parsers for production work.
 
+## Installation
+
+Faithlife.Parsing should be installed [via NuGet](https://www.nuget.org/packages/Faithlife.Parsing).
+
+This library is compatible with .NET Framework and .NET Core. Specficially, it is a Portable Class Library using Profile111, which means it supports .NET Framework 4.5, Windows 8, Windows Phone 8.1, and [.NET Standard 1.1](https://docs.microsoft.com/en-us/dotnet/articles/standard/library).
+
 ## Using a parser
 
 A parser is an implementation of [`IParser<T>`](src/Faithlife.Parsing/IParser.cs). It converts one or more characters of text into an instance of type `T`.
