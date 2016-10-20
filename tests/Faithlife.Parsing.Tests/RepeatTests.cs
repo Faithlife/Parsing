@@ -101,5 +101,33 @@ namespace Faithlife.Parsing.Tests
 			var parser = Parser.String("abc").Repeat(2, 3);
 			parser.TryParse("abcabcabcabc").ShouldSucceed(new[] { "abc", "abc", "abc" }, 9);
 		}
+
+		[Fact]
+		public void DelimitedShouldSucceed()
+		{
+			var parser = Parser.String("abc").Delimited(Parser.Char(','));
+			parser.TryParse("abc,abc,abc").ShouldSucceed(new[] { "abc", "abc", "abc" }, 11);
+		}
+
+		[Fact]
+		public void DelimitedShouldIgnoreTrailing()
+		{
+			var parser = Parser.String("abc").Delimited(Parser.Char(','));
+			parser.TryParse("abc,abc,abc,").ShouldSucceed(new[] { "abc", "abc", "abc" }, 11);
+		}
+
+		[Fact]
+		public void DelimitedAllowTrailing()
+		{
+			var parser = Parser.String("abc").DelimitedAllowTrailing(Parser.Char(','));
+			parser.TryParse("abc,abc,abc,").ShouldSucceed(new[] { "abc", "abc", "abc" }, 12);
+		}
+
+		[Fact]
+		public void DelimitedAllowTrailingNoTrailing()
+		{
+			var parser = Parser.String("abc").DelimitedAllowTrailing(Parser.Char(','));
+			parser.TryParse("abc,abc,abc").ShouldSucceed(new[] { "abc", "abc", "abc" }, 11);
+		}
 	}
 }

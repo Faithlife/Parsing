@@ -18,5 +18,11 @@ namespace Faithlife.Parsing.Tests
 			parser.TryParse("x(fail)x", 1).ShouldFail(1);
 			parser.TryParse("x(failure)x", 1).ShouldSucceed("failure", 10);
 		}
+
+		[Fact]
+		public void TestAppend()
+		{
+			Parser.Char('a').Repeat(2).Append(Parser.Char('b')).TryParse("aabc").ShouldSucceed(new[] { 'a', 'a', 'b' }, 3);
+		}
 	}
 }

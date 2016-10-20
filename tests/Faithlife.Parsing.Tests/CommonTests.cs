@@ -68,6 +68,16 @@ namespace Faithlife.Parsing.Tests
 		}
 
 		[Fact]
+		public void TextPositionEquality()
+		{
+			var values = Parser.String("ab").Positioned().Repeat(2).Parse("abab");
+			Equals(values[0].Position, values[1].Position).ShouldBe(false);
+			Equals(values[0].Position.GetHashCode(), values[1].Position.GetHashCode()).ShouldBe(false);
+			(values[0].Position == values[1].Position).ShouldBe(false);
+			(values[0].Position != values[1].Position).ShouldBe(true);
+		}
+
+		[Fact]
 		public void ParseResult_GetValueOrDefault()
 		{
 			ParseResult.Success(1, new TextPosition()).GetValueOrDefault().ShouldBe(1);
