@@ -1,7 +1,7 @@
 #addin "nuget:https://www.nuget.org/api/v2/?package=Cake.Git&version=0.10.0"
 #addin "nuget:https://www.nuget.org/api/v2/?package=Octokit&version=0.23.0"
 #tool "nuget:https://www.nuget.org/api/v2/?package=coveralls.io&version=1.3.4"
-#tool "nuget:https://www.nuget.org/api/v2/?package=gitlink&version=2.3.0"
+#tool "nuget:https://www.nuget.org/api/v2/?package=PdbGit&version=3.0.32"
 #tool "nuget:https://www.nuget.org/api/v2/?package=OpenCover&version=4.6.519"
 #tool "nuget:https://www.nuget.org/api/v2/?package=ReportGenerator&version=2.5.0"
 #tool "nuget:https://www.nuget.org/api/v2/?package=xunit.runner.console&version=2.1.0"
@@ -83,11 +83,8 @@ Task("SourceIndex")
 				throw new InvalidOperationException($"The current commit '{headSha}' must be pushed to GitHub.", exception);
 			}
 
-			GitLink(MakeAbsolute(Directory(".")).FullPath, new GitLinkSettings
-			{
-				RepositoryUrl = $"{githubRawUri}/{githubOwner}/{githubRepo}",
-				ArgumentCustomization = args => args.Append($"-ignore Bom,BomTest"),
-			});
+			foreach (var pdbPath in GetFiles($"src/**/bin/**/*.pdb"))
+				ExecuteProcess(@"cake\PdbGit\tools\PdbGit.exe", $@"""{pdbPath}"" -u {githubRawUri}/{githubOwner}/{githubRepo}");
 		}
 		else
 		{
