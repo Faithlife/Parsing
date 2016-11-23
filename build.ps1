@@ -9,37 +9,41 @@ Param(
     [string[]]$ScriptArgs
 )
 
-# create tools directory
-$ToolsDirPath = Join-Path $PSScriptRoot "tools"
-New-Item -Path $ToolsDirPath -Type Directory -ErrorAction SilentlyContinue | Out-Null
+# create cake directory
+$CakeDirPath = Join-Path $PSScriptRoot "cake"
+New-Item -Path $CakeDirPath -Type Directory -ErrorAction SilentlyContinue | Out-Null
+
+# create packages.config
+$PackagesConfigPath = Join-Path $CakeDirPath "packages.config"
+If (!(Test-Path $PackagesConfigPath)) {
+    [System.IO.File]::WriteAllLines($PackagesConfigPath, @(
+        "<?xml version=`"1.0`" encoding=`"utf-8`"?>",
+        "<packages>",
+        "`t<package id=`"Cake`" version=`"0.17.0`" />",
+        "</packages>"))
+}
 
 # download nuget.exe if not in path and not already downloaded
 $NuGetExe = Get-Command "nuget.exe" -ErrorAction SilentlyContinue
-if ($NuGetExe -ne $null) {
+If ($NuGetExe -ne $null) {
     $NuGetExePath = $NuGetExe.Path
 }
 Else {
-    $NuGetExePath = Join-Path $ToolsDirPath "nuget.exe"
-    if (!(Test-Path $NuGetExePath)) {
+    $NuGetExePath = Join-Path $CakeDirPath "nuget.exe"
+    If (!(Test-Path $NuGetExePath)) {
         Invoke-WebRequest -Uri http://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NuGetExePath
     }
 }
 
-# download packages.config if necessary
-$PackagesConfigPath = Join-Path $ToolsDirPath "packages.config"
-if (!(Test-Path $PackagesConfigPath)) {
-    Invoke-WebRequest -Uri http://cakebuild.net/download/bootstrapper/packages -OutFile $PackagesConfigPath
-}
-
-# download Cake via NuGet and packages.config
-Push-Location $ToolsDirPath
-Invoke-Expression "&`"$NuGetExePath`" install -ExcludeVersion -OutputDirectory `"$ToolsDirPath`""
-if ($LASTEXITCODE -ne 0) {
+# use NuGet to download Cake
+Push-Location $CakeDirPath
+Invoke-Expression "&`"$NuGetExePath`" install -ExcludeVersion -OutputDirectory ."
+If ($LASTEXITCODE -ne 0) {
     Throw "An error occured while restoring NuGet tools."
 }
 Pop-Location
 
 # run Cake with specified arguments
-$CakeExePath = Join-Path $ToolsDirPath "Cake/Cake.exe"
-Invoke-Expression "& `"$CakeExePath`" -experimental $ScriptArgs"
-exit $LASTEXITCODE
+$CakeExePath = Join-Path $CakeDirPath "Cake/Cake.exe"
+Invoke-Expression "& `"$CakeExePath`" --paths_tools=cake -experimental $ScriptArgs"
+Exit $LASTEXITCODE

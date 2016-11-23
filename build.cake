@@ -1,10 +1,10 @@
-#addin "nuget:?package=Cake.Git"
-#addin "nuget:?package=Octokit"
-#tool "nuget:?package=coveralls.io"
-#tool "nuget:?package=gitlink"
-#tool "nuget:?package=OpenCover"
-#tool "nuget:?package=ReportGenerator"
-#tool "nuget:?package=xunit.runner.console"
+#addin "nuget:https://www.nuget.org/api/v2/?package=Cake.Git&version=0.10.0"
+#addin "nuget:https://www.nuget.org/api/v2/?package=Octokit&version=0.23.0"
+#tool "nuget:https://www.nuget.org/api/v2/?package=coveralls.io&version=1.3.4"
+#tool "nuget:https://www.nuget.org/api/v2/?package=gitlink&version=2.3.0"
+#tool "nuget:https://www.nuget.org/api/v2/?package=OpenCover&version=4.6.519"
+#tool "nuget:https://www.nuget.org/api/v2/?package=ReportGenerator&version=2.5.0"
+#tool "nuget:https://www.nuget.org/api/v2/?package=xunit.runner.console&version=2.1.0"
 
 using LibGit2Sharp;
 
@@ -13,14 +13,14 @@ var configuration = Argument("configuration", "Release");
 var nugetApiKey = Argument("nugetApiKey", "");
 var githubApiKey = Argument("githubApiKey", "");
 var coverallsApiKey = Argument("coverallsApiKey", "");
+var prerelease = Argument("prerelease", "");
 
-var solutionPath = "./Parsing.sln";
-var nugetPackageName = "Faithlife.Parsing";
-var assemblyPath = $"./src/Faithlife.Parsing/bin/{configuration}/Faithlife.Parsing.dll";
+var solutionFileName = "Parsing.sln";
 var githubOwner = "Faithlife";
 var githubRepo = "Parsing";
 var githubRawUri = "http://raw.githubusercontent.com";
 var nugetSource = "https://www.nuget.org/api/v2/package";
+var coverageAssemblies = new[] { "Faithlife.Parsing" };
 
 var gitRepository = new LibGit2Sharp.Repository(MakeAbsolute(Directory(".")).FullPath);
 
@@ -34,109 +34,126 @@ string version = null;
 string GetSemVerFromFile(string path)
 {
 	var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(path);
-	return $"{versionInfo.FileMajorPart}.{versionInfo.FileMinorPart}.{versionInfo.FileBuildPart}";
+	var semver = $"{versionInfo.FileMajorPart}.{versionInfo.FileMinorPart}.{versionInfo.FileBuildPart}";
+	if (prerelease.Length != 0)
+		semver += $"-{prerelease}";
+	return semver;
 }
 
 Task("Clean")
 	.Does(() =>
 	{
-		CleanDirectories($"./src/**/bin/{configuration}");
-		CleanDirectories($"./src/**/obj/{configuration}");
-		CleanDirectories($"./tests/**/bin/{configuration}");
-		CleanDirectories($"./tests/**/obj/{configuration}");
+		CleanDirectories($"src/**/bin");
+		CleanDirectories($"src/**/obj");
+		CleanDirectories($"tests/**/bin");
+		CleanDirectories($"tests/**/obj");
+		CleanDirectories("release");
 	});
 
-Task("NuGetRestore")
-	.IsDependentOn("Clean")
-	.Does(() => NuGetRestore(solutionPath));
-
 Task("Build")
-	.IsDependentOn("NuGetRestore")
-	.Does(() => MSBuild(solutionPath, settings => settings.SetConfiguration(configuration)));
+	.IsDependentOn("Clean")
+	.Does(() =>
+	{
+		NuGetRestore(solutionFileName);
+		MSBuild(solutionFileName, settings => settings.SetConfiguration(configuration));
+	});
 
 Task("Test")
 	.IsDependentOn("Build")
-	.Does(() => XUnit2($"./tests/**/bin/{configuration}/*.Tests.dll"));
+	.Does(() => XUnit2($"tests/**/bin/**/*.Tests.dll"));
 
 Task("SourceIndex")
 	.IsDependentOn("Test")
 	.WithCriteria(() => configuration == "Release")
 	.Does(() =>
 	{
-		var dirtyEntry = gitRepository.RetrieveStatus().FirstOrDefault(x => x.State != FileStatus.Unaltered && x.State != FileStatus.Ignored);
-		if (dirtyEntry != null)
-			throw new InvalidOperationException($"The git working directory must be clean, but '{dirtyEntry.FilePath}' is dirty.");
-
-		headSha = gitRepository.Head.Tip.Sha;
-		try
+		if (prerelease.Length == 0)
 		{
-			githubClient.Repository.Commit.GetSha1(githubOwner, githubRepo, headSha).GetAwaiter().GetResult();
+			var dirtyEntry = gitRepository.RetrieveStatus().FirstOrDefault(x => x.State != FileStatus.Unaltered && x.State != FileStatus.Ignored);
+			if (dirtyEntry != null)
+				throw new InvalidOperationException($"The git working directory must be clean, but '{dirtyEntry.FilePath}' is dirty.");
+
+			headSha = gitRepository.Head.Tip.Sha;
+			try
+			{
+				githubClient.Repository.Commit.GetSha1(githubOwner, githubRepo, headSha).GetAwaiter().GetResult();
+			}
+			catch (Octokit.NotFoundException exception)
+			{
+				throw new InvalidOperationException($"The current commit '{headSha}' must be pushed to GitHub.", exception);
+			}
+
+			GitLink(MakeAbsolute(Directory(".")).FullPath, new GitLinkSettings
+			{
+				RepositoryUrl = $"{githubRawUri}/{githubOwner}/{githubRepo}",
+				ArgumentCustomization = args => args.Append($"-ignore Bom,BomTest"),
+			});
 		}
-		catch (Octokit.NotFoundException exception)
+		else
 		{
-			throw new InvalidOperationException($"The current commit '{headSha}' must be pushed to GitHub.", exception);
+			Warning("Skipping source index for prerelease.");
 		}
 
-		GitLink(MakeAbsolute(Directory(".")).FullPath, new GitLinkSettings
-		{
-			RepositoryUrl = $"{githubRawUri}/{githubOwner}/{githubRepo}",
-			ArgumentCustomization = args => args.Append($"-ignore Bom,BomTest"),
-		});
-
-		version = GetSemVerFromFile(assemblyPath);
+		version = GetSemVerFromFile(GetFiles($"src/**/bin/**/{coverageAssemblies[0]}.dll").First().ToString());
 	});
 
-Task("NuGetPack")
+Task("NuGetPackage")
 	.IsDependentOn("SourceIndex")
 	.Does(() =>
 	{
-		CreateDirectory("./build");
-		NuGetPack($"./{nugetPackageName}.nuspec", new NuGetPackSettings
-		{
-			Version = version,
-			ArgumentCustomization = args => args.Append($"-Prop Configuration={configuration}"),
-			OutputDirectory = "./build",
-		});
-	});
+		CreateDirectory("release");
 
-Task("NuGetPublishOnly")
-	.IsDependentOn("NuGetPack")
-	.WithCriteria(() => !string.IsNullOrEmpty(nugetApiKey))
-	.Does(() =>
-	{
-		NuGetPush($"./build/{nugetPackageName}.{version}.nupkg", new NuGetPushSettings
+		foreach (var nuspecPath in GetFiles($"src/*.nuspec"))
 		{
-			ApiKey = nugetApiKey,
-			Source = nugetSource,
-		});
-	});
-
-Task("NuGetTagOnly")
-	.IsDependentOn("NuGetPack")
-	.WithCriteria(() => !string.IsNullOrEmpty(githubApiKey))
-	.Does(() =>
-	{
-		var tagName = $"nuget-{version}";
-		Information($"Creating git tag '{tagName}'...");
-		githubClient.Git.Reference.Create(githubOwner, githubRepo,
-			new Octokit.NewReference($"refs/tags/{tagName}", headSha)).GetAwaiter().GetResult();
+			NuGetPack(nuspecPath, new NuGetPackSettings
+			{
+				Version = version,
+				OutputDirectory = "release",
+			});
+		}
 	});
 
 Task("NuGetPublish")
-	.IsDependentOn("NuGetPublishOnly")
-	.IsDependentOn("NuGetTagOnly");
+	.IsDependentOn("NuGetPackage")
+	.WithCriteria(() => !string.IsNullOrEmpty(nugetApiKey) && !string.IsNullOrEmpty(githubApiKey))
+	.Does(() =>
+	{
+		foreach (var nupkgPath in GetFiles($"release/*.nupkg"))
+		{
+			NuGetPush(nupkgPath, new NuGetPushSettings
+			{
+				ApiKey = nugetApiKey,
+				Source = nugetSource,
+			});
+		}
+
+		if (headSha != null)
+		{
+			var tagName = $"nuget-{version}";
+			Information($"Creating git tag '{tagName}'...");
+			githubClient.Git.Reference.Create(githubOwner, githubRepo,
+				new Octokit.NewReference($"refs/tags/{tagName}", headSha)).GetAwaiter().GetResult();
+		}
+		else
+		{
+			Warning("Skipping git tag for prerelease.");
+		}
+	});
 
 Task("Coverage")
 	.IsDependentOn("Build")
 	.Does(() =>
 	{
-		CreateDirectory("./build");
-		if (FileExists("./build/coverage.xml"))
-			DeleteFile("./build/coverage.xml");
-		foreach (var testDllPath in GetFiles($"./tests/**/bin/{configuration}/*.Tests.dll"))
+		CreateDirectory("release");
+		if (FileExists("release/coverage.xml"))
+			DeleteFile("release/coverage.xml");
+
+		string filter = string.Concat(coverageAssemblies.Select(x => $@" ""-filter:+[{x}]*"""));
+
+		foreach (var testDllPath in GetFiles($"tests/**/bin/**/*.Tests.dll"))
 		{
-			StartProcess(@"tools\OpenCover\tools\OpenCover.Console.exe",
-				$@"-register:user -mergeoutput ""-target:tools\xunit.runner.console\tools\xunit.console.exe"" ""-targetargs:{testDllPath} -noshadow"" ""-output:build\coverage.xml"" -skipautoprops -returntargetcode ""-filter:+[Faithlife*]*""");
+			ExecuteProcess(@"cake\OpenCover\tools\OpenCover.Console.exe",
+				$@"-register:user -mergeoutput ""-target:cake\xunit.runner.console\tools\xunit.console.exe"" ""-targetargs:{testDllPath} -noshadow"" ""-output:release\coverage.xml"" -skipautoprops -returntargetcode" + filter);
 		}
 	});
 
@@ -144,17 +161,24 @@ Task("CoverageReport")
 	.IsDependentOn("Coverage")
 	.Does(() =>
 	{
-		StartProcess(@"tools\ReportGenerator\tools\ReportGenerator.exe", $@"""-reports:build\coverage.xml"" ""-targetdir:build\coverage""");
+		ExecuteProcess(@"cake\ReportGenerator\tools\ReportGenerator.exe", $@"""-reports:release\coverage.xml"" ""-targetdir:release\coverage""");
 	});
 
 Task("CoveragePublish")
 	.IsDependentOn("Coverage")
 	.Does(() =>
 	{
-		StartProcess(@"tools\coveralls.io\tools\coveralls.net.exe", $@"--opencover ""build\coverage.xml"" --full-sources --repo-token {coverallsApiKey}");
+		ExecuteProcess(@"cake\coveralls.io\tools\coveralls.net.exe", $@"--opencover ""release\coverage.xml"" --full-sources --repo-token {coverallsApiKey}");
 	});
 
 Task("Default")
 	.IsDependentOn("Test");
+
+void ExecuteProcess(string exePath, string arguments)
+{
+	int exitCode = StartProcess(exePath, arguments);
+	if (exitCode != 0)
+		throw new InvalidOperationException($"{exePath} failed with exit code {exitCode}.");
+}
 
 RunTarget(target);
