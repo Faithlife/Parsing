@@ -3,6 +3,7 @@
 	/// <summary>
 	/// The result of a parse attempt.
 	/// </summary>
+	/// <seealso cref="ParseResult" />
 	public interface IParseResult
 	{
 		/// <summary>
@@ -24,6 +25,7 @@
 	/// <summary>
 	/// The result of a parse attempt.
 	/// </summary>
+	/// <seealso cref="ParseResult" />
 	public interface IParseResult<out T> : IParseResult
 	{
 		/// <summary>

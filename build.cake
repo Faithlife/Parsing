@@ -1,10 +1,11 @@
-#addin "nuget:https://www.nuget.org/api/v2/?package=Cake.Git&version=0.10.0"
-#addin "nuget:https://www.nuget.org/api/v2/?package=Octokit&version=0.23.0"
-#tool "nuget:https://www.nuget.org/api/v2/?package=coveralls.io&version=1.3.4"
-#tool "nuget:https://www.nuget.org/api/v2/?package=PdbGit&version=3.0.32"
-#tool "nuget:https://www.nuget.org/api/v2/?package=OpenCover&version=4.6.519"
-#tool "nuget:https://www.nuget.org/api/v2/?package=ReportGenerator&version=2.5.0"
-#tool "nuget:https://www.nuget.org/api/v2/?package=xunit.runner.console&version=2.1.0"
+#addin "nuget:?package=Cake.Git&version=0.10.0"
+#addin "nuget:?package=Octokit&version=0.23.0"
+#tool "nuget:?package=coveralls.io&version=1.3.4"
+#tool "nuget:?package=PdbGit&version=3.0.32"
+#tool "nuget:?package=OpenCover&version=4.6.519"
+#tool "nuget:?package=ReportGenerator&version=2.5.0"
+#tool "nuget:?package=xunit.runner.console&version=2.1.0"
+#tool "nuget:?package=XmlDocMarkdown&version=0.2.4"
 
 using LibGit2Sharp;
 
@@ -22,7 +23,8 @@ var githubRawUri = "http://raw.githubusercontent.com";
 var nugetSource = "https://www.nuget.org/api/v2/package";
 var coverageAssemblies = new[] { "Faithlife.Parsing" };
 
-var gitRepository = new LibGit2Sharp.Repository(MakeAbsolute(Directory(".")).FullPath);
+var rootPath = MakeAbsolute(Directory(".")).FullPath;
+var gitRepository = LibGit2Sharp.Repository.IsValid(rootPath) ? new LibGit2Sharp.Repository(rootPath) : null;
 
 var githubClient = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("build.cake"));
 if (!string.IsNullOrEmpty(githubApiKey))
@@ -30,15 +32,6 @@ if (!string.IsNullOrEmpty(githubApiKey))
 
 string headSha = null;
 string version = null;
-
-string GetSemVerFromFile(string path)
-{
-	var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(path);
-	var semver = $"{versionInfo.FileMajorPart}.{versionInfo.FileMinorPart}.{versionInfo.FileBuildPart}";
-	if (prerelease.Length != 0)
-		semver += $"-{prerelease}";
-	return semver;
-}
 
 Task("Clean")
 	.Does(() =>
@@ -58,13 +51,21 @@ Task("Build")
 		MSBuild(solutionFileName, settings => settings.SetConfiguration(configuration));
 	});
 
-Task("Test")
+Task("GenerateDocs")
 	.IsDependentOn("Build")
+	.Does(() => GenerateDocs(verify: false));
+
+Task("VerifyGenerateDocs")
+	.IsDependentOn("Build")
+	.Does(() => GenerateDocs(verify: true));
+
+Task("Test")
+	.IsDependentOn("VerifyGenerateDocs")
 	.Does(() => XUnit2($"tests/**/bin/**/*.Tests.dll"));
 
 Task("SourceIndex")
 	.IsDependentOn("Test")
-	.WithCriteria(() => configuration == "Release")
+	.WithCriteria(() => configuration == "Release" && gitRepository != null)
 	.Does(() =>
 	{
 		if (prerelease.Length == 0)
@@ -170,6 +171,28 @@ Task("CoveragePublish")
 
 Task("Default")
 	.IsDependentOn("Test");
+
+string GetSemVerFromFile(string path)
+{
+	var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(path);
+	var semver = $"{versionInfo.FileMajorPart}.{versionInfo.FileMinorPart}.{versionInfo.FileBuildPart}";
+	if (prerelease.Length != 0)
+		semver += $"-{prerelease}";
+	return semver;
+}
+
+void GenerateDocs(bool verify)
+{
+	if (!verify)
+		CleanDirectories("docs/ArgsReading");
+
+	int exitCode = StartProcess($@"cake\XmlDocMarkdown\tools\XmlDocMarkdown.exe",
+		$@"src\Faithlife.Parsing\bin\{configuration}\Faithlife.Parsing.dll docs\" + (verify ? " --verify" : ""));
+	if (exitCode == 1 && verify)
+		throw new InvalidOperationException("Generated docs don't match; use -target=GenerateDocs to regenerate.");
+	else if (exitCode != 0)
+		throw new InvalidOperationException($"Docs generation failed with exit code {exitCode}.");
+}
 
 void ExecuteProcess(string exePath, string arguments)
 {

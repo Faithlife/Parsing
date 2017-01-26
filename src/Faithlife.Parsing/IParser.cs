@@ -3,6 +3,7 @@
 	/// <summary>
 	/// Parses text.
 	/// </summary>
+	/// <seealso cref="Parser" />
 	public interface IParser<out T>
 	{
 		/// <summary>
