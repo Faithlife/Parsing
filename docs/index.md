@@ -18,16 +18,16 @@ This library is compatible with .NET Framework and .NET Core. Specficially, it i
 
 ## Using a parser
 
-A parser is an implementation of [`IParser<T>`](Faithlife.Parsing/IParser-1.md). It converts one or more characters of text into an instance of type `T`.
+A parser is an implementation of [IParser<T>](Faithlife.Parsing/IParser-1.md). It converts one or more characters of text into an instance of type `T`.
 
 ```csharp
 // parses one or more digits into an integer
 IParser<int> integerParser = CreateIntegerParser();
 ```
 
-To use a parser, you call [`TryParse`](Faithlife.Parsing/Parser/TryParse.md) or [`Parse`](Faithlife.Parsing/Parser/Parse.md), extension methods for [`IParser<T>`](Faithlife.Parsing/IParser-1.md) that are defined on the [`Parser`](Faithlife.Parsing/Parser.md) static class. These methods have a `text` parameter that specifies the text that you want to parse.
+To use a parser, you call [TryParse](Faithlife.Parsing/Parser/TryParse.md) or [Parse](Faithlife.Parsing/Parser/Parse.md), extension methods for [IParser<T>](Faithlife.Parsing/IParser-1.md) that are defined on the [Parser](Faithlife.Parsing/Parser.md) static class. These methods have a `text` parameter that specifies the text that you want to parse.
 
-[`TryParse`](Faithlife.Parsing/Parser/TryParse.md) returns an [`IParseResult<T>`](Faithlife.Parsing/IParseResult-1.md). The [`Success`](Faithlife.Parsing/IParseResult/Success.md) property is true if the parsing was successful, in which case the [`Value`](Faithlife.Parsing/IParseResult-1/Value.md) property returns the result of the parse.
+[TryParse](Faithlife.Parsing/Parser/TryParse.md) returns an [IParseResult<T>](Faithlife.Parsing/IParseResult-1.md). The [Success](Faithlife.Parsing/IParseResult/Success.md) property is true if the parsing was successful, in which case the [Value](Faithlife.Parsing/IParseResult-1/Value.md) property returns the result of the parse.
 
 ```csharp
 IParseResult<int> integerResult = integerParser.TryParse("123abc");
@@ -35,21 +35,21 @@ Debug.Assert(integerResult.Success);
 Debug.Assert(integerResult.Value == 123);
 ```
 
-If [`Success`](Faithlife.Parsing/IParseResult/Success.md) is false, the parsing failed. Accessing the [`Value`](Faithlife.Parsing/IParseResult-1/Value.md) property will throw a [`ParseException`](Faithlife.Parsing/ParseException.md).
+If [Success](Faithlife.Parsing/IParseResult/Success.md) is false, the parsing failed. Accessing the [Value](Faithlife.Parsing/IParseResult-1/Value.md) property will throw a [ParseException](Faithlife.Parsing/ParseException.md).
 
 ```csharp
 IParseResult<int> noIntegerResult = integerParser.TryParse("abc123");
 Debug.Assert(!noIntegerResult.Success);
 ```
 
-[`Parse`](Faithlife.Parsing/Parser/Parse.md) returns the successfully parsed value of type `T` directly.
+[Parse](Faithlife.Parsing/Parser/Parse.md) returns the successfully parsed value of type `T` directly.
 
 ```csharp
 int number = integerParser.Parse("123abc");
 Debug.Assert(number == 123);
 ```
 
-If the parsing fails, `Parse` throws a [`ParseException`](Faithlife.Parsing/ParseException.md), which has a [`Result`](Faithlife.Parsing/ParseException/Result.md) property that contains the full [`IParseResult<T>`](Faithlife.Parsing/IParseResult-1.md).
+If the parsing fails, [Parse](Faithlife.Parsing/Parser/Parse.md) throws a [ParseException](Faithlife.Parsing/ParseException.md), which has a [Result](Faithlife.Parsing/ParseException/Result.md) property that contains the full [IParseResult<T>](Faithlife.Parsing/IParseResult-1.md).
 
 ```csharp
 try
@@ -62,7 +62,7 @@ catch (ParseException exception)
 }
 ```
 
-[`IParseResult<T>`](Faithlife.Parsing/IParseResult-1.md) also indicates where parsing stopped. The [`NextPosition`](Faithlife.Parsing/IParseResult/NextPosition.md) property of [`IParseResult<T>`](Faithlife.Parsing/IParseResult-1.md) returns a [`TextPosition`](Faithlife.Parsing/TextPosition.md) whose [`Index`](Faithlife.Parsing/TextPosition/Index.md) property indicates the index into the text where parsing stopped.
+[IParseResult<T>](Faithlife.Parsing/IParseResult-1.md) also indicates where parsing stopped. The [NextPosition](Faithlife.Parsing/IParseResult/NextPosition.md) property of [IParseResult<T>](Faithlife.Parsing/IParseResult-1.md) returns a [TextPosition](Faithlife.Parsing/TextPosition.md) whose [Index](Faithlife.Parsing/TextPosition/Index.md) property indicates the index into the text where parsing stopped.
 
 ```csharp
 Debug.Assert(integerResult.NextPosition.Index == 3);
