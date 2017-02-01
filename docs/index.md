@@ -238,9 +238,9 @@ IParser<double> namedNumberParser = numberParser.Named("number");
 
 For reporting semantic errors, track where parsed values were found with the [Positioned](Faithlife.Parsing/Parser/Positioned.md) extension method, which wraps the parsed value in a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md).
 
-* The [Value](Faithlife.Parsing/Parser/Positioned-1/Value.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) is the parsed value.
-* The [Position](Faithlife.Parsing/Parser/Positioned-1/Position.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) is a [TextPosition](Faithlife.Parsing/TextPosition.md), which has a zero-based [Index](Faithlife.Parsing/TextPosition/Index.md) into the text, as well as a [GetLineColumn](Faithlife.Parsing/TextPosition/GetLineColumn.md) method, which returns a [LineColumn](Faithlife.Parsing/LineColumn.md) value with a one-based [LineNumber](Faithlife.Parsing/LineColumn/LineNumber.md) and [ColumnNumber](Faithlife.Parsing/LineColumn/ColumnNumber.md).
-* The [Length](Faithlife.Parsing/Parser/Positioned-1/Length.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) indicates the text length of the parsed value.
+* The [Value](Faithlife.Parsing/Positioned-1/Value.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) is the parsed value.
+* The [Position](Faithlife.Parsing/Positioned-1/Position.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) is a [TextPosition](Faithlife.Parsing/TextPosition.md), which has a zero-based [Index](Faithlife.Parsing/TextPosition/Index.md) into the text, as well as a [GetLineColumn](Faithlife.Parsing/TextPosition/GetLineColumn.md) method, which returns a [LineColumn](Faithlife.Parsing/LineColumn.md) value with a one-based [LineNumber](Faithlife.Parsing/LineColumn/LineNumber.md) and [ColumnNumber](Faithlife.Parsing/LineColumn/ColumnNumber.md).
+* The [Length](Faithlife.Parsing/Positioned-1/Length.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) indicates the text length of the parsed value.
 
 ```csharp
 IParser<Positioned<double>> positionedNumberParser = numberParser.Positioned().Trim();
