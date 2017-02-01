@@ -5,7 +5,7 @@
 #tool "nuget:?package=OpenCover&version=4.6.519"
 #tool "nuget:?package=ReportGenerator&version=2.5.0"
 #tool "nuget:?package=xunit.runner.console&version=2.1.0"
-#tool "nuget:?package=XmlDocMarkdown&version=0.2.4"
+#tool "nuget:?package=XmlDocMarkdown&version=0.2.6"
 
 using LibGit2Sharp;
 
@@ -187,7 +187,7 @@ void GenerateDocs(bool verify)
 		CleanDirectories("docs/ArgsReading");
 
 	int exitCode = StartProcess($@"cake\XmlDocMarkdown\tools\XmlDocMarkdown.exe",
-		$@"src\Faithlife.Parsing\bin\{configuration}\Faithlife.Parsing.dll docs\" + (verify ? " --verify" : ""));
+		$@"src\Faithlife.Parsing\bin\{configuration}\Faithlife.Parsing.dll docs\ --source ""https://github.com/Faithlife/Parsing/tree/master/src/Faithlife.Parsing"" --namespace Faithlife.Parsing" + (verify ? " --verify" : ""));
 	if (exitCode == 1 && verify)
 		throw new InvalidOperationException("Generated docs don't match; use -target=GenerateDocs to regenerate.");
 	else if (exitCode != 0)
