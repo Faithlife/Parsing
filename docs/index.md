@@ -18,16 +18,16 @@ This library is compatible with .NET Framework and .NET Core. Specficially, it i
 
 ## Using a parser
 
-A parser is an implementation of [IParser<T>](Faithlife.Parsing/IParser-1.md). It converts one or more characters of text into an instance of type `T`.
+A parser is an implementation of [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md). It converts one or more characters of text into an instance of type `T`.
 
 ```csharp
 // parses one or more digits into an integer
 IParser<int> integerParser = CreateIntegerParser();
 ```
 
-To use a parser, you call [TryParse](Faithlife.Parsing/Parser/TryParse.md) or [Parse](Faithlife.Parsing/Parser/Parse.md), extension methods for [IParser<T>](Faithlife.Parsing/IParser-1.md) that are defined on the [Parser](Faithlife.Parsing/Parser.md) static class. These methods have a `text` parameter that specifies the text that you want to parse.
+To use a parser, you call [TryParse](Faithlife.Parsing/Parser/TryParse.md) or [Parse](Faithlife.Parsing/Parser/Parse.md), extension methods for [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md) that are defined on the [Parser](Faithlife.Parsing/Parser.md) static class. These methods have a `text` parameter that specifies the text that you want to parse.
 
-[TryParse](Faithlife.Parsing/Parser/TryParse.md) returns an [IParseResult<T>](Faithlife.Parsing/IParseResult-1.md). The [Success](Faithlife.Parsing/IParseResult/Success.md) property is true if the parsing was successful, in which case the [Value](Faithlife.Parsing/IParseResult-1/Value.md) property returns the result of the parse.
+[TryParse](Faithlife.Parsing/Parser/TryParse.md) returns an [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md). The [Success](Faithlife.Parsing/IParseResult/Success.md) property is true if the parsing was successful, in which case the [Value](Faithlife.Parsing/IParseResult-1/Value.md) property returns the result of the parse.
 
 ```csharp
 IParseResult<int> integerResult = integerParser.TryParse("123abc");
@@ -49,7 +49,7 @@ int number = integerParser.Parse("123abc");
 Debug.Assert(number == 123);
 ```
 
-If the parsing fails, [Parse](Faithlife.Parsing/Parser/Parse.md) throws a [ParseException](Faithlife.Parsing/ParseException.md), which has a [Result](Faithlife.Parsing/ParseException/Result.md) property that contains the full [IParseResult<T>](Faithlife.Parsing/IParseResult-1.md).
+If the parsing fails, [Parse](Faithlife.Parsing/Parser/Parse.md) throws a [ParseException](Faithlife.Parsing/ParseException.md), which has a [Result](Faithlife.Parsing/ParseException/Result.md) property that contains the full [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md).
 
 ```csharp
 try
@@ -62,7 +62,7 @@ catch (ParseException exception)
 }
 ```
 
-[IParseResult<T>](Faithlife.Parsing/IParseResult-1.md) also indicates where parsing stopped. The [NextPosition](Faithlife.Parsing/IParseResult/NextPosition.md) property of [IParseResult<T>](Faithlife.Parsing/IParseResult-1.md) returns a [TextPosition](Faithlife.Parsing/TextPosition.md) whose [Index](Faithlife.Parsing/TextPosition/Index.md) property indicates the index into the text where parsing stopped.
+[IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md) also indicates where parsing stopped. The [NextPosition](Faithlife.Parsing/IParseResult/NextPosition.md) property of [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md) returns a [TextPosition](Faithlife.Parsing/TextPosition.md) whose [Index](Faithlife.Parsing/TextPosition/Index.md) property indicates the index into the text where parsing stopped.
 
 ```csharp
 Debug.Assert(integerResult.NextPosition.Index == 3);
@@ -76,7 +76,7 @@ Debug.Assert(noIntegerResult.NextPosition.Index == 0);
 
 ## Character parsers
 
-Use `Parser.Char` to parse a character that matches the specified predicate.
+Use [Parser.Char](Faithlife.Parsing/Parser/Char.md) to parse a character that matches the specified predicate.
 
 ```csharp
 IParser<char> digitParser = Parser.Char(ch => ch >= '0' && ch <= '9');
@@ -84,11 +84,11 @@ Debug.Assert(digitParser.Parse("789xyz") == '7');
 Debug.Assert(!digitParser.TryParse("xyz789").Success);
 ```
 
-[Other character parsers](Faithlife.Parsing/Parser.md) include `Char(char)`, `AnyChar`, `AnyCharExcept(char)`, `Digit`, `Letter`, `LetterOrDigit`, and `WhiteSpace`.
+Other character parsers include [AnyChar](Faithlife.Parsing/Parser/AnyChar.md), [AnyCharExcept](Faithlife.Parsing/Parser/AnyCharExcept.md), [Digit](Faithlife.Parsing/Parser/Digit.md), [Letter](Faithlife.Parsing/Parser/Letter.md), [LetterOrDigit](Faithlife.Parsing/Parser/LetterOrDigit.md), and [WhiteSpace](Faithlife.Parsing/Parser/WhiteSpace.md).
 
 ## String parsers
 
-Use [`Parser.String`](Faithlife.Parsing/Parser.md) to match one or more consecutive characters.
+Use [Parser.String](Faithlife.Parsing/Parser/String.md) to match one or more consecutive characters.
 
 ```csharp
 IParser<string> yesParser = Parser.String("yes");
@@ -105,16 +105,16 @@ Debug.Assert(noParser.Parse("No way") == "No");
 
 ## Repeating parsers
 
-Use `AtLeastOnce()` to allow a parser to be used one or more times consecutively.
+Use [AtLeastOnce](Faithlife.Parsing/Parser/AtLeastOnce.md) to allow a parser to be used one or more times consecutively.
 
 ```csharp
 IParser<IReadOnlyList<char>> digitsParser = digitParser.AtLeastOnce();
 Debug.Assert(digitsParser.Parse("789xyz").SequenceEqual(new[] { '7', '8', '9' }));
 ```
 
-To specify the number of times that a parser can be repeated, use one of the many [repeat parsers](Faithlife.Parsing/Parser.md): `Many` (0..∞), `AtMost` (0..n), `AtMostOnce` (0..1), `AtLeastOnce` (1..∞), `AtLeast` (n..∞), `Once` (1), and `Repeat` (n or n..m).
+To specify the number of times that a parser can be repeated, use one of the many repeat parsers: [Many](Faithlife.Parsing/Parser/Many.md) (0..∞), [AtMost](Faithlife.Parsing/Parser/AtMost.md) (0..n), [AtMostOnce](Faithlife.Parsing/Parser/AtMostOnce.md) (0..1), [AtLeastOnce](Faithlife.Parsing/Parser/AtLeastOnce.md) (1..∞), [AtLeast](Faithlife.Parsing/Parser/AtLeast.md) (n..∞), [Once](Faithlife.Parsing/Parser/Once.md) (1), and [Repeat](Faithlife.Parsing/Parser/Repeat.md) (n or n..m).
 
-Use `Delimited` to repeat a parser at least once but also require a delimiter between the parsed items. (`DelimitedAllowTrailing` allows an optional delimiter at the end.)
+Use [Delimited](Faithlife.Parsing/Parser/Delimited.md) to repeat a parser at least once but also require a delimiter between the parsed items. ([DelimitedAllowTrailing](Faithlife.Parsing/Parser/DelimitedAllowTrailing.md) allows an optional delimiter at the end.)
 
 ```csharp
 IReadOnlyList<char> letters = Parser.Letter.Delimited(Parser.Char(',')).Parse("a,b,c");
@@ -123,7 +123,7 @@ Debug.Assert(letters.SequenceEqual(new[] { 'a', 'b', 'c' }));
 
 ## Converting parsers
 
-The real power of Faithlife.Parsing is the ability to create parsers that also interpret the text. The familiar `Select` extension method can be used to convert a successfully parsed value into something more useful.
+The real power of Faithlife.Parsing is the ability to create parsers that also interpret the text. The familiar [Select](Faithlife.Parsing/Parser/Select.md) extension method can be used to convert a successfully parsed value into something more useful.
 
 The following parser (used above) matches a digit, converts the digit to an integer, repeats that digit-to-integer parser at least once, and then converts those integers-from-digits into the final integer that the digits represent together.
 
@@ -137,7 +137,7 @@ IParser<int> CreateIntegerParser()
 }
 ```
 
-Use `Success` to return a specific value for any successful parsing.
+Use [Success](Faithlife.Parsing/Parser/Success.md) to return a specific value for any successful parsing.
 
 ```csharp
 IParser<bool> falseParser = Parser.String("false", StringComparison.OrdinalIgnoreCase).Success(false);
@@ -146,10 +146,10 @@ Debug.Assert(falseParser.Parse("False") == false);
 
 There are also built-in parsers for converting lists of characters and strings.
 
-* `Chars` – Converts a string parser to a character-list parser.
-* `String` – Converts a character-list parser to a string parser.
-* `Concat` – Converts a string-list parser into a string parser by concatenating the strings.
-* `Join` – Converts a string-list parser into a string parser by joining the strings with a separator.
+* [Chars](Faithlife.Parsing/Parser/Chars.md) – Converts a string parser to a character-list parser.
+* [String](Faithlife.Parsing/Parser/String.md) – Converts a character-list parser to a string parser.
+* [Concat](Faithlife.Parsing/Parser/Concat.md) – Converts a string-list parser into a string parser by concatenating the strings.
+* [Join](Faithlife.Parsing/Parser/Join.md) – Converts a string-list parser into a string parser by joining the strings with a separator.
 
 ```csharp
 IParser<string> keywordsParser = Parser.Letter.AtLeastOnce().String()
@@ -159,7 +159,7 @@ Debug.Assert(keywordsParser.Parse("public  static readonly") == "public,static,r
 
 ## Chaining parsers
 
-The `SelectMany` extension method allows LINQ query syntax to be used to chain parsers, one after another, and combine the results of each parsing.
+The [SelectMany](Faithlife.Parsing/Parser/SelectMany.md) extension method allows LINQ query syntax to be used to chain parsers, one after another, and combine the results of each parsing.
 
 ```csharp
 IParser<int> simpleAdder =
@@ -170,14 +170,14 @@ IParser<int> simpleAdder =
 Debug.Assert(simpleAdder.Parse("7+8") == 15);
 ```
 
-[Other extension methods](Faithlife.Parsing/Parser.md) are useful for chaining parsers when the result of one of them is not used.
+Other extension methods are useful for chaining parsers when the result of one of them is not used.
 
-* `PrecededBy` – Requires that a parser succeed beforehand.
-* `FollowedBy` – Requires that a parser succeed afterward.
-* `Bracketed` – Calls `PrecededBy` and `FollowedBy`.
-* `TrimStart` – Ignores whitespace beforehand, if any.
-* `TrimEnd` – Ignores whitespace afterward, if any.
-* `Trim` – Ignores whitespace beforehand or afterward, if any.
+* [PrecededBy](Faithlife.Parsing/Parser/PrecededBy.md) – Requires that a parser succeed beforehand.
+* [FollowedBy](Faithlife.Parsing/Parser/FollowedBy.md) – Requires that a parser succeed afterward.
+* [Bracketed](Faithlife.Parsing/Parser/Bracketed.md) – Calls [PrecededBy](Faithlife.Parsing/Parser/PrecededBy.md) and [FollowedBy](Faithlife.Parsing/Parser/FollowedBy.md).
+* [TrimStart](Faithlife.Parsing/Parser/TrimStart.md) – Ignores whitespace beforehand, if any.
+* [TrimEnd](Faithlife.Parsing/Parser/TrimEnd.md) – Ignores whitespace afterward, if any.
+* [Trim](Faithlife.Parsing/Parser/Trim.md) – Ignores whitespace beforehand or afterward, if any.
 
 ```csharp
 IParser<IReadOnlyList<int>> tupleParser =
@@ -187,7 +187,7 @@ Debug.Assert(tupleParser.Parse(" (7, 8, 9) ").SequenceEqual(new[] { 7, 8, 9 }));
 
 ## Either-or parsers
 
-Powerful parsers need to provide either-or options. The [`Or` methods](Faithlife.Parsing/Parser.md) are used to allow one of any number of available parsers to be used. `Or` can be used as a static method or as an extension method.
+Powerful parsers need to provide either-or options. The [Or](Faithlife.Parsing/Parser/Or.md) methods are used to allow one of any number of available parsers to be used. [Or](Faithlife.Parsing/Parser/Or.md) can be used as a static method or as an extension method.
 
 ```csharp
 IParser<bool> yesNoParser = yesParser.Success(true).Or(noParser.Success(false));
@@ -205,7 +205,7 @@ Debug.Assert(yesNoMaybeParser.Parse("maybe") == null);
 
 ## Filtering parsers
 
-You can restrict the values that can be produced by a parser by using `Where` (or `where` in LINQ query syntax).
+You can restrict the values that can be produced by a parser by using [Where](Faithlife.Parsing/Parser/Where.md) (or `where` in LINQ query syntax).
 
 ```csharp
 IParser<int> positiveParser = integerParser.Where(x => x > 0);
@@ -215,7 +215,7 @@ Debug.Assert(!positiveParser.TryParse("0").Success);
 
 ## Regular expressions
 
-Use `Parser.Regex` to create a parser that matches the specified regular expression. The regular expression is automatically anchored to start where the text is being parsed.
+Use [Parser.Regex](Faithlife.Parsing/Parser/Regex.md) to create a parser that matches the specified regular expression. The regular expression is automatically anchored to start where the text is being parsed.
 
 Regular expressions in .NET are extremely powerful; use them to simplify your parsers whenever possible.
 
@@ -228,7 +228,7 @@ Debug.Assert(numberParser.Parse("6.0221409e+23") == 6.0221409e+23);
 
 ## Syntax error reporting
 
-To improve syntax errors, give parsers a name with the `Named` extension method.
+To improve syntax errors, give parsers a name with the [Named](Faithlife.Parsing/Parser/Named.md) extension method.
 
 ```csharp
 IParser<double> namedNumberParser = numberParser.Named("number");
@@ -236,11 +236,11 @@ IParser<double> namedNumberParser = numberParser.Named("number");
 
 ## Semantic error reporting
 
-For reporting semantic errors, track where parsed values were found with the `Positioned` extension method, which wraps the parsed value in a `Positioned<T>`.
+For reporting semantic errors, track where parsed values were found with the [Positioned](Faithlife.Parsing/Parser/Positioned.md) extension method, which wraps the parsed value in a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md).
 
-* The `Value` property of a `Positioned<T>` is the parsed value.
-* The `Position` property of a `Positioned<T>` is a `TextPosition`, which has a zero-based `Index` into the text, as well as a `GetLineColumn()` method, which returns a `LineColumn` value with a one-based `LineNumber` and `ColumnNumber`.
-* The `Length` property of a `Position<T>` indicates the text length of the parsed value.
+* The [Value](Faithlife.Parsing/Parser/Positioned-1/Value.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) is the parsed value.
+* The [Position](Faithlife.Parsing/Parser/Positioned-1/Position.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) is a [TextPosition](Faithlife.Parsing/TextPosition.md), which has a zero-based [Index](Faithlife.Parsing/TextPosition/Index.md) into the text, as well as a [GetLineColumn](Faithlife.Parsing/TextPosition/GetLineColumn.md) method, which returns a [LineColumn](Faithlife.Parsing/LineColumn.md) value with a one-based [LineNumber](Faithlife.Parsing/LineColumn/LineNumber.md) and [ColumnNumber](Faithlife.Parsing/LineColumn/ColumnNumber.md).
+* The [Length](Faithlife.Parsing/Parser/Positioned-1/Length.md) property of a [Positioned&lt;T&gt;](Faithlife.Parsing/Positioned-1.md) indicates the text length of the parsed value.
 
 ```csharp
 IParser<Positioned<double>> positionedNumberParser = numberParser.Positioned().Trim();
@@ -254,14 +254,14 @@ Debug.Assert(positionedNumber.Length == 4);
 
 ## Low-level parsers
 
-As stated earlier, a parser is an implementation of `IParser<T>`. Most parsers are created by using the existing parsers documented above, but it is possible to create a custom parser by implementing `IParser<T>`.
+As stated earlier, a parser is an implementation of [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md). Most parsers are created by using the existing parsers documented above, but it is possible to create a custom parser by implementing [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md).
 
-`IParser<T>` has a single method named `TryParse`. It takes a single argument of type `TextPosition`, whose `Text` is the text being parsed and whose `Index` is the zero-based index into the text where the parsing should begin. `TryParse` returns an `IParseResult<T>`, as documented earlier.
+[IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md) has a single method named [TryParse](Faithlife.Parsing/IParser-1/TryParse.md). It takes a single argument of type [TextPosition](Faithlife.Parsing/TextPosition.md), whose [Text](Faithlife.Parsing/TextPosition/Text.md) is the text being parsed and whose [Index](Faithlife.Parsing/TextPosition/Index.md) is the zero-based index into the text where the parsing should begin. [TryParse](Faithlife.Parsing/IParser-1/TryParse.md) returns an [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md), as documented earlier.
 
-You can create a class that implements `IParser<T>`, but it is usually easier to call `Parser.Create`, which implements `TryParse` with the specified `Func<TextPosition, IParserResult<T>>`.
+You can create a class that implements [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md), but it is usually easier to call [Parser.Create](Faithlife.Parsing/Parser/Create.md), which implements [TryParse](Faithlife.Parsing/IParser-1/TryParse.md) with the specified `Func<TextPosition, IParserResult<T>>`.
 
-Your parser should investigate the text, starting at the index specified by the `Index` property of the `TextPosition`, and determine if it can successfully parse that text.
+Your parser should investigate the text, starting at the index specified by the [Index](Faithlife.Parsing/TextPosition/Index.md) property of the [TextPosition](Faithlife.Parsing/TextPosition.md), and determine if it can successfully parse that text.
 
-If it can, the parser should return a successful `IParseResult<T>` via the `ParseResult.Success` method. Call it with the corresponding value of type `T` and the position just past the end of the text that was parsed. Use the `WithNextIndex` method on the `TextPosition` to create a text position at the desired index.
+If it can, the parser should return a successful [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md) via the [ParseResult.Success](Faithlife.Parsing/ParseResult/Success.md) method. Call it with the corresponding value of type `T` and the position just past the end of the text that was parsed. Use the [WithNextIndex](Faithlife.Parsing/TextPosition/WithNextIndex.md) method on the [TextPosition](Faithlife.Parsing/TextPosition.md) to create a text position at the desired index.
 
-If the parser fails, it should return a failed `IParseResult<T>` via the `ParseResult.Failure` method.
+If the parser fails, it should return a failed [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md) via the [ParseResult.Failure](Faithlife.Parsing/ParseResult/Failure.md) method.
