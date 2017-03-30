@@ -1,4 +1,4 @@
-﻿namespace Faithlife.Parsing
+namespace Faithlife.Parsing
 {
 	/// <summary>
 	/// Parses text.

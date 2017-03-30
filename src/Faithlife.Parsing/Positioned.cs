@@ -1,4 +1,4 @@
-﻿namespace Faithlife.Parsing
+namespace Faithlife.Parsing
 {
 	/// <summary>
 	/// Wraps a text position and length around a parsed value.

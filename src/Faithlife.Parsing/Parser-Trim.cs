@@ -1,4 +1,4 @@
-﻿namespace Faithlife.Parsing
+namespace Faithlife.Parsing
 {
 	public static partial class Parser
 	{
