@@ -3,7 +3,7 @@
 Gets the hash code.
 
 ```csharp
-public int GetHashCode()
+public override int GetHashCode()
 ```
 
 ## See Also

@@ -12,9 +12,10 @@ public struct TextPosition : IEquatable<TextPosition>
 | --- | --- |
 | [Index](TextPosition/Index.md) { get; } | The zero-based index into the text being parsed. |
 | [Text](TextPosition/Text.md) { get; } | The entire text being parsed. |
-| [Equals](TextPosition/Equals.md)(…) | Checks for equality. (2 methods) |
+| override [Equals](TextPosition/Equals.md)(…) | Checks for equality. |
+| [Equals](TextPosition/Equals.md)(…) | Checks for equality. |
 | [GetCurrentChar](TextPosition/GetCurrentChar.md)() | Gets the character at the text position. |
-| [GetHashCode](TextPosition/GetHashCode.md)() | Gets the hash code. |
+| override [GetHashCode](TextPosition/GetHashCode.md)() | Gets the hash code. |
 | [GetLineColumn](TextPosition/GetLineColumn.md)() | The line and column number of the text position. |
 | [IsAtEnd](TextPosition/IsAtEnd.md)() | True if the text position is at the end of the text. |
 | [WithNextIndex](TextPosition/WithNextIndex.md)() | Creates a new text position at the next index. |

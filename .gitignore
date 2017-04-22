@@ -2,7 +2,6 @@
 bin/
 cake/
 obj/
-packages/
 release/
 
 *.cache
@@ -11,3 +10,5 @@ release/
 *.ncrunchsolution
 *.suo
 *.user
+
+launchSettings.json

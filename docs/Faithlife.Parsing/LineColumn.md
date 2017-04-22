@@ -13,9 +13,10 @@ public struct LineColumn : IEquatable<LineColumn>
 | [LineColumn](LineColumn/LineColumn.md)(…) | Creates an instance. |
 | [ColumnNumber](LineColumn/ColumnNumber.md) { get; } | The column number (one-based). |
 | [LineNumber](LineColumn/LineNumber.md) { get; } | The line number (one-based). |
-| [Equals](LineColumn/Equals.md)(…) | Checks for equality. (2 methods) |
-| [GetHashCode](LineColumn/GetHashCode.md)() | Gets the hash code. |
-| [ToString](LineColumn/ToString.md)() | Renders the line number and column number with a comma in between. |
+| [Equals](LineColumn/Equals.md)(…) | Checks for equality. |
+| override [Equals](LineColumn/Equals.md)(…) | Checks for equality. |
+| override [GetHashCode](LineColumn/GetHashCode.md)() | Gets the hash code. |
+| override [ToString](LineColumn/ToString.md)() | Renders the line number and column number with a comma in between. |
 | [operator ==](LineColumn/op_Equality.md) | Checks for equality. |
 | [operator !=](LineColumn/op_Inequality.md) | Checks for inequality. |
 

@@ -1,67 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D813928A-B266-4208-9755-0BD581D1499E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Faithlife.Parsing</RootNamespace>
-    <AssemblyName>Faithlife.Parsing</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
+    <Authors>Faithlife Corporation</Authors>
+    <Company />
+    <Product />
+    <Description>A simple library for constructing parsers in C#.</Description>
+    <Copyright>Copyright 2016-2017 Faithlife Corporation</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/Faithlife/Parsing/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://faithlife.github.io/Parsing/</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Faithlife/Parsing.git</RepositoryUrl>
+    <PackageTags>parser parsers</PackageTags>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatSpecificWarningsAsErrors />
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>True</DebugSymbols>
+    <DocumentationFile>bin\$(Configuration)\netstandard1.1\Faithlife.Parsing.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;PORTABLE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Faithlife.Parsing.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
-    <DefineConstants>TRACE;PORTABLE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Faithlife.Parsing.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="Json\JsonParsers.cs" />
-    <Compile Include="Parser-Common.cs" />
-    <Compile Include="TextPosition.cs" />
-    <Compile Include="IParser.cs" />
-    <Compile Include="IParseResult.cs" />
-    <Compile Include="NamedFailure.cs" />
-    <Compile Include="ParseException.cs" />
-    <Compile Include="Parser-Char.cs" />
-    <Compile Include="Parser-Or.cs" />
-    <Compile Include="Parser-Regex.cs" />
-    <Compile Include="Parser-Repeat.cs" />
-    <Compile Include="Parser-String.cs" />
-    <Compile Include="Parser-Then.cs" />
-    <Compile Include="Parser-Trim.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="LineColumn.cs" />
-    <Compile Include="Positioned.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ParseResult.cs" />
+    <PackageReference Include="SourceLink.Create.GitHub" Version="2.0.2" PrivateAssets="all" />
+    <PackageReference Include="SourceLink.Test" Version="2.0.2" PrivateAssets="all" />
+    <DotNetCliToolReference Include="dotnet-sourcelink" Version="2.0.2" />
+    <DotNetCliToolReference Include="dotnet-sourcelink-git" Version="2.0.2" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+
 </Project>

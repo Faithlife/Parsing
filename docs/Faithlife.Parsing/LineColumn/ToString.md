@@ -3,7 +3,7 @@
 Renders the line number and column number with a comma in between.
 
 ```csharp
-public string ToString()
+public override string ToString()
 ```
 
 ## See Also
