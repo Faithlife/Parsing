@@ -18,7 +18,7 @@
     <TreatSpecificWarningsAsErrors />
     <DebugType>embedded</DebugType>
     <DebugSymbols>True</DebugSymbols>
-    <DocumentationFile>bin\$(Configuration)\netstandard1.1\Faithlife.Parsing.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
