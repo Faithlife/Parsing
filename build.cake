@@ -92,7 +92,7 @@ Task("Default")
 
 void GenerateDocs(bool verify)
 {
-	int exitCode = StartProcess($@"cake\XmlDocMarkdown\tools\XmlDocMarkdown.exe",
+	int exitCode = StartProcess(@"cake\XmlDocMarkdown\tools\XmlDocMarkdown.exe",
 		$@"{docsAssembly} docs\ --source ""{docsSourceUri}"" --newline lf --clean" + (verify ? " --verify" : ""));
 	if (exitCode == 1 && verify)
 		throw new InvalidOperationException("Generated docs don't match; use -target=GenerateDocs to regenerate.");
