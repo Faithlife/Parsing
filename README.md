@@ -13,3 +13,7 @@ https://faithlife.github.io/Parsing/
 ## License
 
 [MIT](LICENSE)
+
+## Contributing
+
+See [contributing guidelines](CONTRIBUTING.md).
