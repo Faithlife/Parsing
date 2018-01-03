@@ -1,5 +1,5 @@
 using System;
-using System.Globalization;
+using static System.FormattableString;
 
 namespace Faithlife.Parsing
 {
@@ -30,49 +30,31 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public bool Equals(LineColumn other)
-		{
-			return LineNumber == other.LineNumber && ColumnNumber == other.ColumnNumber;
-		}
+		public bool Equals(LineColumn other) => LineNumber == other.LineNumber && ColumnNumber == other.ColumnNumber;
 
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public override bool Equals(object other)
-		{
-			return other is LineColumn && Equals((LineColumn) other);
-		}
+		public override bool Equals(object other) => other is LineColumn column && Equals(column);
 
 		/// <summary>
 		/// Gets the hash code.
 		/// </summary>
-		public override int GetHashCode()
-		{
-			return (LineNumber << 8) ^ ColumnNumber;
-		}
+		public override int GetHashCode() => (LineNumber << 8) ^ ColumnNumber;
 
 		/// <summary>
 		/// Renders the line number and column number with a comma in between.
 		/// </summary>
-		public override string ToString()
-		{
-			return string.Format(CultureInfo.InvariantCulture, "{0},{1}", LineNumber, ColumnNumber);
-		}
+		public override string ToString() => Invariant($"{LineNumber},{ColumnNumber}");
 
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public static bool operator ==(LineColumn first, LineColumn second)
-		{
-			return first.Equals(second);
-		}
+		public static bool operator ==(LineColumn first, LineColumn second) => first.Equals(second);
 
 		/// <summary>
 		/// Checks for inequality.
 		/// </summary>
-		public static bool operator !=(LineColumn first, LineColumn second)
-		{
-			return !(first == second);
-		}
+		public static bool operator !=(LineColumn first, LineColumn second) => !(first == second);
 	}
 }

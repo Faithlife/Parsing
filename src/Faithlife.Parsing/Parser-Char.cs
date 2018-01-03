@@ -25,10 +25,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Parses the specified character.
 		/// </summary>
-		public static IParser<char> Char(char ch)
-		{
-			return Char(x => x == ch);
-		}
+		public static IParser<char> Char(char ch) => Char(x => x == ch);
 
 		/// <summary>
 		/// Parses any character; i.e. only fails at the end of the text.
@@ -38,10 +35,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Parses any character except the specified character.
 		/// </summary>
-		public static IParser<char> AnyCharExcept(char ch)
-		{
-			return Char(x => x != ch);
-		}
+		public static IParser<char> AnyCharExcept(char ch) => Char(x => x != ch);
 
 		/// <summary>
 		/// Parses any digit (as determined by System.Char.IsDigit).

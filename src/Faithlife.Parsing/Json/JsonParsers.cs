@@ -86,17 +86,13 @@ namespace Faithlife.Parsing.Json
 		/// Parses a JSON object property into its value. Fails if the property name doesn't match the specified name.
 		/// </summary>
 		public static IParser<T> JsonPropertyNamed<T>(this IParser<T> parser, string name)
-		{
-			return parser.JsonPropertyNamed(name, StringComparison.Ordinal);
-		}
+			=> parser.JsonPropertyNamed(name, StringComparison.Ordinal);
 
 		/// <summary>
 		/// Parses a JSON object property into its value. Fails if the property name doesn't match the specified name.
 		/// </summary>
 		public static IParser<T> JsonPropertyNamed<T>(this IParser<T> parser, string name, StringComparison comparison)
-		{
-			return parser.JsonPropertyOf().Where(x => string.Equals(x.Key, name, comparison)).Select(x => x.Value);
-		}
+			=> parser.JsonPropertyOf().Where(x => string.Equals(x.Key, name, comparison)).Select(x => x.Value);
 
 		/// <summary>
 		/// Parses a JSON object from its properties. The specified parser must parse each entire JSON property (name, colon, and value).
@@ -133,10 +129,7 @@ namespace Faithlife.Parsing.Json
 			JsonBoolean.Select(x => (object) x),
 			JsonNull);
 
-		private static IParser<string> Token(string value)
-		{
-			return Parser.String(value).Trim().Named("'" + value + "'");
-		}
+		private static IParser<string> Token(string value) => Parser.String(value).Trim().Named("'" + value + "'");
 
 		private static string UnescapeString(string value)
 		{

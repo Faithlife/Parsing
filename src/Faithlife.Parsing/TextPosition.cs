@@ -24,98 +24,62 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// The line and column number of the text position.
 		/// </summary>
-		public LineColumn GetLineColumn()
-		{
-			return m_source.GetPositionFromIndex(m_index);
-		}
+		public LineColumn GetLineColumn() => m_source.GetPositionFromIndex(m_index);
 
 		/// <summary>
 		/// True if the text position is at the end of the text.
 		/// </summary>
-		public bool IsAtEnd()
-		{
-			return m_index == m_source.Text.Length;
-		}
+		public bool IsAtEnd() => m_index == m_source.Text.Length;
 
 		/// <summary>
 		/// Gets the character at the text position.
 		/// </summary>
 		/// <remarks>Throws IndexOutOfRangeException if the text position is at the end of the text.</remarks>
-		public char GetCurrentChar()
-		{
-			return m_source.Text[m_index];
-		}
+		public char GetCurrentChar() => m_source.Text[m_index];
 
 		/// <summary>
 		/// Creates a new text position at the next index.
 		/// </summary>
-		public TextPosition WithNextIndex()
-		{
-			return new TextPosition(m_source, m_index + 1);
-		}
+		public TextPosition WithNextIndex() => new TextPosition(m_source, m_index + 1);
 
 		/// <summary>
 		/// Creates a new text position advanced the specified number of characters.
 		/// </summary>
-		public TextPosition WithNextIndex(int count)
-		{
-			return new TextPosition(m_source, m_index + count);
-		}
+		public TextPosition WithNextIndex(int count) => new TextPosition(m_source, m_index + count);
 
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public bool Equals(TextPosition other)
-		{
-			return m_index == other.m_index && m_source == other.m_source;
-		}
+		public bool Equals(TextPosition other) => m_index == other.m_index && m_source == other.m_source;
 
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public override bool Equals(object other)
-		{
-			return other is TextPosition && Equals((TextPosition) other);
-		}
+		public override bool Equals(object other) => other is TextPosition position && Equals(position);
 
 		/// <summary>
 		/// Gets the hash code.
 		/// </summary>
-		public override int GetHashCode()
-		{
-			return m_index;
-		}
+		public override int GetHashCode() => m_index;
 
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public static bool operator ==(TextPosition first, TextPosition second)
-		{
-			return first.Equals(second);
-		}
+		public static bool operator ==(TextPosition first, TextPosition second) => first.Equals(second);
 
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public static bool operator !=(TextPosition first, TextPosition second)
-		{
-			return !(first == second);
-		}
+		public static bool operator !=(TextPosition first, TextPosition second) => !(first == second);
 
 		internal TextPosition(string text, int index)
 			: this(new TextSource(text), index)
 		{
 		}
 
-		internal ReadOnlyCollection<NamedFailure> GetNamedFailures()
-		{
-			return m_source.GetNamedFailures();
-		}
+		internal ReadOnlyCollection<NamedFailure> GetNamedFailures() => m_source.GetNamedFailures();
 
-		internal void ReportNamedFailure(string name, IParseResult result)
-		{
-			m_source.ReportNamedFailure(name, result);
-		}
+		internal void ReportNamedFailure(string name, IParseResult result) => m_source.ReportNamedFailure(name, result);
 
 		private TextPosition(TextSource source, int index)
 		{
@@ -133,10 +97,7 @@ namespace Faithlife.Parsing
 
 			public string Text => m_text;
 
-			public ReadOnlyCollection<NamedFailure> GetNamedFailures()
-			{
-				return new ReadOnlyCollection<NamedFailure>(m_namedFailures);
-			}
+			public ReadOnlyCollection<NamedFailure> GetNamedFailures() => new ReadOnlyCollection<NamedFailure>(m_namedFailures);
 
 			public void ReportNamedFailure(string name, IParseResult result)
 			{

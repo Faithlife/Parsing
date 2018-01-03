@@ -38,10 +38,7 @@ namespace Faithlife.Parsing
 		/// <remarks>The first successful parser that advances the text position is returned.
 		/// Otherwise, the first successful parser that does not advance the text position is returned.
 		/// Otherwise, the first failure is returned.</remarks>
-		public static IParser<T> Or<T>(params IParser<T>[] parsers)
-		{
-			return Or((IEnumerable<IParser<T>>) parsers);
-		}
+		public static IParser<T> Or<T>(params IParser<T>[] parsers) => Or((IEnumerable<IParser<T>>) parsers);
 
 		/// <summary>
 		/// Succeeds with a successful parser, if any.
@@ -49,49 +46,31 @@ namespace Faithlife.Parsing
 		/// <remarks>The first successful parser that advances the text position is returned.
 		/// Otherwise, the first successful parser that does not advance the text position is returned.
 		/// Otherwise, the first failure is returned.</remarks>
-		public static IParser<T> Or<T>(this IParser<T> first, IParser<T> second)
-		{
-			return Or(new[] { first, second });
-		}
+		public static IParser<T> Or<T>(this IParser<T> first, IParser<T> second) => Or(new[] { first, second });
 
 		/// <summary>
 		/// Succeeds with the default value if the parser fails.
 		/// </summary>
-		public static IParser<T> OrDefault<T>(this IParser<T> parser)
-		{
-			return parser.OrDefault(default(T));
-		}
+		public static IParser<T> OrDefault<T>(this IParser<T> parser) => parser.OrDefault(default);
 
 		/// <summary>
 		/// Succeeds with the default value if the parser fails.
 		/// </summary>
-		public static IParser<T> OrDefault<T>(this IParser<T> parser, T value)
-		{
-			return parser.Or(Success(value));
-		}
+		public static IParser<T> OrDefault<T>(this IParser<T> parser, T value) => parser.Or(Success(value));
 
 		/// <summary>
 		/// Succeeds with an empty collection if the parser fails.
 		/// </summary>
-		public static IParser<IEnumerable<T>> OrEmpty<T>(this IParser<IEnumerable<T>> parser)
-		{
-			return parser.OrDefault(new T[0]);
-		}
+		public static IParser<IEnumerable<T>> OrEmpty<T>(this IParser<IEnumerable<T>> parser) => parser.OrDefault(new T[0]);
 
 		/// <summary>
 		/// Succeeds with an empty collection if the parser fails.
 		/// </summary>
-		public static IParser<IReadOnlyCollection<T>> OrEmpty<T>(this IParser<IReadOnlyCollection<T>> parser)
-		{
-			return parser.OrDefault(new T[0]);
-		}
+		public static IParser<IReadOnlyCollection<T>> OrEmpty<T>(this IParser<IReadOnlyCollection<T>> parser) => parser.OrDefault(new T[0]);
 
 		/// <summary>
 		/// Succeeds with an empty collection if the parser fails.
 		/// </summary>
-		public static IParser<IReadOnlyList<T>> OrEmpty<T>(this IParser<IReadOnlyList<T>> parser)
-		{
-			return parser.OrDefault(new T[0]);
-		}
+		public static IParser<IReadOnlyList<T>> OrEmpty<T>(this IParser<IReadOnlyList<T>> parser) => parser.OrDefault(new T[0]);
 	}
 }

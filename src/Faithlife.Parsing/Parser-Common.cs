@@ -49,17 +49,12 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Succeeds with the specified value without advancing the text position.
 		/// </summary>
-		public static IParser<T> Success<T>(T value)
-		{
-			return Create(position => ParseResult.Success(value, position));
-		}
+		public static IParser<T> Success<T>(T value) => Create(position => ParseResult.Success(value, position));
 
 		/// <summary>
 		/// Fails if the specified predicate returns false for the successfully parsed value.
 		/// </summary>
-		public static IParser<T> Where<T>(this IParser<T> parser, Func<T, bool> predicate)
-		{
-			return Create(position => parser.TryParse(position).MapSuccess(result => predicate(result.Value) ? result : ParseResult.Failure<T>(position)));
-		}
+		public static IParser<T> Where<T>(this IParser<T> parser, Func<T, bool> predicate) =>
+			Create(position => parser.TryParse(position).MapSuccess(result => predicate(result.Value) ? result : ParseResult.Failure<T>(position)));
 	}
 }
