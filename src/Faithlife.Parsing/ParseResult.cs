@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static System.FormattableString;
 
 namespace Faithlife.Parsing
 {
@@ -50,20 +49,20 @@ namespace Faithlife.Parsing
 		{
 			if (result.Success)
 			{
-				return Invariant($"success at {result.NextPosition.GetLineColumn()}");
+				return $"success at {result.NextPosition.GetLineColumn()}";
 			}
 			else
 			{
 				var stringBuilder = new StringBuilder();
 
-				stringBuilder.Append(Invariant($"failure at {result.NextPosition.GetLineColumn()}"));
+				stringBuilder.Append($"failure at {result.NextPosition.GetLineColumn()}");
 
 				foreach (var namedFailureGroup in result.GetNamedFailures().Distinct()
 					.GroupBy(x => x.Position.GetLineColumn())
 					.OrderByDescending(x => x.Key.LineNumber).ThenByDescending(x => x.Key.ColumnNumber)
 					.Select(x => new { Position = x.Key, Names = x.Select(y => y.Name).Distinct().ToArray() }))
 				{
-					stringBuilder.Append(Invariant($"; expected {string.Join(" or ", namedFailureGroup.Names)} at {namedFailureGroup.Position}"));
+					stringBuilder.Append($"; expected {string.Join(" or ", namedFailureGroup.Names)} at {namedFailureGroup.Position}");
 				}
 
 				return stringBuilder.ToString();

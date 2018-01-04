@@ -1,5 +1,4 @@
 using System;
-using static System.FormattableString;
 
 namespace Faithlife.Parsing
 {
@@ -45,7 +44,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Renders the line number and column number with a comma in between.
 		/// </summary>
-		public override string ToString() => Invariant($"{LineNumber},{ColumnNumber}");
+		public override string ToString() => $"{LineNumber},{ColumnNumber}";
 
 		/// <summary>
 		/// Checks for equality.
