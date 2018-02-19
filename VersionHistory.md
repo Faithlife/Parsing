@@ -9,6 +9,10 @@ Prefix the description of the change with `[major]`, `[minor]` or `[patch]` in a
 
 ## Released
 
+### 1.2.1
+
+* Update Source Link to 2.8.0.
+
 ### 1.2.0
 
 * Adopt [Faithlife/CSharpTemplate](https://github.com/Faithlife/CSharpTemplate).
