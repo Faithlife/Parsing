@@ -1,5 +1,5 @@
-#addin "Cake.Git"
-#tool "nuget:?package=XmlDocMarkdown&version=0.5.6"
+#addin nuget:?package=Cake.Git&version=0.19.0
+#addin nuget:?package=Cake.XmlDocMarkdown&version=1.4.1
 
 using System.Text.RegularExpressions;
 
@@ -10,13 +10,15 @@ var trigger = Argument("trigger", "");
 var versionSuffix = Argument("versionSuffix", "");
 
 var solutionFileName = "Parsing.sln";
-var docsAssembly = File($"src/Faithlife.Parsing/bin/{configuration}/net461/Faithlife.Parsing.dll").ToString();
+var docsProjects = new[] { "Faithlife.Parsing" };
 var docsRepoUri = "https://github.com/Faithlife/Parsing.git";
-var docsSourceUri = "https://github.com/Faithlife/Parsing/tree/master/src/Faithlife.Parsing";
+var docsSourceUri = "https://github.com/Faithlife/Parsing/tree/master/src";
 
 var nugetSource = "https://api.nuget.org/v3/index.json";
 var buildBotUserName = "faithlifebuildbot";
 var buildBotPassword = EnvironmentVariable("BUILD_BOT_PASSWORD");
+var buildBotDisplayName = "Faithlife Build Bot";
+var buildBotEmail = "faithlifebuildbot@users.noreply.github.com";
 
 Task("Clean")
 	.Does(() =>
@@ -28,11 +30,17 @@ Task("Clean")
 		CleanDirectories("release");
 	});
 
-Task("Build")
+Task("Restore")
 	.Does(() =>
 	{
 		DotNetCoreRestore(solutionFileName);
-		DotNetCoreBuild(solutionFileName, new DotNetCoreBuildSettings { Configuration = configuration, ArgumentCustomization = args => args.Append("--verbosity normal") });
+	});
+
+Task("Build")
+	.IsDependentOn("Restore")
+	.Does(() =>
+	{
+		DotNetCoreBuild(solutionFileName, new DotNetCoreBuildSettings { Configuration = configuration, NoRestore = true, ArgumentCustomization = args => args.Append("--verbosity normal") });
 	});
 
 Task("Rebuild")
@@ -48,16 +56,19 @@ Task("UpdateDocs")
 		var branchName = "gh-pages";
 		var docsDirectory = new DirectoryPath(branchName);
 		GitClone(docsRepoUri, docsDirectory, new GitCloneSettings { BranchName = branchName });
-		var exePath = File("cake/xmldocmarkdown.0.5.6/XmlDocMarkdown/tools/XmlDocMarkdown.exe").ToString();
-		var arguments = $@"{docsAssembly} {branchName}{System.IO.Path.DirectorySeparatorChar} --source ""{docsSourceUri}"" --newline lf --clean";
-		int exitCode = StartProcess(exePath, arguments);
-		if (exitCode != 0)
-			throw new InvalidOperationException($"Docs generation failed with exit code {exitCode}.");
+
+		Information($"Updating documentation at {docsDirectory}.");
+		foreach (var docsProject in docsProjects)
+		{
+			XmlDocMarkdownGenerate(File($"src/{docsProject}/bin/{configuration}/net461/{docsProject}.dll").ToString(), $"{docsDirectory}{System.IO.Path.DirectorySeparatorChar}",
+				new XmlDocMarkdownSettings { SourceCodePath = $"{docsSourceUri}/{docsProject}", NewLine = "\n", ShouldClean = true });
+		}
+
 		if (GitHasUncommitedChanges(docsDirectory))
 		{
 			Information("Committing all documentation changes.");
 			GitAddAll(docsDirectory);
-			GitCommit(docsDirectory, "Faithlife Build Bot", "faithlifebuildbot@users.noreply.github.com", "Automatic documentation update.");
+			GitCommit(docsDirectory, buildBotDisplayName, buildBotEmail, "Automatic documentation update.");
 			Information("Pushing updated documentation to GitHub.");
 			GitPush(docsDirectory, buildBotUserName, buildBotPassword, branchName);
 		}
@@ -72,7 +83,7 @@ Task("Test")
 	.Does(() =>
 	{
 		foreach (var projectPath in GetFiles("tests/**/*.csproj").Select(x => x.FullPath))
-			DotNetCoreTest(projectPath, new DotNetCoreTestSettings { Configuration = configuration });
+			DotNetCoreTest(projectPath, new DotNetCoreTestSettings { Configuration = configuration, NoBuild = true, NoRestore = true });
 	});
 
 Task("NuGetPackage")
@@ -84,11 +95,20 @@ Task("NuGetPackage")
 		if (string.IsNullOrEmpty(versionSuffix) && !string.IsNullOrEmpty(trigger))
 			versionSuffix = Regex.Match(trigger, @"^v[^\.]+\.[^\.]+\.[^\.]+-(.+)").Groups[1].ToString();
 		foreach (var projectPath in GetFiles("src/**/*.csproj").Select(x => x.FullPath))
-			DotNetCorePack(projectPath, new DotNetCorePackSettings { Configuration = configuration, OutputDirectory = "release", VersionSuffix = versionSuffix });
+			DotNetCorePack(projectPath, new DotNetCorePackSettings { Configuration = configuration, NoBuild = true, NoRestore = true, OutputDirectory = "release", VersionSuffix = versionSuffix });
+	});
+
+Task("NuGetPackageTest")
+	.IsDependentOn("NuGetPackage")
+	.Does(() =>
+	{
+		var firstProject = GetFiles("src/**/*.csproj").First().FullPath;
+		foreach (var nupkg in GetFiles("release/**/*.nupkg").Select(x => x.FullPath))
+			DotNetCoreTool(firstProject, "sourcelink", $"test {nupkg}");
 	});
 
 Task("NuGetPublish")
-	.IsDependentOn("NuGetPackage")
+	.IsDependentOn("NuGetPackageTest")
 	.Does(() =>
 	{
 		var nupkgPaths = GetFiles("release/*.nupkg").Select(x => x.FullPath).ToList();
@@ -120,12 +140,5 @@ Task("NuGetPublish")
 
 Task("Default")
 	.IsDependentOn("Test");
-
-void ExecuteProcess(string exePath, string arguments)
-{
-	int exitCode = StartProcess(exePath, arguments);
-	if (exitCode != 0)
-		throw new InvalidOperationException($"{exePath} failed with exit code {exitCode}.");
-}
 
 RunTarget(target);
