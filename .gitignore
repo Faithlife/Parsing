@@ -20,5 +20,4 @@ Thumbs.db
 *.userprefs
 *.ncrunchproject
 *.ncrunchsolution
-
-launchSettings.json
+nCrunchTemp*
