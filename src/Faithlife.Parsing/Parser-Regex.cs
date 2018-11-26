@@ -9,14 +9,7 @@ namespace Faithlife.Parsing
 		/// </summary>
 		/// <remarks>The regular expression pattern is automatically anchored at the beginning
 		/// of the text, but not at the end of the text. The parsed value is the successful Match.</remarks>
-		public static IParser<Match> Regex(string pattern) => Regex(pattern, RegexOptions.None);
-
-		/// <summary>
-		/// Succeeds if the specified regular expression pattern matches the text.
-		/// </summary>
-		/// <remarks>The regular expression pattern is automatically anchored at the beginning
-		/// of the text, but not at the end of the text. The parsed value is the successful Match.</remarks>
-		public static IParser<Match> Regex(string pattern, RegexOptions regexOptions)
+		public static IParser<Match> Regex(string pattern, RegexOptions regexOptions = RegexOptions.None)
 		{
 			// turn off multiline mode for '^'; wrap pattern in non-capturing group to ensure ungrouped '|' works properly
 			var regex = new Regex("(?-m:^)(?:" + pattern + ")", regexOptions);
