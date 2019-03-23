@@ -14,7 +14,7 @@ The Faithlife.Parsing library includes [parsers for JSON](Faithlife.Parsing.Json
 
 Faithlife.Parsing should be installed [via NuGet](https://www.nuget.org/packages/Faithlife.Parsing).
 
-This library is compatible with most .NET platforms via [.NET Standard 1.1](https://docs.microsoft.com/en-us/dotnet/articles/standard/library).
+This library is compatible with most .NET platforms via [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
 
 ## Using a parser
 
