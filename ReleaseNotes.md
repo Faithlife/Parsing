@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.1.0
+
+* Use nullable references.
+* Fix analyzer issues.
+
 ## 2.0.0
 
 * Drop support for .NET Standard 1.1 and .NET 4.6.1.
