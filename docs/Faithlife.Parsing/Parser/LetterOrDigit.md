@@ -3,7 +3,7 @@
 Parses any letter or digit (as determined by System.Char.IsLetterOrDigit).
 
 ```csharp
-public static IParser<char> LetterOrDigit;
+public static readonly IParser<char> LetterOrDigit;
 ```
 
 ## See Also

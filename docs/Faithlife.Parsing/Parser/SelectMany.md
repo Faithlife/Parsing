@@ -1,10 +1,10 @@
-# Parser.SelectMany&lt;T,U,V&gt; method
+# Parser.SelectMany&lt;TBefore,TDuring,TAfter&gt; method
 
 Used to support LINQ query syntax.
 
 ```csharp
-public static IParser<V> SelectMany<T, U, V>(this IParser<T> parser, Func<T, IParser<U>> selector, 
-    Func<T, U, V> projector)
+public static IParser<TAfter> SelectMany<TBefore, TDuring, TAfter>(this IParser<TBefore> parser, 
+    Func<TBefore, IParser<TDuring>> selector, Func<TBefore, TDuring, TAfter> projector)
 ```
 
 ## See Also

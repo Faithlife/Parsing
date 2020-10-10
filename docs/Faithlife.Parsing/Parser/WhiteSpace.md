@@ -3,7 +3,7 @@
 Parses any whitespace character (as determined by System.Char.IsWhiteSpace).
 
 ```csharp
-public static IParser<char> WhiteSpace;
+public static readonly IParser<char> WhiteSpace;
 ```
 
 ## See Also

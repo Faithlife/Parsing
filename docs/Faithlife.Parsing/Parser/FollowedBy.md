@@ -1,9 +1,10 @@
-# Parser.FollowedBy&lt;T,U&gt; method
+# Parser.FollowedBy&lt;TValue,TFollowing&gt; method
 
 Succeeds if the specified parser also succeeds afterward (ignoring its result).
 
 ```csharp
-public static IParser<T> FollowedBy<T, U>(this IParser<T> parser, IParser<U> followedBy)
+public static IParser<TValue> FollowedBy<TValue, TFollowing>(this IParser<TValue> parser, 
+    IParser<TFollowing> followedBy)
 ```
 
 ## See Also

@@ -3,7 +3,7 @@
 Parses a JSON string.
 
 ```csharp
-public static IParser<string> JsonString;
+public static readonly IParser<string> JsonString;
 ```
 
 ## See Also

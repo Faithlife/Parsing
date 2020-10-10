@@ -1,9 +1,10 @@
-# Parser.Select&lt;T,U&gt; method
+# Parser.Select&lt;TBefore,TAfter&gt; method
 
 Converts any successfully parsed value.
 
 ```csharp
-public static IParser<U> Select<T, U>(this IParser<T> parser, Func<T, U> convertValue)
+public static IParser<TAfter> Select<TBefore, TAfter>(this IParser<TBefore> parser, 
+    Func<TBefore, TAfter> convertValue)
 ```
 
 ## See Also

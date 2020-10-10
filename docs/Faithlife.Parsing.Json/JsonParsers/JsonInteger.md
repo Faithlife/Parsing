@@ -3,7 +3,7 @@
 Parses a JSON number into a 64-bit integer. Fails if the number has a decimal point or exponent.
 
 ```csharp
-public static IParser<long> JsonInteger;
+public static readonly IParser<long> JsonInteger;
 ```
 
 ## See Also

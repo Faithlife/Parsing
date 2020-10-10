@@ -1,10 +1,10 @@
-# Parser.DelimitedAllowTrailing&lt;T,U&gt; method
+# Parser.DelimitedAllowTrailing&lt;TValue,TDelimiter&gt; method
 
 Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item, and allowing a single optional trailing delimiter.
 
 ```csharp
-public static IParser<IReadOnlyList<T>> DelimitedAllowTrailing<T, U>(this IParser<T> parser, 
-    IParser<U> delimiter)
+public static IParser<IReadOnlyList<TValue>> DelimitedAllowTrailing<TValue, TDelimiter>(
+    this IParser<TValue> parser, IParser<TDelimiter> delimiter)
 ```
 
 ## See Also

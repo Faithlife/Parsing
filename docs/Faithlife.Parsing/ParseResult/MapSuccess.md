@@ -1,10 +1,10 @@
-# ParseResult.MapSuccess&lt;T,U&gt; method
+# ParseResult.MapSuccess&lt;TBefore,TAfter&gt; method
 
 Maps a successful parse result into another parse result (success or failure).
 
 ```csharp
-public static IParseResult<U> MapSuccess<T, U>(this IParseResult<T> result, 
-    Func<IParseResult<T>, IParseResult<U>> convert)
+public static IParseResult<TAfter> MapSuccess<TBefore, TAfter>(this IParseResult<TBefore> result, 
+    Func<IParseResult<TBefore>, IParseResult<TAfter>> convert)
 ```
 
 ## See Also

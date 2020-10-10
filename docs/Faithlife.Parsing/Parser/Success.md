@@ -14,12 +14,12 @@ public static IParser<T> Success<T>(T value)
 
 ---
 
-# Parser.Success&lt;T,U&gt; method (2 of 2)
+# Parser.Success&lt;TBefore,TAfter&gt; method (2 of 2)
 
 Succeeds with the specified value if the parser is successful.
 
 ```csharp
-public static IParser<U> Success<T, U>(this IParser<T> parser, U value)
+public static IParser<TAfter> Success<TBefore, TAfter>(this IParser<TBefore> parser, TAfter value)
 ```
 
 ## See Also

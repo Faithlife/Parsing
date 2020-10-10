@@ -3,7 +3,7 @@
 Parses a JSON number into a double-precision floating-point number.
 
 ```csharp
-public static IParser<double> JsonDouble;
+public static readonly IParser<double> JsonDouble;
 ```
 
 ## See Also

@@ -23,7 +23,7 @@ The first successful parser that advances the text position is returned. Otherwi
 Succeeds with a successful parser, if any.
 
 ```csharp
-public static IParser<T> Or<T>(IParser<T>[] parsers)
+public static IParser<T> Or<T>(params IParser<T>[] parsers)
 ```
 
 ## Remarks

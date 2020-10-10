@@ -1,10 +1,10 @@
-# Parser.Bracketed&lt;T,U,V&gt; method
+# Parser.Bracketed&lt;TValue,TPreceding,TFollowing&gt; method
 
 Succeeds if the specified parsers succeed beforehand and afterward (ignoring their results).
 
 ```csharp
-public static IParser<T> Bracketed<T, U, V>(this IParser<T> parser, IParser<U> precededBy, 
-    IParser<V> followedBy)
+public static IParser<TValue> Bracketed<TValue, TPreceding, TFollowing>(
+    this IParser<TValue> parser, IParser<TPreceding> precededBy, IParser<TFollowing> followedBy)
 ```
 
 ## See Also

@@ -3,7 +3,7 @@
 Parses a JSON number into a 64-bit integer if possible; otherwise uses a double-precision floating-point number.
 
 ```csharp
-public static IParser<object> JsonNumber;
+public static readonly IParser<object> JsonNumber;
 ```
 
 ## See Also

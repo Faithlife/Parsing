@@ -1,9 +1,10 @@
-# Parser.PrecededBy&lt;T,U&gt; method
+# Parser.PrecededBy&lt;TValue,TPreceding&gt; method
 
 Succeeds if the specified parser also succeeds beforehand (ignoring its result).
 
 ```csharp
-public static IParser<T> PrecededBy<T, U>(this IParser<T> parser, IParser<U> precededBy)
+public static IParser<TValue> PrecededBy<TValue, TPreceding>(this IParser<TValue> parser, 
+    IParser<TPreceding> precededBy)
 ```
 
 ## See Also

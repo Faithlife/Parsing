@@ -1,10 +1,10 @@
-# Parser.Then&lt;T,U&gt; method
+# Parser.Then&lt;TBefore,TAfter&gt; method
 
 Executes one parser after another.
 
 ```csharp
-public static IParser<U> Then<T, U>(this IParser<T> parser, 
-    Func<T, IParser<U>> convertValueToNextParser)
+public static IParser<TAfter> Then<TBefore, TAfter>(this IParser<TBefore> parser, 
+    Func<TBefore, IParser<TAfter>> convertValueToNextParser)
 ```
 
 ## See Also

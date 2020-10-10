@@ -13,7 +13,7 @@ public static class ParseResult
 | static [Failure&lt;T&gt;](ParseResult/Failure.md)(…) | Creates a failed parse result. |
 | static [GetNamedFailures](ParseResult/GetNamedFailures.md)(…) | Gets the named failures that were registered while parsing. |
 | static [GetValueOrDefault&lt;T&gt;](ParseResult/GetValueOrDefault.md)(…) | Gets the parse result value on success, or the default value on failure. (2 methods) |
-| static [MapSuccess&lt;T,U&gt;](ParseResult/MapSuccess.md)(…) | Maps a successful parse result into another parse result (success or failure). |
+| static [MapSuccess&lt;TBefore,TAfter&gt;](ParseResult/MapSuccess.md)(…) | Maps a successful parse result into another parse result (success or failure). |
 | static [Success&lt;T&gt;](ParseResult/Success.md)(…) | Creates a successful parse result. |
 | static [ToMessage](ParseResult/ToMessage.md)(…) | Creates a message for the parse result. |
 

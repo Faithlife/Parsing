@@ -3,7 +3,7 @@
 Parses any digit (as determined by System.Char.IsDigit).
 
 ```csharp
-public static IParser<char> Digit;
+public static readonly IParser<char> Digit;
 ```
 
 ## See Also

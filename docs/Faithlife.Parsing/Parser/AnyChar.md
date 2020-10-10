@@ -3,7 +3,7 @@
 Parses any character; i.e. only fails at the end of the text.
 
 ```csharp
-public static IParser<char> AnyChar;
+public static readonly IParser<char> AnyChar;
 ```
 
 ## See Also

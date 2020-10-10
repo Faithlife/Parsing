@@ -3,7 +3,7 @@
 Parses a JSON Boolean.
 
 ```csharp
-public static IParser<bool> JsonBoolean;
+public static readonly IParser<bool> JsonBoolean;
 ```
 
 ## See Also
