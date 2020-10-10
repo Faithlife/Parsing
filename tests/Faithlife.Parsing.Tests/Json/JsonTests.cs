@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Faithlife.Parsing.Json;
@@ -78,22 +79,22 @@ namespace Faithlife.Parsing.Tests.Json
 		[Fact]
 		public void JsonNullSuccess()
 		{
-			JsonParsers.JsonNull.TryParse("null").ShouldSucceed((object) null, 4);
+			JsonParsers.JsonNull.TryParse("null").ShouldSucceed((object?) null, 4);
 		}
 
 		[Fact]
 		public void JsonArraySuccess()
 		{
-			JsonParsers.JsonBoolean.JsonArrayOf().TryParse("[]").ShouldSucceed(new bool[0]);
+			JsonParsers.JsonBoolean.JsonArrayOf().TryParse("[]").ShouldSucceed(Array.Empty<bool>());
 			JsonParsers.JsonBoolean.JsonArrayOf().TryParse("[true]").ShouldSucceed(new[] { true });
 			JsonParsers.JsonBoolean.JsonArrayOf().TryParse("[ false, false ]").ShouldSucceed(new[] { false, false });
-			JsonParsers.JsonNumber.Or(JsonParsers.JsonNull).JsonArrayOf().TryParse("[ 2, null, -3.14 ]").ShouldSucceed(new object[] { 2L, null, -3.14 });
+			JsonParsers.JsonNumber.Or(JsonParsers.JsonNull).JsonArrayOf().TryParse("[ 2, null, -3.14 ]").ShouldSucceed(new object?[] { 2L, null, -3.14 });
 		}
 
 		[Fact]
 		public void JsonObjectSuccess()
 		{
-			JsonParsers.JsonBoolean.JsonPropertyOf().JsonObjectOf().TryParse("{}").ShouldSucceed(new KeyValuePair<string, bool>[0]);
+			JsonParsers.JsonBoolean.JsonPropertyOf().JsonObjectOf().TryParse("{}").ShouldSucceed(Array.Empty<KeyValuePair<string, bool>>());
 			JsonParsers.JsonBoolean.JsonPropertyOf().JsonObjectOf().TryParse("{\r\n\t\"yes\": true,\r\n\t\"no\": false\r\n}")
 				.ShouldSucceed(new[] { new KeyValuePair<string, bool>("yes", true), new KeyValuePair<string, bool>("no", false) });
 		}
@@ -110,7 +111,7 @@ namespace Faithlife.Parsing.Tests.Json
 					]
 				}";
 
-			var value = (IReadOnlyList<KeyValuePair<string, object>>) JsonParsers.JsonValue.TryParse(json).Value;
+			var value = (IReadOnlyList<KeyValuePair<string, object>>) JsonParsers.JsonValue.TryParse(json).Value!;
 			value[0].Key.ShouldBe("id");
 			value[0].Value.ShouldBe(42L);
 			value[1].Key.ShouldBe("names");

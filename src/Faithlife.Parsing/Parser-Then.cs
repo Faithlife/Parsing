@@ -9,19 +9,19 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Executes one parser after another.
 		/// </summary>
-		public static IParser<U> Then<T, U>(this IParser<T> parser, Func<T, IParser<U>> convertValueToNextParser)
+		public static IParser<TAfter> Then<TBefore, TAfter>(this IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser)
 			=> Create(position => parser.TryParse(position).MapSuccess(result => convertValueToNextParser(result.Value).TryParse(result.NextPosition)));
 
 		/// <summary>
 		/// Converts any successfully parsed value.
 		/// </summary>
-		public static IParser<U> Select<T, U>(this IParser<T> parser, Func<T, U> convertValue)
+		public static IParser<TAfter> Select<TBefore, TAfter>(this IParser<TBefore> parser, Func<TBefore, TAfter> convertValue)
 			=> parser.Then(value => Success(convertValue(value)));
 
 		/// <summary>
 		/// Succeeds with the specified value if the parser is successful.
 		/// </summary>
-		public static IParser<U> Success<T, U>(this IParser<T> parser, U value) => parser.Select(_ => value);
+		public static IParser<TAfter> Success<TBefore, TAfter>(this IParser<TBefore> parser, TAfter value) => parser.Select(_ => value);
 
 		/// <summary>
 		/// Concatenates the two successfully parsed collections.
@@ -38,7 +38,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Used to support LINQ query syntax.
 		/// </summary>
-		public static IParser<V> SelectMany<T, U, V>(this IParser<T> parser, Func<T, IParser<U>> selector, Func<T, U, V> projector)
+		public static IParser<TAfter> SelectMany<TBefore, TDuring, TAfter>(this IParser<TBefore> parser, Func<TBefore, IParser<TDuring>> selector, Func<TBefore, TDuring, TAfter> projector)
 			=> parser.Then(t => selector(t).Select(u => projector(t, u)));
 	}
 }

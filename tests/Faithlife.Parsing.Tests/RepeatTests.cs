@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace Faithlife.Parsing.Tests
@@ -29,21 +30,21 @@ namespace Faithlife.Parsing.Tests
 		public void AtMostShouldAlwaysSucceed()
 		{
 			var parser = Parser.String("abc").AtMost(2);
-			parser.TryParse("").ShouldSucceed(new string[0], 0);
-			parser.TryParse("a").ShouldSucceed(new string[0], 0);
+			parser.TryParse("").ShouldSucceed(Array.Empty<string>(), 0);
+			parser.TryParse("a").ShouldSucceed(Array.Empty<string>(), 0);
 			parser.TryParse("abc").ShouldSucceed(new[] { "abc" }, 3);
 			parser.TryParse("abcd").ShouldSucceed(new[] { "abc" }, 3);
 			parser.TryParse("abcabc").ShouldSucceed(new[] { "abc", "abc" }, 6);
 			parser.TryParse("abcabcd").ShouldSucceed(new[] { "abc", "abc" }, 6);
 			parser.TryParse("abcabcabc").ShouldSucceed(new[] { "abc", "abc" }, 6);
 			parser.TryParse("abcabcabcd").ShouldSucceed(new[] { "abc", "abc" }, 6);
-			parser.TryParse("b").ShouldSucceed(new string[0], 0);
+			parser.TryParse("b").ShouldSucceed(Array.Empty<string>(), 0);
 		}
 
 		[Fact]
 		public void AtMostOnceShouldAlwaysSucceed()
 		{
-			Parser.String("abc").AtMostOnce().TryParse("bcabc").ShouldSucceed(new string[0], 0);
+			Parser.String("abc").AtMostOnce().TryParse("bcabc").ShouldSucceed(Array.Empty<string>(), 0);
 		}
 
 		[Fact]
@@ -56,13 +57,13 @@ namespace Faithlife.Parsing.Tests
 		public void ManyShouldAlwaysSucceed()
 		{
 			var parser = Parser.String("abc").Many();
-			parser.TryParse("").ShouldSucceed(new string[0], 0);
-			parser.TryParse("ab").ShouldSucceed(new string[0], 0);
+			parser.TryParse("").ShouldSucceed(Array.Empty<string>(), 0);
+			parser.TryParse("ab").ShouldSucceed(Array.Empty<string>(), 0);
 			parser.TryParse("abc").ShouldSucceed(new[] { "abc" }, 3);
 			parser.TryParse("abcd").ShouldSucceed(new[] { "abc" }, 3);
 			parser.TryParse("abcabcd").ShouldSucceed(new[] { "abc", "abc" }, 6);
 			parser.TryParse("abcabcabc").ShouldSucceed(new[] { "abc", "abc", "abc" }, 9);
-			parser.TryParse("b").ShouldSucceed(new string[0], 0);
+			parser.TryParse("b").ShouldSucceed(Array.Empty<string>(), 0);
 		}
 
 		[Fact]

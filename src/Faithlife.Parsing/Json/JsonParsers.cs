@@ -14,7 +14,7 @@ namespace Faithlife.Parsing.Json
 		/// <summary>
 		/// Parses a JSON number into a 64-bit integer. Fails if the number has a decimal point or exponent.
 		/// </summary>
-		public static IParser<long> JsonInteger = Parser
+		public static readonly IParser<long> JsonInteger = Parser
 			.Regex(@"-?(0|[1-9][0-9]*)(?![0-9.eE])", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture)
 			.Trim()
 			.Select(match => long.Parse(match.ToString(), CultureInfo.InvariantCulture))
@@ -23,7 +23,7 @@ namespace Faithlife.Parsing.Json
 		/// <summary>
 		/// Parses a JSON number into a double-precision floating-point number.
 		/// </summary>
-		public static IParser<double> JsonDouble = Parser
+		public static readonly IParser<double> JsonDouble = Parser
 			.Regex(@"-?(0|[1-9][0-9]*)(.[0-9]+)?([eE][-+]?[0-9]+)?(?![0-9.eE])", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture)
 			.Trim()
 			.Select(match => double.Parse(match.ToString(), CultureInfo.InvariantCulture))
@@ -32,14 +32,14 @@ namespace Faithlife.Parsing.Json
 		/// <summary>
 		/// Parses a JSON number into a 64-bit integer if possible; otherwise uses a double-precision floating-point number.
 		/// </summary>
-		public static IParser<object> JsonNumber =
+		public static readonly IParser<object> JsonNumber =
 			JsonInteger.Select(x => (object) x)
 			.Or(JsonDouble.Select(x => (object) x));
 
 		/// <summary>
 		/// Parses a JSON string.
 		/// </summary>
-		public static IParser<string> JsonString = Parser
+		public static readonly IParser<string> JsonString = Parser
 			.Regex(@"""(\\(?:[""\\/bfnrt]|u[0-9a-fA-F]{4})|[^""\\]+)*""", RegexOptions.CultureInvariant)
 			.Trim()
 			.Select(match => string.Concat(match.Groups[1].Captures.Cast<Capture>().Select(x => UnescapeString(x.ToString()))))
@@ -48,7 +48,7 @@ namespace Faithlife.Parsing.Json
 		/// <summary>
 		/// Parses a JSON Boolean.
 		/// </summary>
-		public static IParser<bool> JsonBoolean =
+		public static readonly IParser<bool> JsonBoolean =
 			Token("true").Success(true)
 			.Or(Token("false").Success(false))
 			.Named("boolean");
@@ -56,7 +56,7 @@ namespace Faithlife.Parsing.Json
 		/// <summary>
 		/// Parses a JSON null.
 		/// </summary>
-		public static IParser<object> JsonNull = Token("null").Success((object) null);
+		public static readonly IParser<object?> JsonNull = Token("null").Success((object?) null);
 
 		/// <summary>
 		/// Parses an array of JSON values, each of which is parsed with the specified parser.
@@ -109,19 +109,19 @@ namespace Faithlife.Parsing.Json
 		/// <summary>
 		/// Parses a JSON array of arbitrary JSON values.
 		/// </summary>
-		public static IParser<IReadOnlyList<object>> JsonArray = Parser.Ref(() => JsonValue).JsonArrayOf();
+		public static readonly IParser<IReadOnlyList<object?>> JsonArray = Parser.Ref(() => JsonValue).JsonArrayOf();
 
 		/// <summary>
 		/// Parses a JSON object of arbitrary JSON property values.
 		/// </summary>
-		public static IParser<IReadOnlyList<KeyValuePair<string, object>>> JsonObject = Parser.Ref(() => JsonValue).JsonPropertyOf().JsonObjectOf();
+		public static readonly IParser<IReadOnlyList<KeyValuePair<string, object?>>> JsonObject = Parser.Ref(() => JsonValue).JsonPropertyOf().JsonObjectOf();
 
 		/// <summary>
 		/// Parses an arbitrary JSON value.
 		/// </summary>
 		/// <remarks>The resulting object is a null, Boolean, String, Int64, Double, IReadOnlyList{Object},
 		/// or IReadOnlyList{KeyValuePair{string,object}}.</remarks>
-		public static IParser<object> JsonValue = Parser.Or(
+		public static readonly IParser<object?> JsonValue = Parser.Or(
 			JsonString,
 			JsonNumber,
 			JsonObject,
@@ -129,7 +129,7 @@ namespace Faithlife.Parsing.Json
 			JsonBoolean.Select(x => (object) x),
 			JsonNull);
 
-		private static IParser<string> Token(string value) => Parser.String(value).Trim().Named("'" + value + "'");
+		private static IParser<string> Token(string value) => Parser.String(value, StringComparison.Ordinal).Trim().Named("'" + value + "'");
 
 		private static string UnescapeString(string value)
 		{
@@ -155,7 +155,7 @@ namespace Faithlife.Parsing.Json
 			case 't':
 				return "\t";
 			case 'u':
-				return new string((char) int.Parse(value.Substring(2), NumberStyles.HexNumber), 1);
+				return new string((char) int.Parse(value.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture), 1);
 			default:
 				throw new InvalidOperationException();
 			}

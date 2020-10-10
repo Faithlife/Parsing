@@ -5,17 +5,17 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Succeeds if the specified parser also succeeds beforehand (ignoring its result).
 		/// </summary>
-		public static IParser<T> PrecededBy<T, U>(this IParser<T> parser, IParser<U> precededBy) => precededBy.Then(_ => parser);
+		public static IParser<TValue> PrecededBy<TValue, TPreceding>(this IParser<TValue> parser, IParser<TPreceding> precededBy) => precededBy.Then(_ => parser);
 
 		/// <summary>
 		/// Succeeds if the specified parser also succeeds afterward (ignoring its result).
 		/// </summary>
-		public static IParser<T> FollowedBy<T, U>(this IParser<T> parser, IParser<U> followedBy) => parser.Then(followedBy.Success);
+		public static IParser<TValue> FollowedBy<TValue, TFollowing>(this IParser<TValue> parser, IParser<TFollowing> followedBy) => parser.Then(followedBy.Success);
 
 		/// <summary>
 		/// Succeeds if the specified parsers succeed beforehand and afterward (ignoring their results).
 		/// </summary>
-		public static IParser<T> Bracketed<T, U, V>(this IParser<T> parser, IParser<U> precededBy, IParser<V> followedBy) => parser.PrecededBy(precededBy).FollowedBy(followedBy);
+		public static IParser<TValue> Bracketed<TValue, TPreceding, TFollowing>(this IParser<TValue> parser, IParser<TPreceding> precededBy, IParser<TFollowing> followedBy) => parser.PrecededBy(precededBy).FollowedBy(followedBy);
 
 		/// <summary>
 		/// Succeeds if the specified parser succeeds, ignoring any whitespace characters beforehand.

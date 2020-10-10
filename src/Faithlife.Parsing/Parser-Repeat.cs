@@ -48,7 +48,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item.
 		/// </summary>
-		public static IParser<IReadOnlyList<T>> Delimited<T, U>(this IParser<T> parser, IParser<U> delimiter)
+		public static IParser<IReadOnlyList<TValue>> Delimited<TValue, TDelimiter>(this IParser<TValue> parser, IParser<TDelimiter> delimiter)
 		{
 			return
 				from first in parser.Once()
@@ -60,7 +60,7 @@ namespace Faithlife.Parsing
 		/// Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item,
 		/// and allowing a single optional trailing delimiter.
 		/// </summary>
-		public static IParser<IReadOnlyList<T>> DelimitedAllowTrailing<T, U>(this IParser<T> parser, IParser<U> delimiter)
+		public static IParser<IReadOnlyList<TValue>> DelimitedAllowTrailing<TValue, TDelimiter>(this IParser<TValue> parser, IParser<TDelimiter> delimiter)
 		{
 			return
 				from first in parser.Once()

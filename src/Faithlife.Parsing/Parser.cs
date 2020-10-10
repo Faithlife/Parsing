@@ -41,7 +41,7 @@ namespace Faithlife.Parsing
 
 			public IParseResult<T> TryParse(TextPosition position) => m_parse(position);
 
-			readonly Func<TextPosition, IParseResult<T>> m_parse;
+			private readonly Func<TextPosition, IParseResult<T>> m_parse;
 		}
 	}
 }

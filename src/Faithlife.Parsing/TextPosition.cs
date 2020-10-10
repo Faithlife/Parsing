@@ -128,16 +128,16 @@ namespace Faithlife.Parsing
 				return new LineColumn(lineIndex + 1, index - m_startOfLineIndices[lineIndex] + 1);
 			}
 
-			static readonly Regex s_startOfLineRegex = new Regex("^", RegexOptions.Multiline);
+			private static readonly Regex s_startOfLineRegex = new Regex("^", RegexOptions.Multiline);
 
-			readonly string m_text;
-			readonly List<NamedFailure> m_namedFailures;
-			int[] m_startOfLineIndices;
-			int m_firstFailureIndex;
-			int m_lastFailureIndex;
+			private readonly string m_text;
+			private readonly List<NamedFailure> m_namedFailures;
+			private int[]? m_startOfLineIndices;
+			private int m_firstFailureIndex;
+			private int m_lastFailureIndex;
 		}
 
-		readonly TextSource m_source;
-		readonly int m_index;
+		private readonly TextSource m_source;
+		private readonly int m_index;
 	}
 }

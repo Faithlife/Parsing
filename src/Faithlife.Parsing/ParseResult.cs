@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -23,12 +24,14 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Gets the parse result value on success, or the default value on failure.
 		/// </summary>
+		[return: MaybeNull]
 		public static T GetValueOrDefault<T>(this IParseResult<T> result) => result.GetValueOrDefault(default);
 
 		/// <summary>
 		/// Gets the parse result value on success, or the default value on failure.
 		/// </summary>
-		public static T GetValueOrDefault<T>(this IParseResult<T> result, T defaultValue) => result.Success ? result.Value : defaultValue;
+		[return: MaybeNull]
+		public static T GetValueOrDefault<T>(this IParseResult<T> result, [AllowNull] T defaultValue) => result.Success ? result.Value : defaultValue;
 
 		/// <summary>
 		/// Gets the named failures that were registered while parsing.
@@ -38,8 +41,8 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Maps a successful parse result into another parse result (success or failure).
 		/// </summary>
-		public static IParseResult<U> MapSuccess<T, U>(this IParseResult<T> result, Func<IParseResult<T>, IParseResult<U>> convert)
-			=> result.Success ? convert(result) : Failure<U>(result.NextPosition);
+		public static IParseResult<TAfter> MapSuccess<TBefore, TAfter>(this IParseResult<TBefore> result, Func<IParseResult<TBefore>, IParseResult<TAfter>> convert)
+			=> result.Success ? convert(result) : Failure<TAfter>(result.NextPosition);
 
 		/// <summary>
 		/// Creates a message for the parse result.
@@ -83,7 +86,7 @@ namespace Faithlife.Parsing
 
 			public TextPosition NextPosition { get; }
 
-			object IParseResult.Value => Value;
+			object? IParseResult.Value => Value;
 		}
 
 		private sealed class FailureResult<T> : IParseResult<T>
@@ -99,7 +102,7 @@ namespace Faithlife.Parsing
 
 			public TextPosition NextPosition { get; }
 
-			object IParseResult.Value => Value;
+			object? IParseResult.Value => Value;
 		}
 	}
 }

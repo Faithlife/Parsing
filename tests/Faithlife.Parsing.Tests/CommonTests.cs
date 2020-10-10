@@ -80,10 +80,10 @@ namespace Faithlife.Parsing.Tests
 		[Fact]
 		public void ParseResult_GetValueOrDefault()
 		{
-			ParseResult.Success(1, new TextPosition()).GetValueOrDefault().ShouldBe(1);
-			ParseResult.Success(1, new TextPosition()).GetValueOrDefault(2).ShouldBe(1);
-			ParseResult.Failure<int>(new TextPosition()).GetValueOrDefault().ShouldBe(0);
-			ParseResult.Failure<int>(new TextPosition()).GetValueOrDefault(2).ShouldBe(2);
+			ParseResult.Success(1, default).GetValueOrDefault().ShouldBe(1);
+			ParseResult.Success(1, default).GetValueOrDefault(2).ShouldBe(1);
+			ParseResult.Failure<int>(default).GetValueOrDefault().ShouldBe(0);
+			ParseResult.Failure<int>(default).GetValueOrDefault(2).ShouldBe(2);
 		}
 
 		[Fact]

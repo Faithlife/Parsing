@@ -16,9 +16,9 @@ namespace Faithlife.Parsing.Tests
 		public static void ShouldSucceed<T>(this IParseResult<T> actual, T expected, int? remainderIndex = null)
 		{
 			Assert.True(actual.Success, "parse failed");
-			IEnumerable sequence = expected as IEnumerable;
+			var sequence = expected as IEnumerable;
 			if (sequence != null && !(expected is string))
-				Assert.True(sequence.Cast<object>().SequenceEqual(((IEnumerable) actual.Value).Cast<object>()));
+				Assert.True(sequence.Cast<object>().SequenceEqual(((IEnumerable?) actual.Value).Cast<object>()));
 			else
 				Assert.Equal(expected, actual.Value);
 			if (remainderIndex != null)
@@ -40,7 +40,6 @@ namespace Faithlife.Parsing.Tests
 				AssertRemainderIndex(actual, remainderIndex.Value);
 		}
 
-		[SuppressMessage("ReSharper", "UnusedParameter.Local")]
 		private static void AssertRemainderIndex<T>(IParseResult<T> actual, int remainderIndex)
 		{
 			Assert.Equal(remainderIndex, actual.NextPosition.Index);

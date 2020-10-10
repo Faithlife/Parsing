@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -49,9 +50,9 @@ namespace Faithlife.Parsing.Tests
 		[Fact]
 		public void OrEmpty()
 		{
-			Parser.String("xyz").Chars().OrEmpty().TryParse("abcd").ShouldSucceed(new char[0], 0);
-			Parser.String("xyz").Chars().Select(x => (IReadOnlyCollection<char>) x).OrEmpty().TryParse("abcd").ShouldSucceed(new char[0], 0);
-			Parser.String("xyz").Chars().Select(x => (IEnumerable<char>) x).OrEmpty().TryParse("abcd").ShouldSucceed(new char[0], 0);
+			Parser.String("xyz").Chars().OrEmpty().TryParse("abcd").ShouldSucceed(Array.Empty<char>(), 0);
+			Parser.String("xyz").Chars().Select(x => (IReadOnlyCollection<char>) x).OrEmpty().TryParse("abcd").ShouldSucceed(Array.Empty<char>(), 0);
+			Parser.String("xyz").Chars().Select(x => (IEnumerable<char>) x).OrEmpty().TryParse("abcd").ShouldSucceed(Array.Empty<char>(), 0);
 		}
 	}
 }

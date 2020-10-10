@@ -14,7 +14,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// The parsed object instance. Throws a ParseException if the parsing was not successful.
 		/// </summary>
-		object Value { get; }
+		object? Value { get; }
 
 		/// <summary>
 		/// The text position at the end of the parsed value.

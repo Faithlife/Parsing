@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Faithlife.Parsing
@@ -14,16 +15,16 @@ namespace Faithlife.Parsing
 		{
 			return Create(position =>
 			{
-				IParseResult<T> firstEmptySuccess = null;
-				IParseResult<T> firstFailure = null;
+				IParseResult<T>? firstEmptySuccess = null;
+				IParseResult<T>? firstFailure = null;
 
 				foreach (IParser<T> parser in parsers)
 				{
 					IParseResult<T> result = parser.TryParse(position);
 					if (!result.Success)
-						firstFailure = firstFailure ?? result;
+						firstFailure ??= result;
 					else if (result.NextPosition == position)
-						firstEmptySuccess = firstEmptySuccess ?? result;
+						firstEmptySuccess ??= result;
 					else
 						return result;
 				}
@@ -51,7 +52,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Succeeds with the default value if the parser fails.
 		/// </summary>
-		public static IParser<T> OrDefault<T>(this IParser<T> parser) => parser.OrDefault(default);
+		public static IParser<T> OrDefault<T>(this IParser<T> parser) => parser.OrDefault(default!);
 
 		/// <summary>
 		/// Succeeds with the default value if the parser fails.
@@ -61,16 +62,16 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Succeeds with an empty collection if the parser fails.
 		/// </summary>
-		public static IParser<IEnumerable<T>> OrEmpty<T>(this IParser<IEnumerable<T>> parser) => parser.OrDefault(new T[0]);
+		public static IParser<IEnumerable<T>> OrEmpty<T>(this IParser<IEnumerable<T>> parser) => parser.OrDefault(Array.Empty<T>());
 
 		/// <summary>
 		/// Succeeds with an empty collection if the parser fails.
 		/// </summary>
-		public static IParser<IReadOnlyCollection<T>> OrEmpty<T>(this IParser<IReadOnlyCollection<T>> parser) => parser.OrDefault(new T[0]);
+		public static IParser<IReadOnlyCollection<T>> OrEmpty<T>(this IParser<IReadOnlyCollection<T>> parser) => parser.OrDefault(Array.Empty<T>());
 
 		/// <summary>
 		/// Succeeds with an empty collection if the parser fails.
 		/// </summary>
-		public static IParser<IReadOnlyList<T>> OrEmpty<T>(this IParser<IReadOnlyList<T>> parser) => parser.OrDefault(new T[0]);
+		public static IParser<IReadOnlyList<T>> OrEmpty<T>(this IParser<IReadOnlyList<T>> parser) => parser.OrDefault(Array.Empty<T>());
 	}
 }

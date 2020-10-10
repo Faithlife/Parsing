@@ -13,7 +13,7 @@ namespace Faithlife.Parsing
 			{
 				if (!position.IsAtEnd())
 				{
-					char current = position.GetCurrentChar();
+					var current = position.GetCurrentChar();
 					if (test(current))
 						return ParseResult.Success(current, position.WithNextIndex());
 				}
@@ -30,7 +30,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Parses any character; i.e. only fails at the end of the text.
 		/// </summary>
-		public static IParser<char> AnyChar = Char(x => true);
+		public static readonly IParser<char> AnyChar = Char(x => true);
 
 		/// <summary>
 		/// Parses any character except the specified character.
@@ -40,21 +40,21 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Parses any digit (as determined by System.Char.IsDigit).
 		/// </summary>
-		public static IParser<char> Digit = Char(char.IsDigit);
+		public static readonly IParser<char> Digit = Char(char.IsDigit);
 
 		/// <summary>
 		/// Parses any letter (as determined by System.Char.IsLetter).
 		/// </summary>
-		public static IParser<char> Letter = Char(char.IsLetter);
+		public static readonly IParser<char> Letter = Char(char.IsLetter);
 
 		/// <summary>
 		/// Parses any letter or digit (as determined by System.Char.IsLetterOrDigit).
 		/// </summary>
-		public static IParser<char> LetterOrDigit = Char(char.IsLetterOrDigit);
+		public static readonly IParser<char> LetterOrDigit = Char(char.IsLetterOrDigit);
 
 		/// <summary>
 		/// Parses any whitespace character (as determined by System.Char.IsWhiteSpace).
 		/// </summary>
-		public static IParser<char> WhiteSpace = Char(char.IsWhiteSpace);
+		public static readonly IParser<char> WhiteSpace = Char(char.IsWhiteSpace);
 	}
 }

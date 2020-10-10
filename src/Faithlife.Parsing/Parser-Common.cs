@@ -42,8 +42,8 @@ namespace Faithlife.Parsing
 		/// <remarks>Avoid left recursion, which will result in a stack overflow at runtime.</remarks>
 		public static IParser<T> Ref<T>(Func<IParser<T>> parserGenerator)
 		{
-			IParser<T> parser = null;
-			return Create(position => (parser ?? (parser = parserGenerator())).TryParse(position));
+			IParser<T>? parser = null;
+			return Create(position => (parser ??= parserGenerator()).TryParse(position));
 		}
 
 		/// <summary>
