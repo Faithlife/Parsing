@@ -18,9 +18,9 @@ namespace Faithlife.Parsing
 				IParseResult<T>? firstEmptySuccess = null;
 				IParseResult<T>? firstFailure = null;
 
-				foreach (IParser<T> parser in parsers)
+				foreach (var parser in parsers)
 				{
-					IParseResult<T> result = parser.TryParse(position);
+					var result = parser.TryParse(position);
 					if (!result.Success)
 						firstFailure ??= result;
 					else if (result.NextPosition == position)

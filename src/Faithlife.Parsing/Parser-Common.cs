@@ -20,7 +20,7 @@ namespace Faithlife.Parsing
 		{
 			return Create(position =>
 			{
-				IParseResult<T> result = parser.TryParse(position);
+				var result = parser.TryParse(position);
 				if (!result.Success)
 					result.NextPosition.ReportNamedFailure(name, result);
 				return result;

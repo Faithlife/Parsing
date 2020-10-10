@@ -52,7 +52,7 @@ namespace Faithlife.Parsing.Tests
 		[Fact]
 		public void TestConvertToCharsAndBack()
 		{
-			IParser<string> parser = Parser.String("abc").Chars().String();
+			var parser = Parser.String("abc").Chars().String();
 			parser.TryParse("abcd").ShouldSucceed("abc", 3);
 		}
 

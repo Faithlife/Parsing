@@ -24,7 +24,7 @@ namespace Faithlife.Parsing
 			return Create(position =>
 			{
 				var inputIndex = position.Index;
-				string inputText = position.Text;
+				var inputText = position.Text;
 				var match = regex.Match(inputText, inputIndex, inputText.Length - inputIndex);
 				if (match.Success)
 					return ParseResult.Success(match, position.WithNextIndex(match.Length));
