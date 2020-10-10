@@ -136,29 +136,19 @@ namespace Faithlife.Parsing.Json
 			if (value[0] != '\\')
 				return value;
 
-			switch (value[1])
+			return value[1] switch
 			{
-			case '"':
-				return "\"";
-			case '\\':
-				return "\\";
-			case '/':
-				return "/";
-			case 'b':
-				return "\b";
-			case 'f':
-				return "\f";
-			case 'n':
-				return "\n";
-			case 'r':
-				return "\r";
-			case 't':
-				return "\t";
-			case 'u':
-				return new string((char) int.Parse(value.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture), 1);
-			default:
-				throw new InvalidOperationException();
-			}
+				'"' => "\"",
+				'\\' => "\\",
+				'/' => "/",
+				'b' => "\b",
+				'f' => "\f",
+				'n' => "\n",
+				'r' => "\r",
+				't' => "\t",
+				'u' => new string((char) int.Parse(value.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture), 1),
+				_ => throw new InvalidOperationException(),
+			};
 		}
 	}
 }
