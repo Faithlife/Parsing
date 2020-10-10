@@ -34,7 +34,7 @@ namespace Faithlife.Parsing.Json
 		/// </summary>
 		public static readonly IParser<object> JsonNumber =
 			JsonInteger.Select(x => (object) x)
-			.Or(JsonDouble.Select(x => (object) x));
+				.Or(JsonDouble.Select(x => (object) x));
 
 		/// <summary>
 		/// Parses a JSON string.
@@ -50,8 +50,8 @@ namespace Faithlife.Parsing.Json
 		/// </summary>
 		public static readonly IParser<bool> JsonBoolean =
 			Token("true").Success(true)
-			.Or(Token("false").Success(false))
-			.Named("boolean");
+				.Or(Token("false").Success(false))
+				.Named("boolean");
 
 		/// <summary>
 		/// Parses a JSON null.

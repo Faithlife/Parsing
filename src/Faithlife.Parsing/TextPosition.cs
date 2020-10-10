@@ -101,7 +101,7 @@ namespace Faithlife.Parsing
 
 			public void ReportNamedFailure(string name, IParseResult result)
 			{
-				int failureIndex = result.NextPosition.Index;
+				var failureIndex = result.NextPosition.Index;
 
 				if (m_namedFailures.Count == 0 || failureIndex > m_lastFailureIndex || failureIndex <= m_firstFailureIndex)
 				{
@@ -121,7 +121,7 @@ namespace Faithlife.Parsing
 				if (m_startOfLineIndices == null)
 					m_startOfLineIndices = s_startOfLineRegex.Matches(m_text).OfType<Match>().Select(x => x.Index).ToArray();
 
-				int lineIndex = Array.BinarySearch(m_startOfLineIndices, index);
+				var lineIndex = Array.BinarySearch(m_startOfLineIndices, index);
 				if (lineIndex < 0)
 					lineIndex = ~lineIndex - 1;
 

@@ -19,8 +19,8 @@ namespace Faithlife.Parsing
 			return Create(position =>
 			{
 				string inputText = position.Text;
-				int inputIndex = position.Index;
-				int textLength = text.Length;
+				var inputIndex = position.Index;
+				var textLength = text.Length;
 				if (string.Compare(inputText, inputIndex, text, 0, textLength, comparison) == 0)
 					return ParseResult.Success(inputText.Substring(inputIndex, textLength), position.WithNextIndex(textLength));
 

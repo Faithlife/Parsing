@@ -75,7 +75,7 @@ namespace Faithlife.Parsing
 			{
 				var values = new List<T>(capacity: atLeast);
 				var remainder = position;
-				int repeated = 0;
+				var repeated = 0;
 
 				while (true)
 				{
