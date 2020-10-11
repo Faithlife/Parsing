@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.2.0
+
+* Support left-associative unary and binary operators.
+
 ## 2.1.0
 
 * Use nullable references.
