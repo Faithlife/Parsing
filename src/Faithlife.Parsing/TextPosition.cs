@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -116,10 +117,11 @@ namespace Faithlife.Parsing
 				}
 			}
 
+			[SuppressMessage("ReSharper", "RedundantEnumerableCastCall", Justification = "Cast needed for .NET Standard 2.0.")]
 			public LineColumn GetPositionFromIndex(int index)
 			{
 				if (m_startOfLineIndices == null)
-					m_startOfLineIndices = s_startOfLineRegex.Matches(m_text).OfType<Match>().Select(x => x.Index).ToArray();
+					m_startOfLineIndices = s_startOfLineRegex.Matches(m_text).Cast<Match>().Select(x => x.Index).ToArray();
 
 				var lineIndex = Array.BinarySearch(m_startOfLineIndices, index);
 				if (lineIndex < 0)

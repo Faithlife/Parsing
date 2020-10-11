@@ -31,18 +31,18 @@ namespace Faithlife.Parsing.Tests.Json
 			public IReadOnlyList<double>? Dimensions { get; set; }
 		}
 
-		private static readonly IParser<Action<WidgetDto>> WidgetIdParser = JsonParsers.JsonInteger.JsonPropertyNamed("id")
+		private static IParser<Action<WidgetDto>> WidgetIdParser { get; } = JsonParsers.JsonInteger.JsonPropertyNamed("id")
 			.Select(value => (Action<WidgetDto>) (widget => widget.Id = (int) value));
 
-		private static readonly IParser<Action<WidgetDto>> WidgetNameParser = JsonParsers.JsonString.JsonPropertyNamed("name")
+		private static IParser<Action<WidgetDto>> WidgetNameParser { get; } = JsonParsers.JsonString.JsonPropertyNamed("name")
 			.Select(value => (Action<WidgetDto>) (widget => widget.Name = value));
 
-		private static readonly IParser<Action<WidgetDto>> WidgetDimensionsParser = JsonParsers.JsonDouble.JsonArrayOf().JsonPropertyNamed("dimensions")
+		private static IParser<Action<WidgetDto>> WidgetDimensionsParser { get; } = JsonParsers.JsonDouble.JsonArrayOf().JsonPropertyNamed("dimensions")
 			.Select(value => (Action<WidgetDto>) (widget => widget.Dimensions = value));
 
-		private static readonly IParser<Action<WidgetDto>> WidgetPropertyParser = Parser.Or(WidgetIdParser, WidgetNameParser, WidgetDimensionsParser);
+		private static IParser<Action<WidgetDto>> WidgetPropertyParser { get; } = Parser.Or(WidgetIdParser, WidgetNameParser, WidgetDimensionsParser);
 
-		private static readonly IParser<WidgetDto> WidgetParser = WidgetPropertyParser.JsonObjectOf()
+		private static IParser<WidgetDto> WidgetParser { get; } = WidgetPropertyParser.JsonObjectOf()
 			.Select(actions =>
 			{
 				var widget = new WidgetDto();

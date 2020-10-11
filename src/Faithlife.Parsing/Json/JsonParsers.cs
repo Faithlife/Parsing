@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -39,6 +40,7 @@ namespace Faithlife.Parsing.Json
 		/// <summary>
 		/// Parses a JSON string.
 		/// </summary>
+		[SuppressMessage("ReSharper", "RedundantEnumerableCastCall", Justification = "Cast needed for .NET Standard 2.0.")]
 		public static readonly IParser<string> JsonString = Parser
 			.Regex(@"""(\\(?:[""\\/bfnrt]|u[0-9a-fA-F]{4})|[^""\\]+)*""", RegexOptions.CultureInvariant)
 			.Trim()
