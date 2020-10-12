@@ -22,6 +22,8 @@ public static class Parser
 | static [AtMost&lt;T&gt;](Parser/AtMost.md)(…) | Always succeeds. The value is a collection of at most the specified number of successfully parsed items. |
 | static [AtMostOnce&lt;T&gt;](Parser/AtMostOnce.md)(…) | Always succeeds. The value is a one-item collection of a single successfully parsed item; otherwise an empty collection. |
 | static [Bracketed&lt;TValue,TPreceding,TFollowing&gt;](Parser/Bracketed.md)(…) | Succeeds if the specified parsers succeed beforehand and afterward (ignoring their results). |
+| static [ChainBinary&lt;TValue,TOperator&gt;](Parser/ChainBinary.md)(…) | Chains a left-associative binary operator to the parser. |
+| static [ChainUnary&lt;TValue,TOperator&gt;](Parser/ChainUnary.md)(…) | Chains a left-associative unary operator to the parser. |
 | static [Char](Parser/Char.md)(…) | Parses a single character if the specified predicate returns true. (2 methods) |
 | static [Chars](Parser/Chars.md)(…) | Maps a successfully parsed string into a successfully parsed collection of characters. |
 | static [Concat](Parser/Concat.md)(…) | Concatenates the successfully parsed collection of strings into a single successfully parsed string. |
