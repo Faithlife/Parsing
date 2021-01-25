@@ -46,7 +46,7 @@ namespace Faithlife.Parsing.Tests
 			Parser.String(op, StringComparison.Ordinal).Trim();
 
 		private static IParser<ExpressionNode> Expression { get; } =
-			Parser.Ref(() => Expression).Bracketed(Op("("), Op(")")).Or(Name).Or(Number)
+			Parser.Ref(() => Expression!).Bracketed(Op("("), Op(")")).Or(Name).Or(Number)
 				.ChainUnary(Op("-").Trim(), (x, y) => new ExpressionNode(x, y))
 				.ChainBinary(Op("*").Or(Op("/")).Trim(), (x, y, z) => new ExpressionNode(x, y, z))
 				.ChainBinary(Op("+").Or(Op("-")).Trim(), (x, y, z) => new ExpressionNode(x, y, z));

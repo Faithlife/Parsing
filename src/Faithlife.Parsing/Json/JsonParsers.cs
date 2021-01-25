@@ -111,12 +111,12 @@ namespace Faithlife.Parsing.Json
 		/// <summary>
 		/// Parses a JSON array of arbitrary JSON values.
 		/// </summary>
-		public static readonly IParser<IReadOnlyList<object?>> JsonArray = Parser.Ref(() => JsonValue).JsonArrayOf();
+		public static readonly IParser<IReadOnlyList<object?>> JsonArray = Parser.Ref(() => JsonValue!).JsonArrayOf();
 
 		/// <summary>
 		/// Parses a JSON object of arbitrary JSON property values.
 		/// </summary>
-		public static readonly IParser<IReadOnlyList<KeyValuePair<string, object?>>> JsonObject = Parser.Ref(() => JsonValue).JsonPropertyOf().JsonObjectOf();
+		public static readonly IParser<IReadOnlyList<KeyValuePair<string, object?>>> JsonObject = Parser.Ref(() => JsonValue!).JsonPropertyOf().JsonObjectOf();
 
 		/// <summary>
 		/// Parses an arbitrary JSON value.
