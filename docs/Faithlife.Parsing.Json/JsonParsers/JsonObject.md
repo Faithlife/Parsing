@@ -3,7 +3,7 @@
 Parses a JSON object of arbitrary JSON property values.
 
 ```csharp
-public static readonly IParser<IReadOnlyList<KeyValuePair<string, object>>> JsonObject;
+public static readonly IParser<IReadOnlyList<KeyValuePair<string, object?>>> JsonObject;
 ```
 
 ## See Also

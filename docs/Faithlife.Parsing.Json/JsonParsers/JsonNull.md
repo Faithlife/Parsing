@@ -3,7 +3,7 @@
 Parses a JSON null.
 
 ```csharp
-public static readonly IParser<object> JsonNull;
+public static readonly IParser<object?> JsonNull;
 ```
 
 ## See Also
