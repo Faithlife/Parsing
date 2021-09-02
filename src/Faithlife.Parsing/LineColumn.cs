@@ -34,7 +34,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public override bool Equals(object other) => other is LineColumn column && Equals(column);
+		public override bool Equals(object obj) => obj is LineColumn column && Equals(column);
 
 		/// <summary>
 		/// Gets the hash code.

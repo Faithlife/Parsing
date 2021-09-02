@@ -36,6 +36,7 @@ namespace Faithlife.Parsing
 		/// Gets the character at the text position.
 		/// </summary>
 		/// <remarks>Throws IndexOutOfRangeException if the text position is at the end of the text.</remarks>
+		[SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "Legacy.")]
 		public char GetCurrentChar() => m_source.Text[m_index];
 
 		/// <summary>
@@ -56,7 +57,7 @@ namespace Faithlife.Parsing
 		/// <summary>
 		/// Checks for equality.
 		/// </summary>
-		public override bool Equals(object other) => other is TextPosition position && Equals(position);
+		public override bool Equals(object obj) => obj is TextPosition position && Equals(position);
 
 		/// <summary>
 		/// Gets the hash code.
