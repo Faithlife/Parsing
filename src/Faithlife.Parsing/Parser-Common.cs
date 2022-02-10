@@ -1,5 +1,3 @@
-using System;
-
 namespace Faithlife.Parsing
 {
 	public static partial class Parser

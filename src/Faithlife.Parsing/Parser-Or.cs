@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Faithlife.Parsing
 {
 	public static partial class Parser
