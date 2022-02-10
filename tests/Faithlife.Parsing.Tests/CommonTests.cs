@@ -51,6 +51,7 @@ public class CommonTests
 	{
 		var positioned = Parser.String("ab").Positioned().Parse("xabc", 1);
 		positioned.Position.Index.ShouldBe(1);
+		positioned.Value.ShouldBe("ab");
 		positioned.Length.ShouldBe(2);
 	}
 
