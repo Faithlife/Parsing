@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Faithlife.Parsing;
@@ -21,14 +20,12 @@ public static class ParseResult
 	/// <summary>
 	/// Gets the parse result value on success, or the default value on failure.
 	/// </summary>
-	[return: MaybeNull]
-	public static T GetValueOrDefault<T>(this IParseResult<T> result) => result.GetValueOrDefault(default);
+	public static T? GetValueOrDefault<T>(this IParseResult<T> result) => result.GetValueOrDefault(default);
 
 	/// <summary>
 	/// Gets the parse result value on success, or the default value on failure.
 	/// </summary>
-	[return: MaybeNull]
-	public static T GetValueOrDefault<T>(this IParseResult<T> result, [AllowNull] T defaultValue) => result.Success ? result.Value : defaultValue;
+	public static T? GetValueOrDefault<T>(this IParseResult<T> result, T? defaultValue) => result.Success ? result.Value : defaultValue;
 
 	/// <summary>
 	/// Gets the named failures that were registered while parsing.
