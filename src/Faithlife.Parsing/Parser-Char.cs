@@ -28,7 +28,7 @@ public static partial class Parser
 	/// <summary>
 	/// Parses any character; i.e. only fails at the end of the text.
 	/// </summary>
-	public static readonly IParser<char> AnyChar = Char(x => true);
+	public static readonly IParser<char> AnyChar = Char(_ => true);
 
 	/// <summary>
 	/// Parses any character except the specified character.

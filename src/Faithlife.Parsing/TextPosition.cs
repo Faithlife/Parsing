@@ -96,7 +96,7 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 
 		public string Text => m_text;
 
-		public ReadOnlyCollection<NamedFailure> GetNamedFailures() => new ReadOnlyCollection<NamedFailure>(m_namedFailures);
+		public ReadOnlyCollection<NamedFailure> GetNamedFailures() => m_namedFailures.AsReadOnly();
 
 		public void ReportNamedFailure(string name, IParseResult result)
 		{
@@ -118,8 +118,7 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 		[SuppressMessage("ReSharper", "RedundantEnumerableCastCall", Justification = "Cast needed for .NET Standard 2.0.")]
 		public LineColumn GetPositionFromIndex(int index)
 		{
-			if (m_startOfLineIndices == null)
-				m_startOfLineIndices = s_startOfLineRegex.Matches(m_text).Cast<Match>().Select(x => x.Index).ToArray();
+			m_startOfLineIndices ??= s_startOfLineRegex.Matches(m_text).Cast<Match>().Select(x => x.Index).ToArray();
 
 			var lineIndex = Array.BinarySearch(m_startOfLineIndices, index);
 			if (lineIndex < 0)
