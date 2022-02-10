@@ -7,7 +7,7 @@ namespace Faithlife.Parsing;
 /// <summary>
 /// A position in the text being parsed.
 /// </summary>
-public struct TextPosition : IEquatable<TextPosition>
+public readonly struct TextPosition : IEquatable<TextPosition>
 {
 	/// <summary>
 	/// The entire text being parsed.

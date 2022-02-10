@@ -3,7 +3,7 @@ namespace Faithlife.Parsing;
 /// <summary>
 /// A line and column number.
 /// </summary>
-public struct LineColumn : IEquatable<LineColumn>
+public readonly struct LineColumn : IEquatable<LineColumn>
 {
 	/// <summary>
 	/// Creates an instance.
