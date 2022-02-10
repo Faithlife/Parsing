@@ -26,21 +26,21 @@ public class CharTests
 	[Fact]
 	public void PredicateShouldFailOnEmpty()
 	{
-		Parser.Char(ch => ch >= 'a' && ch <= 'z').TryParse("").ShouldFail(0);
+		Parser.Char(ch => ch is >= 'a' and <= 'z').TryParse("").ShouldFail(0);
 	}
 
 	[Fact]
 	public void PredicateShouldSucceedOnGoodChar()
 	{
-		Parser.Char(ch => ch >= 'a' && ch <= 'z').TryParse("a").ShouldSucceed('a', 1);
-		Parser.Char(ch => ch >= 'a' && ch <= 'z').TryParse("ab").ShouldSucceed('a', 1);
-		Parser.Char(ch => ch >= 'a' && ch <= 'z').TryParse("b").ShouldSucceed('b', 1);
+		Parser.Char(ch => ch is >= 'a' and <= 'z').TryParse("a").ShouldSucceed('a', 1);
+		Parser.Char(ch => ch is >= 'a' and <= 'z').TryParse("ab").ShouldSucceed('a', 1);
+		Parser.Char(ch => ch is >= 'a' and <= 'z').TryParse("b").ShouldSucceed('b', 1);
 	}
 
 	[Fact]
 	public void PredicateShouldFailOnBadChar()
 	{
-		Parser.Char(ch => ch >= 'a' && ch <= 'z').TryParse("1").ShouldFail(0);
+		Parser.Char(ch => ch is >= 'a' and <= 'z').TryParse("1").ShouldFail(0);
 	}
 
 	[Fact]
