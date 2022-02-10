@@ -1,47 +1,46 @@
-namespace Faithlife.Parsing
+namespace Faithlife.Parsing;
+
+public static partial class Parser
 {
-	public static partial class Parser
+	/// <summary>
+	/// Parses the specified string using ordinal (case-sensitive) comparison.
+	/// </summary>
+	public static IParser<string> String(string text) => String(text, StringComparison.Ordinal);
+
+	/// <summary>
+	/// Parses the specified string using the specified string comparison.
+	/// </summary>
+	public static IParser<string> String(string text, StringComparison comparison)
 	{
-		/// <summary>
-		/// Parses the specified string using ordinal (case-sensitive) comparison.
-		/// </summary>
-		public static IParser<string> String(string text) => String(text, StringComparison.Ordinal);
-
-		/// <summary>
-		/// Parses the specified string using the specified string comparison.
-		/// </summary>
-		public static IParser<string> String(string text, StringComparison comparison)
+		return Create(position =>
 		{
-			return Create(position =>
-			{
-				var inputText = position.Text;
-				var inputIndex = position.Index;
-				var textLength = text.Length;
-				if (string.Compare(inputText, inputIndex, text, 0, textLength, comparison) == 0)
-					return ParseResult.Success(inputText.Substring(inputIndex, textLength), position.WithNextIndex(textLength));
+			var inputText = position.Text;
+			var inputIndex = position.Index;
+			var textLength = text.Length;
+			if (string.Compare(inputText, inputIndex, text, 0, textLength, comparison) == 0)
+				return ParseResult.Success(inputText.Substring(inputIndex, textLength), position.WithNextIndex(textLength));
 
-				return ParseResult.Failure<string>(position);
-			});
-		}
-
-		/// <summary>
-		/// Maps a successfully parsed string into a successfully parsed collection of characters.
-		/// </summary>
-		public static IParser<IReadOnlyList<char>> Chars(this IParser<string> textParser) => textParser.Select(text => text.ToCharArray());
-
-		/// <summary>
-		/// Maps a successfully parsed collection of characters into a successfully parsed string.
-		/// </summary>
-		public static IParser<string> String(this IParser<IEnumerable<char>> parser) => parser.Select(chars => new string(chars.ToArray()));
-
-		/// <summary>
-		/// Concatenates the successfully parsed collection of strings into a single successfully parsed string.
-		/// </summary>
-		public static IParser<string> Concat(this IParser<IEnumerable<string>> parser) => parser.Select(string.Concat);
-
-		/// <summary>
-		/// Joins the successfully parsed collection of strings into a single successfully parsed string using the specified separator.
-		/// </summary>
-		public static IParser<string> Join(this IParser<IEnumerable<string>> parser, string separator) => parser.Select(strings => string.Join(separator, strings));
+			return ParseResult.Failure<string>(position);
+		});
 	}
+
+	/// <summary>
+	/// Maps a successfully parsed string into a successfully parsed collection of characters.
+	/// </summary>
+	public static IParser<IReadOnlyList<char>> Chars(this IParser<string> textParser) => textParser.Select(text => text.ToCharArray());
+
+	/// <summary>
+	/// Maps a successfully parsed collection of characters into a successfully parsed string.
+	/// </summary>
+	public static IParser<string> String(this IParser<IEnumerable<char>> parser) => parser.Select(chars => new string(chars.ToArray()));
+
+	/// <summary>
+	/// Concatenates the successfully parsed collection of strings into a single successfully parsed string.
+	/// </summary>
+	public static IParser<string> Concat(this IParser<IEnumerable<string>> parser) => parser.Select(string.Concat);
+
+	/// <summary>
+	/// Joins the successfully parsed collection of strings into a single successfully parsed string using the specified separator.
+	/// </summary>
+	public static IParser<string> Join(this IParser<IEnumerable<string>> parser, string separator) => parser.Select(strings => string.Join(separator, strings));
 }
