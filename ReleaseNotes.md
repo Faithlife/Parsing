@@ -1,5 +1,12 @@
 # Release Notes
 
+## 2.3.0
+
+* Add `Then` overloads with better performance.
+* A failing `Or` should return the farthest failure position.
+* Miscellaneous optimizations.
+* Improve nullability of `GetValueOrDefault` for C# 10.
+
 ## 2.2.0
 
 * Support left-associative unary and binary operators.
