@@ -17,7 +17,8 @@ public static partial class Parser
 	/// <summary>
 	/// Succeeds with the specified value if the parser is successful.
 	/// </summary>
-	public static IParser<TAfter> Success<TBefore, TAfter>(this IParser<TBefore> parser, TAfter value) => parser.Select(_ => value);
+	public static IParser<TAfter> Success<TBefore, TAfter>(this IParser<TBefore> parser, TAfter value)
+		=> Create(position => parser.TryParse(position).MapSuccess(result => ParseResult.Success(value, result.NextPosition)));
 
 	/// <summary>
 	/// Concatenates the two successfully parsed collections.
