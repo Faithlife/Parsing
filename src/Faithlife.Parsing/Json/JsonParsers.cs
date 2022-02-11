@@ -148,7 +148,7 @@ public static class JsonParsers
 #if NETSTANDARD2_0
 			'u' => new string((char) int.Parse(value.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture), 1),
 #else
-				'u' => new string((char) int.Parse(value.AsSpan(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture), 1),
+			'u' => new string((char) int.Parse(value.AsSpan(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture), 1),
 #endif
 			_ => throw new InvalidOperationException(),
 		};
