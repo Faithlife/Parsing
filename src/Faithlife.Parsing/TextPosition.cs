@@ -76,9 +76,9 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 	{
 	}
 
-	internal ReadOnlyCollection<NamedFailure> GetNamedFailures() => m_source.GetNamedFailures();
+	internal IReadOnlyList<NamedFailure> GetNamedFailures() => m_source.GetNamedFailures();
 
-	internal void ReportNamedFailure(string name, IParseResult result) => m_source.ReportNamedFailure(name, result);
+	internal void ReportNamedFailure(string name) => m_source.ReportNamedFailure(name, m_index);
 
 	private TextPosition(TextSource source, int index)
 	{
@@ -91,19 +91,19 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 		public TextSource(string text)
 		{
 			m_text = text;
-			m_namedFailures = new List<NamedFailure>();
 		}
 
 		public string Text => m_text;
 
-		public ReadOnlyCollection<NamedFailure> GetNamedFailures() => m_namedFailures.AsReadOnly();
+		public IReadOnlyList<NamedFailure> GetNamedFailures() =>
+			(IReadOnlyList<NamedFailure>?) m_namedFailures?.Select(x => new NamedFailure(x.Name, new TextPosition(this, x.Index))).ToList() ?? Array.Empty<NamedFailure>();
 
-		public void ReportNamedFailure(string name, IParseResult result)
+		public void ReportNamedFailure(string name, int failureIndex)
 		{
-			var failureIndex = result.NextPosition.Index;
-
-			if (m_namedFailures.Count == 0 || failureIndex > m_lastFailureIndex || failureIndex <= m_firstFailureIndex)
+			if (m_namedFailures is null || m_namedFailures.Count == 0 || failureIndex > m_lastFailureIndex || failureIndex <= m_firstFailureIndex)
 			{
+				m_namedFailures ??= new();
+
 				if (failureIndex > m_firstFailureIndex)
 				{
 					m_lastFailureIndex = failureIndex;
@@ -111,7 +111,7 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 				}
 
 				m_firstFailureIndex = failureIndex;
-				m_namedFailures.Add(new NamedFailure(name, result.NextPosition));
+				m_namedFailures.Add((name, failureIndex));
 			}
 		}
 
@@ -130,7 +130,7 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 		private static readonly Regex s_startOfLineRegex = new Regex("^", RegexOptions.Multiline);
 
 		private readonly string m_text;
-		private readonly List<NamedFailure> m_namedFailures;
+		private List<(string Name, int Index)>? m_namedFailures;
 		private int[]? m_startOfLineIndices;
 		private int m_firstFailureIndex;
 		private int m_lastFailureIndex;

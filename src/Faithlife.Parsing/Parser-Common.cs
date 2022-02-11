@@ -20,7 +20,7 @@ public static partial class Parser
 		{
 			var result = parser.TryParse(position);
 			if (!result.Success)
-				result.NextPosition.ReportNamedFailure(name, result);
+				result.NextPosition.ReportNamedFailure(name);
 			return result;
 		});
 	}
