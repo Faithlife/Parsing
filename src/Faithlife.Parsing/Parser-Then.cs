@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Faithlife.Parsing;
 
 public static partial class Parser
@@ -12,6 +14,19 @@ public static partial class Parser
 		if (convertValueToNextParser is null)
 			throw new ArgumentNullException(nameof(convertValueToNextParser));
 		return Create(position => parser.TryParse(position).MapSuccess(result => convertValueToNextParser(result.Value).TryParse(result.NextPosition)));
+	}
+
+	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "No better names.")]
+	public static IParser<(TBefore1, TBefore2)> Then<TBefore1, TBefore2>(this IParser<TBefore1> parser, IParser<TBefore2> nextParser)
+	{
+		if (parser is null)
+			throw new ArgumentNullException(nameof(parser));
+		if (nextParser is null)
+			throw new ArgumentNullException(nameof(nextParser));
+		return Create(position => parser.TryParse(position).MapSuccess(result => nextParser.TryParse(result.NextPosition).MapSuccess(nextResult => ParseResult.Success((result.Value, nextResult.Value), nextResult.NextPosition))));
 	}
 
 	/// <summary>
@@ -49,12 +64,8 @@ public static partial class Parser
 	/// <summary>
 	/// Concatenates the two successfully parsed collections.
 	/// </summary>
-	public static IParser<IReadOnlyList<T>> Concat<T>(this IParser<IEnumerable<T>> firstParser, IParser<IEnumerable<T>> secondParser)
-	{
-		if (secondParser is null)
-			throw new ArgumentNullException(nameof(secondParser));
-		return firstParser.Then(secondParser, (firstValue, secondValue) => firstValue.Concat(secondValue).ToList());
-	}
+	public static IParser<IReadOnlyList<T>> Concat<T>(this IParser<IEnumerable<T>> firstParser, IParser<IEnumerable<T>> secondParser) =>
+		firstParser.Then(secondParser, (firstValue, secondValue) => firstValue.Concat(secondValue).ToList());
 
 	/// <summary>
 	/// Appends a successfully parsed value to the end of a successfully parsed collection.
