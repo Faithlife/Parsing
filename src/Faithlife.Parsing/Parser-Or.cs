@@ -7,26 +7,31 @@ public static partial class Parser
 	/// </summary>
 	/// <remarks>The first successful parser that advances the text position is returned.
 	/// Otherwise, the first successful parser that does not advance the text position is returned.
-	/// Otherwise, the first failure is returned.</remarks>
+	/// Otherwise, the failure that advanced the text position farthest is returned.</remarks>
 	public static IParser<T> Or<T>(IEnumerable<IParser<T>> parsers)
 	{
 		return Create(position =>
 		{
 			IParseResult<T>? firstEmptySuccess = null;
-			IParseResult<T>? firstFailure = null;
+			IParseResult<T>? bestFailure = null;
 
 			foreach (var parser in parsers)
 			{
 				var result = parser.TryParse(position);
-				if (!result.Success)
-					firstFailure ??= result;
-				else if (result.NextPosition == position)
-					firstEmptySuccess ??= result;
-				else
-					return result;
+				if (result.Success)
+				{
+					if (result.NextPosition == position)
+						firstEmptySuccess ??= result;
+					else
+						return result;
+				}
+				else if (bestFailure is null || result.NextPosition.Index > bestFailure.NextPosition.Index)
+				{
+					bestFailure = result;
+				}
 			}
 
-			return firstEmptySuccess ?? firstFailure ?? ParseResult.Failure<T>(position);
+			return firstEmptySuccess ?? bestFailure ?? ParseResult.Failure<T>(position);
 		});
 	}
 

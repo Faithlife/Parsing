@@ -52,4 +52,12 @@ public class OrTests
 		Parser.String("xyz").Chars().Select(x => (IReadOnlyCollection<char>) x).OrEmpty().TryParse("abcd").ShouldSucceed(Array.Empty<char>(), 0);
 		Parser.String("xyz").Chars().Select(x => (IEnumerable<char>) x).OrEmpty().TryParse("abcd").ShouldSucceed(Array.Empty<char>(), 0);
 	}
+
+	[Fact]
+	public void OrShouldPreferDeepestFailure()
+	{
+		var parser = Parser.Char('a').Then(Parser.Char('b')).Or(Parser.Char('c').Then(Parser.Char('d')));
+		parser.TryParse("ax").ShouldFail(1);
+		parser.TryParse("cx").ShouldFail(1);
+	}
 }
