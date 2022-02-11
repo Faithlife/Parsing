@@ -5,12 +5,22 @@ public static partial class Parser
 	/// <summary>
 	/// Succeeds if the specified parser also succeeds beforehand (ignoring its result).
 	/// </summary>
-	public static IParser<TValue> PrecededBy<TValue, TPreceding>(this IParser<TValue> parser, IParser<TPreceding> precededBy) => precededBy.Then(_ => parser);
+	public static IParser<TValue> PrecededBy<TValue, TPreceding>(this IParser<TValue> parser, IParser<TPreceding> precededBy)
+	{
+		if (parser is null)
+			throw new ArgumentNullException(nameof(parser));
+		return precededBy.Then(_ => parser);
+	}
 
 	/// <summary>
 	/// Succeeds if the specified parser also succeeds afterward (ignoring its result).
 	/// </summary>
-	public static IParser<TValue> FollowedBy<TValue, TFollowing>(this IParser<TValue> parser, IParser<TFollowing> followedBy) => parser.Then(followedBy.Success);
+	public static IParser<TValue> FollowedBy<TValue, TFollowing>(this IParser<TValue> parser, IParser<TFollowing> followedBy)
+	{
+		if (followedBy is null)
+			throw new ArgumentNullException(nameof(followedBy));
+		return parser.Then(x => followedBy.Success(x));
+	}
 
 	/// <summary>
 	/// Succeeds if the specified parsers succeed beforehand and afterward (ignoring their results).
