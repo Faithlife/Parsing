@@ -7,6 +7,7 @@ public class ChainTests
 {
 	[Theory]
 	[InlineData("2 + 3", 5)]
+	[InlineData("4 - 2 + 1", 3)]
 	[InlineData("2 * 3", 6)]
 	[InlineData("-1", -1)]
 	[InlineData("2 + 3 * 4", 14)]
