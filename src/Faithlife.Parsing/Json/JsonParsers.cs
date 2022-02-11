@@ -76,7 +76,7 @@ public static class JsonParsers
 	{
 		return
 			from name in JsonString
-			from colon in Token(":")
+			from colon in s_colon
 			from value in parser
 			select new KeyValuePair<string, T>(name, value);
 	}
@@ -153,4 +153,6 @@ public static class JsonParsers
 			_ => throw new InvalidOperationException(),
 		};
 	}
+
+	private static readonly IParser<string> s_colon = Token(":");
 }
