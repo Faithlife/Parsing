@@ -73,13 +73,7 @@ public static class JsonParsers
 	/// Parses a JSON object property (i.e. name, colon, and value). The property value is parsed with the specified parser.
 	/// </summary>
 	public static IParser<KeyValuePair<string, T>> JsonPropertyOf<T>(this IParser<T> parser)
-	{
-		return
-			from name in JsonString
-			from colon in s_colon
-			from value in parser
-			select new KeyValuePair<string, T>(name, value);
-	}
+		=> JsonString.FollowedBy(Token(":")).Then(parser, (name, value) => new KeyValuePair<string, T>(name, value));
 
 	/// <summary>
 	/// Parses a JSON object property into its value. Fails if the property name doesn't match the specified name.
@@ -153,6 +147,4 @@ public static class JsonParsers
 			_ => throw new InvalidOperationException(),
 		};
 	}
-
-	private static readonly IParser<string> s_colon = Token(":");
 }
