@@ -9,7 +9,7 @@ public static partial class Parser
 	{
 		if (parser is null)
 			throw new ArgumentNullException(nameof(parser));
-		return precededBy.Then(_ => parser);
+		return precededBy.Then(parser, (_, value) => value);
 	}
 
 	/// <summary>
@@ -19,7 +19,7 @@ public static partial class Parser
 	{
 		if (followedBy is null)
 			throw new ArgumentNullException(nameof(followedBy));
-		return parser.Then(x => followedBy.Success(x));
+		return parser.Then(followedBy, (value, _) => value);
 	}
 
 	/// <summary>

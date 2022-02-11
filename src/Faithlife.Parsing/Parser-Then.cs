@@ -33,7 +33,7 @@ public static partial class Parser
 	{
 		if (convertValue is null)
 			throw new ArgumentNullException(nameof(convertValue));
-		return parser.Then(value => Success(convertValue(value)));
+		return Create(position => parser.TryParse(position).MapSuccess(result => ParseResult.Success(convertValue(result.Value), result.NextPosition)));
 	}
 
 	/// <summary>
@@ -53,7 +53,7 @@ public static partial class Parser
 	{
 		if (secondParser is null)
 			throw new ArgumentNullException(nameof(secondParser));
-		return firstParser.Then(firstValue => secondParser.Select(x => firstValue.Concat(x).ToList()));
+		return firstParser.Then(secondParser, (firstValue, secondValue) => firstValue.Concat(secondValue).ToList());
 	}
 
 	/// <summary>
