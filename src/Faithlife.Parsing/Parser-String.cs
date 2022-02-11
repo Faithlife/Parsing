@@ -18,7 +18,7 @@ public static partial class Parser
 			var inputIndex = position.Index;
 			var textLength = text.Length;
 			if (string.Compare(inputText, inputIndex, text, 0, textLength, comparison) == 0)
-				return ParseResult.Success(inputText.Substring(inputIndex, textLength), position.WithNextIndex(textLength));
+				return ParseResult.Success(comparison == StringComparison.Ordinal ? text : inputText.Substring(inputIndex, textLength), position.WithNextIndex(textLength));
 
 			return ParseResult.Failure<string>(position);
 		});
