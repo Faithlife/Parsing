@@ -38,7 +38,34 @@ public static partial class Parser
 			throw new ArgumentNullException(nameof(parser));
 		if (nextParser is null)
 			throw new ArgumentNullException(nameof(nextParser));
-		return Create(position => parser.TryParse(position).MapSuccess(result => nextParser.TryParse(result.NextPosition).MapSuccess(nextResult => ParseResult.Success(combineValues(result.Value, nextResult.Value), nextResult.NextPosition))));
+		return new ThenParser<TBefore1, TBefore2, TAfter>(parser, nextParser, combineValues);
+	}
+
+	private sealed class ThenParser<TBefore1, TBefore2, TAfter> : IParser<TAfter>
+	{
+		public ThenParser(IParser<TBefore1> parser, IParser<TBefore2> nextParser, Func<TBefore1, TBefore2, TAfter> combineValues)
+		{
+			m_parser = parser;
+			m_nextParser = nextParser;
+			m_combineValues = combineValues;
+		}
+
+		public IParseResult<TAfter> TryParse(TextPosition position)
+		{
+			var result = m_parser.TryParse(position);
+			if (!result.Success)
+				return ParseResult.Failure<TAfter>(result.NextPosition);
+
+			var nextResult = m_nextParser.TryParse(result.NextPosition);
+			if (!nextResult.Success)
+				return ParseResult.Failure<TAfter>(nextResult.NextPosition);
+
+			return ParseResult.Success(m_combineValues(result.Value, nextResult.Value), nextResult.NextPosition);
+		}
+
+		private readonly IParser<TBefore1> m_parser;
+		private readonly IParser<TBefore2> m_nextParser;
+		private readonly Func<TBefore1, TBefore2, TAfter> m_combineValues;
 	}
 
 	/// <summary>
