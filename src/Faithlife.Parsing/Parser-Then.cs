@@ -59,8 +59,8 @@ public static partial class Parser
 	/// <summary>
 	/// Appends a successfully parsed value to the end of a successfully parsed collection.
 	/// </summary>
-	public static IParser<IReadOnlyList<T>> Append<T>(this IParser<IEnumerable<T>> firstParser, IParser<T> secondParser)
-		=> firstParser.Concat(secondParser.Once());
+	public static IParser<IReadOnlyList<T>> Append<T>(this IParser<IEnumerable<T>> firstParser, IParser<T> secondParser) =>
+		firstParser.Concat(secondParser.Once());
 
 	/// <summary>
 	/// Used to support LINQ query syntax.

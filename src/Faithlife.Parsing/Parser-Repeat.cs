@@ -45,15 +45,15 @@ public static partial class Parser
 	/// <summary>
 	/// Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item.
 	/// </summary>
-	public static IParser<IReadOnlyList<TValue>> Delimited<TValue, TDelimiter>(this IParser<TValue> parser, IParser<TDelimiter> delimiter)
-		=> parser.Once().Then(parser.PrecededBy(delimiter).Many(), (first, rest) => first.Concat(rest).ToList());
+	public static IParser<IReadOnlyList<TValue>> Delimited<TValue, TDelimiter>(this IParser<TValue> parser, IParser<TDelimiter> delimiter) =>
+		parser.Once().Then(parser.PrecededBy(delimiter).Many(), (first, rest) => first.Concat(rest).ToList());
 
 	/// <summary>
 	/// Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item,
 	/// and allowing a single optional trailing delimiter.
 	/// </summary>
-	public static IParser<IReadOnlyList<TValue>> DelimitedAllowTrailing<TValue, TDelimiter>(this IParser<TValue> parser, IParser<TDelimiter> delimiter)
-		=> parser.Once().Then(parser.PrecededBy(delimiter).Many().FollowedBy(delimiter.OrDefault()), (first, rest) => first.Concat(rest).ToList());
+	public static IParser<IReadOnlyList<TValue>> DelimitedAllowTrailing<TValue, TDelimiter>(this IParser<TValue> parser, IParser<TDelimiter> delimiter) =>
+		parser.Once().Then(parser.PrecededBy(delimiter).Many().FollowedBy(delimiter.OrDefault()), (first, rest) => first.Concat(rest).ToList());
 
 	private static IParser<IReadOnlyList<T>> DoRepeat<T>(this IParser<T> parser, int atLeast, int? atMost)
 	{

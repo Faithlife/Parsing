@@ -25,7 +25,8 @@ public static partial class Parser
 	/// <summary>
 	/// Succeeds if the specified parsers succeed beforehand and afterward (ignoring their results).
 	/// </summary>
-	public static IParser<TValue> Bracketed<TValue, TPreceding, TFollowing>(this IParser<TValue> parser, IParser<TPreceding> precededBy, IParser<TFollowing> followedBy) => parser.PrecededBy(precededBy).FollowedBy(followedBy);
+	public static IParser<TValue> Bracketed<TValue, TPreceding, TFollowing>(this IParser<TValue> parser, IParser<TPreceding> precededBy, IParser<TFollowing> followedBy) =>
+		parser.PrecededBy(precededBy).FollowedBy(followedBy);
 
 	/// <summary>
 	/// Succeeds if the specified parser succeeds, ignoring any whitespace characters beforehand.

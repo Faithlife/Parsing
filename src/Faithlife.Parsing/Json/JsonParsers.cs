@@ -60,44 +60,32 @@ public static class JsonParsers
 	/// <summary>
 	/// Parses an array of JSON values, each of which is parsed with the specified parser.
 	/// </summary>
-	public static IParser<IReadOnlyList<T>> JsonArrayOf<T>(this IParser<T> parser)
-	{
-		return parser
-			.Delimited(Token(","))
-			.OrEmpty()
-			.Bracketed(Token("["), Token("]"))
-			.Named("array");
-	}
+	public static IParser<IReadOnlyList<T>> JsonArrayOf<T>(this IParser<T> parser) =>
+		parser.Delimited(Token(",")).OrEmpty().Bracketed(Token("["), Token("]")).Named("array");
 
 	/// <summary>
 	/// Parses a JSON object property (i.e. name, colon, and value). The property value is parsed with the specified parser.
 	/// </summary>
-	public static IParser<KeyValuePair<string, T>> JsonPropertyOf<T>(this IParser<T> parser)
-		=> JsonString.FollowedBy(Token(":")).Then(parser, (name, value) => new KeyValuePair<string, T>(name, value));
+	public static IParser<KeyValuePair<string, T>> JsonPropertyOf<T>(this IParser<T> parser) =>
+		JsonString.FollowedBy(Token(":")).Then(parser, (name, value) => new KeyValuePair<string, T>(name, value));
 
 	/// <summary>
 	/// Parses a JSON object property into its value. Fails if the property name doesn't match the specified name.
 	/// </summary>
-	public static IParser<T> JsonPropertyNamed<T>(this IParser<T> parser, string name)
-		=> parser.JsonPropertyNamed(name, StringComparison.Ordinal);
+	public static IParser<T> JsonPropertyNamed<T>(this IParser<T> parser, string name) =>
+		parser.JsonPropertyNamed(name, StringComparison.Ordinal);
 
 	/// <summary>
 	/// Parses a JSON object property into its value. Fails if the property name doesn't match the specified name.
 	/// </summary>
-	public static IParser<T> JsonPropertyNamed<T>(this IParser<T> parser, string name, StringComparison comparison)
-		=> parser.JsonPropertyOf().Where(x => string.Equals(x.Key, name, comparison)).Select(x => x.Value);
+	public static IParser<T> JsonPropertyNamed<T>(this IParser<T> parser, string name, StringComparison comparison) =>
+		parser.JsonPropertyOf().Where(x => string.Equals(x.Key, name, comparison)).Select(x => x.Value);
 
 	/// <summary>
 	/// Parses a JSON object from its properties. The specified parser must parse each entire JSON property (name, colon, and value).
 	/// </summary>
-	public static IParser<IReadOnlyList<T>> JsonObjectOf<T>(this IParser<T> parser)
-	{
-		return parser
-			.Delimited(Token(","))
-			.OrEmpty()
-			.Bracketed(Token("{"), Token("}"))
-			.Named("object");
-	}
+	public static IParser<IReadOnlyList<T>> JsonObjectOf<T>(this IParser<T> parser) =>
+		parser.Delimited(Token(",")).OrEmpty().Bracketed(Token("{"), Token("}")).Named("object");
 
 	/// <summary>
 	/// Parses a JSON array of arbitrary JSON values.
@@ -114,13 +102,8 @@ public static class JsonParsers
 	/// </summary>
 	/// <remarks>The resulting object is a null, Boolean, String, Int64, Double, IReadOnlyList{Object},
 	/// or IReadOnlyList{KeyValuePair{string,object}}.</remarks>
-	public static readonly IParser<object?> JsonValue = Parser.Or(
-		JsonString,
-		JsonNumber,
-		JsonObject,
-		JsonArray,
-		JsonBoolean.Select(x => (object) x),
-		JsonNull);
+	public static readonly IParser<object?> JsonValue =
+		Parser.Or(JsonString, JsonNumber, JsonObject, JsonArray, JsonBoolean.Select(x => (object) x), JsonNull);
 
 	private static IParser<string> Token(string value) => Parser.String(value, StringComparison.Ordinal).Trim().Named("'" + value + "'");
 
