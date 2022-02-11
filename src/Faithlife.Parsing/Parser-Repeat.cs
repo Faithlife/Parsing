@@ -70,7 +70,9 @@ public static partial class Parser
 	{
 		return Create(position =>
 		{
-			var values = new List<T>(capacity: atLeast);
+			var hasValue = false;
+			T value = default!;
+			List<T>? values = null;
 			var remainder = position;
 			var repeated = 0;
 
@@ -81,12 +83,23 @@ public static partial class Parser
 				var result = parser.TryParse(remainder);
 				if (!result.Success || result.NextPosition == remainder)
 					break;
-				values.Add(result.Value);
+				if (!hasValue)
+				{
+					value = result.Value;
+					hasValue = true;
+				}
+				else
+				{
+					values ??= new List<T> { value };
+					values.Add(result.Value);
+				}
 				remainder = result.NextPosition;
 				repeated++;
 			}
 
-			return repeated >= atLeast ? ParseResult.Success<IReadOnlyList<T>>(values, remainder) : ParseResult.Failure<IReadOnlyList<T>>(position);
+			return repeated >= atLeast
+				? ParseResult.Success<IReadOnlyList<T>>(values != null ? values : hasValue ? new[] { value } : Array.Empty<T>(), remainder)
+				: ParseResult.Failure<IReadOnlyList<T>>(position);
 		});
 	}
 }
