@@ -21,12 +21,12 @@ public static partial class Parser
 	public static IParseResult<T> TryParse<T>(this IParser<T> parser, string text, int startIndex) => parser.TryParse(new TextPosition(text, startIndex));
 
 	/// <summary>
-	/// Parses the specified text, throwing ParseException on failure.
+	/// Parses the specified text, throwing <see cref="ParseException" /> on failure.
 	/// </summary>
 	public static T Parse<T>(this IParser<T> parser, string text) => parser.Parse(text, 0);
 
 	/// <summary>
-	/// Parses the specified text at the specified start index, throwing ParseException on failure.
+	/// Parses the specified text at the specified start index, throwing <see cref="ParseException" /> on failure.
 	/// </summary>
 	public static T Parse<T>(this IParser<T> parser, string text, int startIndex) => parser.TryParse(text, startIndex).Value;
 
