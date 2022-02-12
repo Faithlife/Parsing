@@ -35,8 +35,8 @@ public static class ParseResult
 	/// <summary>
 	/// Maps a successful parse result into another parse result (success or failure).
 	/// </summary>
-	public static IParseResult<TAfter> MapSuccess<TBefore, TAfter>(this IParseResult<TBefore> result, Func<IParseResult<TBefore>, IParseResult<TAfter>> convert)
-		=> result.Success ? convert(result) : Failure<TAfter>(result.NextPosition);
+	public static IParseResult<TAfter> MapSuccess<TBefore, TAfter>(this IParseResult<TBefore> result, Func<IParseResult<TBefore>, IParseResult<TAfter>> convert) =>
+		result.Success ? convert(result) : Failure<TAfter>(result.NextPosition);
 
 	/// <summary>
 	/// Creates a message for the parse result.
