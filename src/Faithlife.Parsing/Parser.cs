@@ -6,11 +6,6 @@ namespace Faithlife.Parsing;
 public static partial class Parser
 {
 	/// <summary>
-	/// Creates a parser from a delegate.
-	/// </summary>
-	public static IParser<T> Create<T>(Func<TextPosition, IParseResult<T>> parse) => new SimpleParser<T>(parse);
-
-	/// <summary>
 	/// Attempts to parse the specified text.
 	/// </summary>
 	public static IParseResult<T> TryParse<T>(this IParser<T> parser, string text) => parser.TryParse(text, 0);
@@ -29,6 +24,12 @@ public static partial class Parser
 	/// Parses the specified text at the specified start index, throwing <see cref="ParseException" /> on failure.
 	/// </summary>
 	public static T Parse<T>(this IParser<T> parser, string text, int startIndex) => parser.TryParse(text, startIndex).Value;
+
+	/// <summary>
+	/// Creates a parser from a delegate.
+	/// </summary>
+	/// <remarks>For maximum performance, derive from <see cref="Parser{T}" />.</remarks>
+	public static IParser<T> Create<T>(Func<TextPosition, IParseResult<T>> parse) => new SimpleParser<T>(parse);
 
 	private sealed class SimpleParser<T> : Parser<T>
 	{

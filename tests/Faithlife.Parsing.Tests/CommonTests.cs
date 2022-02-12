@@ -93,4 +93,17 @@ public class CommonTests
 		Parser.Char('a').TryParse("b").ToMessage().ShouldBe("failure at 1,1");
 		Parser.Char('a').Named("'a'").TryParse("b").ToMessage().ShouldBe("failure at 1,1; expected 'a' at 1,1");
 	}
+
+	[Fact]
+	public void ParserCreate()
+	{
+		var parser = Parser.Create(position =>
+		{
+			var nextPosition = position;
+			while (!nextPosition.IsAtEnd() && nextPosition.GetCurrentChar() == '!')
+				nextPosition = nextPosition.WithNextIndex();
+			return position == nextPosition ? ParseResult.Failure<int>(position) : ParseResult.Success(nextPosition.Index - position.Index, nextPosition);
+		});
+		parser.Parse("!!!").ShouldBe(3);
+	}
 }
