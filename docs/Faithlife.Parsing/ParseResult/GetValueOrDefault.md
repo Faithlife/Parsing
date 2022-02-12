@@ -3,7 +3,7 @@
 Gets the parse result value on success, or the default value on failure.
 
 ```csharp
-public static T GetValueOrDefault<T>(this IParseResult<T> result)
+public static T? GetValueOrDefault<T>(this IParseResult<T> result)
 ```
 
 ## See Also
@@ -19,7 +19,7 @@ public static T GetValueOrDefault<T>(this IParseResult<T> result)
 Gets the parse result value on success, or the default value on failure.
 
 ```csharp
-public static T GetValueOrDefault<T>(this IParseResult<T> result, T defaultValue)
+public static T? GetValueOrDefault<T>(this IParseResult<T> result, T? defaultValue)
 ```
 
 ## See Also

@@ -1,10 +1,44 @@
-# Parser.Then&lt;TBefore,TAfter&gt; method
+# Parser.Then&lt;TBefore1,TBefore2&gt; method (1 of 3)
+
+Executes one parser after another.
+
+```csharp
+public static IParser<(TBefore1, TBefore2)> Then<TBefore1, TBefore2>(this IParser<TBefore1> parser, 
+    IParser<TBefore2> nextParser)
+```
+
+## See Also
+
+* interface [IParser&lt;T&gt;](../IParser-1.md)
+* class [Parser](../Parser.md)
+* namespace [Faithlife.Parsing](../../Faithlife.Parsing.md)
+
+---
+
+# Parser.Then&lt;TBefore,TAfter&gt; method (2 of 3)
 
 Executes one parser after another.
 
 ```csharp
 public static IParser<TAfter> Then<TBefore, TAfter>(this IParser<TBefore> parser, 
     Func<TBefore, IParser<TAfter>> convertValueToNextParser)
+```
+
+## See Also
+
+* interface [IParser&lt;T&gt;](../IParser-1.md)
+* class [Parser](../Parser.md)
+* namespace [Faithlife.Parsing](../../Faithlife.Parsing.md)
+
+---
+
+# Parser.Then&lt;TBefore1,TBefore2,TAfter&gt; method (3 of 3)
+
+Executes one parser after another.
+
+```csharp
+public static IParser<TAfter> Then<TBefore1, TBefore2, TAfter>(this IParser<TBefore1> parser, 
+    IParser<TBefore2> nextParser, Func<TBefore1, TBefore2, TAfter> combineValues)
 ```
 
 ## See Also

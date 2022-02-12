@@ -16,7 +16,7 @@ public interface IParseResult
 
 ## See Also
 
-* class [ParseResult](ParseResult.md)
+* class [ParseResult](./ParseResult.md)
 * namespace [Faithlife.Parsing](../Faithlife.Parsing.md)
 * [IParseResult.cs](https://github.com/Faithlife/Parsing/tree/master/src/Faithlife.Parsing/IParseResult.cs)
 

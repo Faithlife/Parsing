@@ -51,7 +51,9 @@ public static class Parser
 | static [String](Parser/String.md)(…) | Parses the specified string using ordinal (case-sensitive) comparison. (3 methods) |
 | static [Success&lt;T&gt;](Parser/Success.md)(…) | Succeeds with the specified value without advancing the text position. |
 | static [Success&lt;TBefore,TAfter&gt;](Parser/Success.md)(…) | Succeeds with the specified value if the parser is successful. |
+| static [Then&lt;TBefore1,TBefore2&gt;](Parser/Then.md)(…) | Executes one parser after another. |
 | static [Then&lt;TBefore,TAfter&gt;](Parser/Then.md)(…) | Executes one parser after another. |
+| static [Then&lt;TBefore1,TBefore2,TAfter&gt;](Parser/Then.md)(…) | Executes one parser after another. |
 | static [Trim&lt;T&gt;](Parser/Trim.md)(…) | Succeeds if the specified parser succeeds, ignoring any whitespace characters beforehand or afterward. |
 | static [TrimEnd&lt;T&gt;](Parser/TrimEnd.md)(…) | Succeeds if the specified parser succeeds, ignoring any whitespace characters afterward. |
 | static [TrimStart&lt;T&gt;](Parser/TrimStart.md)(…) | Succeeds if the specified parser succeeds, ignoring any whitespace characters beforehand. |

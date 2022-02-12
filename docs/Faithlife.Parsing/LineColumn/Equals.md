@@ -18,7 +18,7 @@ public bool Equals(LineColumn other)
 Checks for equality.
 
 ```csharp
-public override bool Equals(object other)
+public override bool Equals(object obj)
 ```
 
 ## See Also

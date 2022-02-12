@@ -14,7 +14,7 @@ public interface IParser<out T>
 
 ## See Also
 
-* class [Parser](Parser.md)
+* class [Parser](./Parser.md)
 * namespace [Faithlife.Parsing](../Faithlife.Parsing.md)
 * [IParser.cs](https://github.com/Faithlife/Parsing/tree/master/src/Faithlife.Parsing/IParser.cs)
 

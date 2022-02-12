@@ -8,7 +8,7 @@ public static IParser<T> Or<T>(IEnumerable<IParser<T>> parsers)
 
 ## Remarks
 
-The first successful parser that advances the text position is returned. Otherwise, the first successful parser that does not advance the text position is returned. Otherwise, the first failure is returned.
+The first successful parser that advances the text position is returned. Otherwise, the first successful parser that does not advance the text position is returned. Otherwise, the failure that advanced the text position farthest is returned.
 
 ## See Also
 
