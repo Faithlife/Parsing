@@ -40,7 +40,7 @@ public static partial class Parser
 	/// </summary>
 	/// <remarks>The first successful parser that advances the text position is returned.
 	/// Otherwise, the first successful parser that does not advance the text position is returned.
-	/// Otherwise, the first failure is returned.</remarks>
+	/// Otherwise, the failure that advanced the text position farthest is returned.</remarks>
 	public static IParser<T> Or<T>(params IParser<T>[] parsers) => Or((IEnumerable<IParser<T>>) parsers);
 
 	/// <summary>
@@ -48,7 +48,7 @@ public static partial class Parser
 	/// </summary>
 	/// <remarks>The first successful parser that advances the text position is returned.
 	/// Otherwise, the first successful parser that does not advance the text position is returned.
-	/// Otherwise, the first failure is returned.</remarks>
+	/// Otherwise, the failure that advanced the text position farthest is returned.</remarks>
 	public static IParser<T> Or<T>(this IParser<T> first, IParser<T> second) => Or(new[] { first, second });
 
 	/// <summary>
@@ -57,7 +57,7 @@ public static partial class Parser
 	public static IParser<T> OrDefault<T>(this IParser<T> parser) => parser.OrDefault(default!);
 
 	/// <summary>
-	/// Succeeds with the default value if the parser fails.
+	/// Succeeds with the specified value if the parser fails.
 	/// </summary>
 	public static IParser<T> OrDefault<T>(this IParser<T> parser, T value) => parser.Or(Success(value));
 
