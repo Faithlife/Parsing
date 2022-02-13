@@ -69,6 +69,18 @@ public static partial class Parser
 	}
 
 	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	public static IParser<T1> ThenSkip<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
+		parser.Then(nextParser, (value, _) => value);
+
+	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	public static IParser<T2> SkipThen<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
+		parser.Then(nextParser, (_, value) => value);
+
+	/// <summary>
 	/// Converts any successfully parsed value.
 	/// </summary>
 	public static IParser<TAfter> Select<TBefore, TAfter>(this IParser<TBefore> parser, Func<TBefore, TAfter> convertValue)

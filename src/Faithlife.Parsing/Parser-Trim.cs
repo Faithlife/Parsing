@@ -6,13 +6,13 @@ public static partial class Parser
 	/// Succeeds if the specified parser also succeeds beforehand (ignoring its result).
 	/// </summary>
 	public static IParser<TValue> PrecededBy<TValue, TPreceding>(this IParser<TValue> parser, IParser<TPreceding> precededBy) =>
-		precededBy.Then(parser, (_, value) => value);
+		precededBy.SkipThen(parser);
 
 	/// <summary>
 	/// Succeeds if the specified parser also succeeds afterward (ignoring its result).
 	/// </summary>
 	public static IParser<TValue> FollowedBy<TValue, TFollowing>(this IParser<TValue> parser, IParser<TFollowing> followedBy) =>
-		parser.Then(followedBy, (value, _) => value);
+		parser.ThenSkip(followedBy);
 
 	/// <summary>
 	/// Succeeds if the specified parser succeeds beforehand and afterward (ignoring its results).
