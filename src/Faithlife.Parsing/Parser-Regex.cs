@@ -9,7 +9,7 @@ public static partial class Parser
 	/// </summary>
 	/// <remarks>The regular expression pattern is automatically anchored at the beginning
 	/// of the text, but not at the end of the text. The parsed value is the successful Match.</remarks>
-	public static IParser<Match> Regex(string pattern) => Regex(pattern, RegexOptions.None);
+	public static IParser<Match> Regex(string pattern) => Regex(pattern, RegexOptions.CultureInvariant);
 
 	/// <summary>
 	/// Succeeds if the specified regular expression pattern matches the text.
