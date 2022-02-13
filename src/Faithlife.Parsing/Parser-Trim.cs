@@ -15,6 +15,12 @@ public static partial class Parser
 		parser.Then(followedBy, (value, _) => value);
 
 	/// <summary>
+	/// Succeeds if the specified parser succeeds beforehand and afterward (ignoring its results).
+	/// </summary>
+	public static IParser<TValue> Bracketed<TValue, TBracketing>(this IParser<TValue> parser, IParser<TBracketing> bracketedBy) =>
+		parser.Bracketed(bracketedBy, bracketedBy);
+
+	/// <summary>
 	/// Succeeds if the specified parsers succeed beforehand and afterward (ignoring their results).
 	/// </summary>
 	public static IParser<TValue> Bracketed<TValue, TPreceding, TFollowing>(this IParser<TValue> parser, IParser<TPreceding> precededBy, IParser<TFollowing> followedBy) =>
@@ -33,5 +39,5 @@ public static partial class Parser
 	/// <summary>
 	/// Succeeds if the specified parser succeeds, ignoring any whitespace characters beforehand or afterward.
 	/// </summary>
-	public static IParser<T> Trim<T>(this IParser<T> parser) => parser.TrimStart().TrimEnd();
+	public static IParser<T> Trim<T>(this IParser<T> parser) => parser.Bracketed(WhiteSpace.Many());
 }
