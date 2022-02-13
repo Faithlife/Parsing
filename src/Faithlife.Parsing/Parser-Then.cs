@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Faithlife.Parsing;
 
+[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "No better names.")]
 public static partial class Parser
 {
 	/// <summary>
@@ -19,31 +20,24 @@ public static partial class Parser
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
-	[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "No better names.")]
-	public static IParser<(TBefore1, TBefore2)> Then<TBefore1, TBefore2>(this IParser<TBefore1> parser, IParser<TBefore2> nextParser)
-	{
-		if (parser is null)
-			throw new ArgumentNullException(nameof(parser));
-		if (nextParser is null)
-			throw new ArgumentNullException(nameof(nextParser));
-		return Create(position => parser.TryParse(position).MapSuccess(result => nextParser.TryParse(result.NextPosition).MapSuccess(nextResult => ParseResult.Success((result.Value, nextResult.Value), nextResult.NextPosition))));
-	}
+	public static IParser<(T1, T2)> Then<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
+		parser.Then(nextParser, (value, nextValue) => (value, nextValue));
 
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
-	public static IParser<TAfter> Then<TBefore1, TBefore2, TAfter>(this IParser<TBefore1> parser, IParser<TBefore2> nextParser, Func<TBefore1, TBefore2, TAfter> combineValues)
+	public static IParser<TAfter> Then<T1, T2, TAfter>(this IParser<T1> parser, IParser<T2> nextParser, Func<T1, T2, TAfter> combineValues)
 	{
 		if (parser is null)
 			throw new ArgumentNullException(nameof(parser));
 		if (nextParser is null)
 			throw new ArgumentNullException(nameof(nextParser));
-		return new ThenParser<TBefore1, TBefore2, TAfter>(parser, nextParser, combineValues);
+		return new ThenParser<T1, T2, TAfter>(parser, nextParser, combineValues);
 	}
 
-	private sealed class ThenParser<TBefore1, TBefore2, TAfter> : IParser<TAfter>
+	private sealed class ThenParser<T1, T2, TAfter> : IParser<TAfter>
 	{
-		public ThenParser(IParser<TBefore1> parser, IParser<TBefore2> nextParser, Func<TBefore1, TBefore2, TAfter> combineValues)
+		public ThenParser(IParser<T1> parser, IParser<T2> nextParser, Func<T1, T2, TAfter> combineValues)
 		{
 			m_parser = parser;
 			m_nextParser = nextParser;
@@ -63,9 +57,9 @@ public static partial class Parser
 			return ParseResult.Success(m_combineValues(result.Value, nextResult.Value), nextResult.NextPosition);
 		}
 
-		private readonly IParser<TBefore1> m_parser;
-		private readonly IParser<TBefore2> m_nextParser;
-		private readonly Func<TBefore1, TBefore2, TAfter> m_combineValues;
+		private readonly IParser<T1> m_parser;
+		private readonly IParser<T2> m_nextParser;
+		private readonly Func<T1, T2, TAfter> m_combineValues;
 	}
 
 	/// <summary>
