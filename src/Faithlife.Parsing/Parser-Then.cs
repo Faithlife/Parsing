@@ -38,24 +38,24 @@ public static partial class Parser
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
-	public static IParser<(TBefore1, TBefore2)> Then<TBefore1, TBefore2>(this IParser<TBefore1> parser, IParser<TBefore2> nextParser)
+	public static IParser<(T1, T2)> Then<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser)
 	{
 		if (parser is null)
 			throw new ArgumentNullException(nameof(parser));
 		if (nextParser is null)
 			throw new ArgumentNullException(nameof(nextParser));
-		return new ThenTupleParser<TBefore1, TBefore2>(parser, nextParser);
+		return new ThenTupleParser<T1, T2>(parser, nextParser);
 	}
 
-	private sealed class ThenTupleParser<TBefore1, TBefore2> : Parser<(TBefore1, TBefore2)>
+	private sealed class ThenTupleParser<T1, T2> : Parser<(T1, T2)>
 	{
-		public ThenTupleParser(IParser<TBefore1> parser, IParser<TBefore2> nextParser)
+		public ThenTupleParser(IParser<T1> parser, IParser<T2> nextParser)
 		{
 			m_parser = parser;
 			m_nextParser = nextParser;
 		}
 
-		public override (TBefore1, TBefore2) TryParse(ref TextPosition position, out bool success)
+		protected override (T1, T2) TryParse(ref TextPosition position, out bool success)
 		{
 			var value = m_parser.TryParse(ref position, out success);
 			if (!success)
@@ -68,8 +68,8 @@ public static partial class Parser
 			return (value, nextValue);
 		}
 
-		private readonly IParser<TBefore1> m_parser;
-		private readonly IParser<TBefore2> m_nextParser;
+		private readonly IFastParser<T1> m_parser;
+		private readonly IFastParser<T2> m_nextParser;
 	}
 
 	/// <summary>
