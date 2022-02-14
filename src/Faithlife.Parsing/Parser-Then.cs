@@ -3,26 +3,22 @@ using System.Diagnostics.CodeAnalysis;
 namespace Faithlife.Parsing;
 
 [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1414:Tuple types in signatures should have element names", Justification = "No better names.")]
+[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1128:Put constructor initializers on their own line", Justification = "More compact.")]
+[SuppressMessage("StyleCop.CSharp.LayoutRules", "SA1502:Element should not be on a single line", Justification = "More compact.")]
 public static partial class Parser
 {
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
-	public static IParser<TAfter> Then<TBefore, TAfter>(this IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser)
-	{
-		if (parser is null)
-			throw new ArgumentNullException(nameof(parser));
-		if (convertValueToNextParser is null)
-			throw new ArgumentNullException(nameof(convertValueToNextParser));
-		return new ThenCreateParser<TBefore, TAfter>(parser, convertValueToNextParser);
-	}
+	public static IParser<TAfter> Then<TBefore, TAfter>(this IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser) =>
+		new ThenCreateParser<TBefore, TAfter>(parser, convertValueToNextParser);
 
 	private sealed class ThenCreateParser<TBefore, TAfter> : Parser<TAfter>
 	{
 		public ThenCreateParser(IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser)
 		{
-			m_parser = parser;
-			m_convertValueToNextParser = convertValueToNextParser;
+			m_parser = parser ?? throw new ArgumentNullException(nameof(parser));
+			m_convertValueToNextParser = convertValueToNextParser ?? throw new ArgumentNullException(nameof(convertValueToNextParser));
 		}
 
 		public override TAfter TryParse(ref TextPosition position, out bool success)
@@ -38,59 +34,15 @@ public static partial class Parser
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
-	public static IParser<(T1, T2)> Then<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser)
-	{
-		if (parser is null)
-			throw new ArgumentNullException(nameof(parser));
-		if (nextParser is null)
-			throw new ArgumentNullException(nameof(nextParser));
-		return new ThenTupleParser<T1, T2>(parser, nextParser);
-	}
+	public static IParser<TAfter> Then<T1, T2, TAfter>(this IParser<T1> parser, IParser<T2> nextParser, Func<T1, T2, TAfter> combineValues) =>
+		new FuncThenParser<T1, T2, TAfter>(parser, nextParser, combineValues);
 
-	private sealed class ThenTupleParser<T1, T2> : Parser<(T1, T2)>
+	private abstract class ThenParser<T1, T2, TAfter> : Parser<TAfter>
 	{
-		public ThenTupleParser(IParser<T1> parser, IParser<T2> nextParser)
+		protected ThenParser(IParser<T1> parser, IParser<T2> nextParser)
 		{
-			m_parser = parser;
-			m_nextParser = nextParser;
-		}
-
-		public override (T1, T2) TryParse(ref TextPosition position, out bool success)
-		{
-			var value = m_parser.TryParse(ref position, out success);
-			if (!success)
-				return default!;
-
-			var nextValue = m_nextParser.TryParse(ref position, out success);
-			if (!success)
-				return default!;
-
-			return (value, nextValue);
-		}
-
-		private readonly IParser<T1> m_parser;
-		private readonly IParser<T2> m_nextParser;
-	}
-
-	/// <summary>
-	/// Executes one parser after another.
-	/// </summary>
-	public static IParser<TAfter> Then<T1, T2, TAfter>(this IParser<T1> parser, IParser<T2> nextParser, Func<T1, T2, TAfter> combineValues)
-	{
-		if (parser is null)
-			throw new ArgumentNullException(nameof(parser));
-		if (nextParser is null)
-			throw new ArgumentNullException(nameof(nextParser));
-		return new ThenParser<T1, T2, TAfter>(parser, nextParser, combineValues);
-	}
-
-	private sealed class ThenParser<T1, T2, TAfter> : Parser<TAfter>
-	{
-		public ThenParser(IParser<T1> parser, IParser<T2> nextParser, Func<T1, T2, TAfter> combineValues)
-		{
-			m_parser = parser;
-			m_nextParser = nextParser;
-			m_combineValues = combineValues;
+			m_parser = parser ?? throw new ArgumentNullException(nameof(parser));
+			m_nextParser = nextParser ?? throw new ArgumentNullException(nameof(nextParser));
 		}
 
 		public override TAfter TryParse(ref TextPosition position, out bool success)
@@ -103,25 +55,142 @@ public static partial class Parser
 			if (!success)
 				return default!;
 
-			return m_combineValues(value, nextValue);
+			return CombineValues(value, nextValue);
 		}
+
+		protected abstract TAfter CombineValues(T1 value, T2 nextValue);
 
 		private readonly IParser<T1> m_parser;
 		private readonly IParser<T2> m_nextParser;
+	}
+
+	private sealed class FuncThenParser<T1, T2, TAfter> : ThenParser<T1, T2, TAfter>
+	{
+		public FuncThenParser(IParser<T1> parser, IParser<T2> nextParser, Func<T1, T2, TAfter> combineValues)
+			: base(parser, nextParser)
+		{
+			m_combineValues = combineValues;
+		}
+
+		protected override TAfter CombineValues(T1 value, T2 nextValue) => m_combineValues(value, nextValue);
+
 		private readonly Func<T1, T2, TAfter> m_combineValues;
 	}
 
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
-	public static IParser<T1> ThenSkip<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
-		parser.Then(nextParser, (value, _) => value);
+	public static IParser<(T1, T2)> Then<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
+		new ThenTupleParser<T1, T2>(parser, nextParser);
+
+	private sealed class ThenTupleParser<T1, T2> : ThenParser<T1, T2, (T1, T2)>
+	{
+		public ThenTupleParser(IParser<T1> parser, IParser<T2> nextParser) : base(parser, nextParser) { }
+		protected override (T1, T2) CombineValues(T1 value, T2 nextValue) =>
+			(value, nextValue);
+	}
 
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
+	public static IParser<(T1, T2, T3)> Then<T1, T2, T3>(this IParser<(T1, T2)> parser, IParser<T3> nextParser) =>
+		new ThenTupleParser<T1, T2, T3>(parser, nextParser);
+
+	private sealed class ThenTupleParser<T1, T2, T3> : ThenParser<(T1, T2), T3, (T1, T2, T3)>
+	{
+		public ThenTupleParser(IParser<(T1, T2)> parser, IParser<T3> nextParser) : base(parser, nextParser) { }
+		protected override (T1, T2, T3) CombineValues((T1, T2) value, T3 nextValue) =>
+			(value.Item1, value.Item2, nextValue);
+	}
+
+	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	public static IParser<(T1, T2, T3, T4)> Then<T1, T2, T3, T4>(this IParser<(T1, T2, T3)> parser, IParser<T4> nextParser) =>
+		new ThenTupleParser<T1, T2, T3, T4>(parser, nextParser);
+
+	private sealed class ThenTupleParser<T1, T2, T3, T4> : ThenParser<(T1, T2, T3), T4, (T1, T2, T3, T4)>
+	{
+		public ThenTupleParser(IParser<(T1, T2, T3)> parser, IParser<T4> nextParser) : base(parser, nextParser) { }
+		protected override (T1, T2, T3, T4) CombineValues((T1, T2, T3) value, T4 nextValue) =>
+			(value.Item1, value.Item2, value.Item3, nextValue);
+	}
+
+	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	public static IParser<(T1, T2, T3, T4, T5)> Then<T1, T2, T3, T4, T5>(this IParser<(T1, T2, T3, T4)> parser, IParser<T5> nextParser) =>
+		new ThenTupleParser<T1, T2, T3, T4, T5>(parser, nextParser);
+
+	private sealed class ThenTupleParser<T1, T2, T3, T4, T5> : ThenParser<(T1, T2, T3, T4), T5, (T1, T2, T3, T4, T5)>
+	{
+		public ThenTupleParser(IParser<(T1, T2, T3, T4)> parser, IParser<T5> nextParser) : base(parser, nextParser) { }
+		protected override (T1, T2, T3, T4, T5) CombineValues((T1, T2, T3, T4) value, T5 nextValue) =>
+			(value.Item1, value.Item2, value.Item3, value.Item4, nextValue);
+	}
+
+	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	public static IParser<(T1, T2, T3, T4, T5, T6)> Then<T1, T2, T3, T4, T5, T6>(this IParser<(T1, T2, T3, T4, T5)> parser, IParser<T6> nextParser) =>
+		new ThenTupleParser<T1, T2, T3, T4, T5, T6>(parser, nextParser);
+
+	private sealed class ThenTupleParser<T1, T2, T3, T4, T5, T6> : ThenParser<(T1, T2, T3, T4, T5), T6, (T1, T2, T3, T4, T5, T6)>
+	{
+		public ThenTupleParser(IParser<(T1, T2, T3, T4, T5)> parser, IParser<T6> nextParser) : base(parser, nextParser) { }
+		protected override (T1, T2, T3, T4, T5, T6) CombineValues((T1, T2, T3, T4, T5) value, T6 nextValue) =>
+			(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, nextValue);
+	}
+
+	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	public static IParser<(T1, T2, T3, T4, T5, T6, T7)> Then<T1, T2, T3, T4, T5, T6, T7>(this IParser<(T1, T2, T3, T4, T5, T6)> parser, IParser<T7> nextParser) =>
+		new ThenTupleParser<T1, T2, T3, T4, T5, T6, T7>(parser, nextParser);
+
+	private sealed class ThenTupleParser<T1, T2, T3, T4, T5, T6, T7> : ThenParser<(T1, T2, T3, T4, T5, T6), T7, (T1, T2, T3, T4, T5, T6, T7)>
+	{
+		public ThenTupleParser(IParser<(T1, T2, T3, T4, T5, T6)> parser, IParser<T7> nextParser) : base(parser, nextParser) { }
+		protected override (T1, T2, T3, T4, T5, T6, T7) CombineValues((T1, T2, T3, T4, T5, T6) value, T7 nextValue) =>
+			(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, nextValue);
+	}
+
+	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	public static IParser<(T1, T2, T3, T4, T5, T6, T7, T8)> Then<T1, T2, T3, T4, T5, T6, T7, T8>(this IParser<(T1, T2, T3, T4, T5, T6, T7)> parser, IParser<T8> nextParser) =>
+		new ThenTupleParser<T1, T2, T3, T4, T5, T6, T7, T8>(parser, nextParser);
+
+	private sealed class ThenTupleParser<T1, T2, T3, T4, T5, T6, T7, T8> : ThenParser<(T1, T2, T3, T4, T5, T6, T7), T8, (T1, T2, T3, T4, T5, T6, T7, T8)>
+	{
+		public ThenTupleParser(IParser<(T1, T2, T3, T4, T5, T6, T7)> parser, IParser<T8> nextParser) : base(parser, nextParser) { }
+		protected override (T1, T2, T3, T4, T5, T6, T7, T8) CombineValues((T1, T2, T3, T4, T5, T6, T7) value, T8 nextValue) =>
+			(value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, value.Item7, nextValue);
+	}
+
+	/// <summary>
+	/// Executes one parser after another, ignoring the output of the second parser.
+	/// </summary>
+	public static IParser<T1> ThenSkip<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
+		new ThenSkipTupleParser<T1, T2>(parser, nextParser);
+
+	private sealed class ThenSkipTupleParser<T1, T2> : ThenParser<T1, T2, T1>
+	{
+		public ThenSkipTupleParser(IParser<T1> parser, IParser<T2> nextParser) : base(parser, nextParser) { }
+		protected override T1 CombineValues(T1 value, T2 nextValue) => value;
+	}
+
+	/// <summary>
+	/// Executes one parser after another, ignoring the output of the first parser.
+	/// </summary>
 	public static IParser<T2> SkipThen<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
-		parser.Then(nextParser, (_, value) => value);
+		new SkipThenTupleParser<T1, T2>(parser, nextParser);
+
+	private sealed class SkipThenTupleParser<T1, T2> : ThenParser<T1, T2, T2>
+	{
+		public SkipThenTupleParser(IParser<T1> parser, IParser<T2> nextParser) : base(parser, nextParser) { }
+		protected override T2 CombineValues(T1 value, T2 nextValue) => nextValue;
+	}
 
 	/// <summary>
 	/// Converts any successfully parsed value.
