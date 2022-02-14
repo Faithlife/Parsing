@@ -10,30 +10,6 @@ public static partial class Parser
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
-	public static IParser<TAfter> Then<TBefore, TAfter>(this IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser) =>
-		new ThenCreateParser<TBefore, TAfter>(parser, convertValueToNextParser);
-
-	private sealed class ThenCreateParser<TBefore, TAfter> : Parser<TAfter>
-	{
-		public ThenCreateParser(IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser)
-		{
-			m_parser = parser ?? throw new ArgumentNullException(nameof(parser));
-			m_convertValueToNextParser = convertValueToNextParser ?? throw new ArgumentNullException(nameof(convertValueToNextParser));
-		}
-
-		public override TAfter TryParse(bool skip, ref TextPosition position, out bool success)
-		{
-			var value = m_parser.TryParse(skip: false, ref position, out success);
-			return success ? m_convertValueToNextParser(value).TryParse(skip, ref position, out success) : default!;
-		}
-
-		private readonly IParser<TBefore> m_parser;
-		private readonly Func<TBefore, IParser<TAfter>> m_convertValueToNextParser;
-	}
-
-	/// <summary>
-	/// Executes one parser after another.
-	/// </summary>
 	public static IParser<TAfter> Then<T1, T2, TAfter>(this IParser<T1> parser, IParser<T2> nextParser, Func<T1, T2, TAfter> combineValues) =>
 		new FuncThenParser<T1, T2, TAfter>(parser, nextParser, combineValues);
 
@@ -289,6 +265,30 @@ public static partial class Parser
 	/// </summary>
 	public static IParser<IReadOnlyList<T>> Append<T>(this IParser<IEnumerable<T>> firstParser, IParser<T> secondParser) =>
 		firstParser.Concat(secondParser.Once());
+
+	/// <summary>
+	/// Executes one parser after another.
+	/// </summary>
+	public static IParser<TAfter> Then<TBefore, TAfter>(this IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser) =>
+		new ThenCreateParser<TBefore, TAfter>(parser, convertValueToNextParser);
+
+	private sealed class ThenCreateParser<TBefore, TAfter> : Parser<TAfter>
+	{
+		public ThenCreateParser(IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser)
+		{
+			m_parser = parser ?? throw new ArgumentNullException(nameof(parser));
+			m_convertValueToNextParser = convertValueToNextParser ?? throw new ArgumentNullException(nameof(convertValueToNextParser));
+		}
+
+		public override TAfter TryParse(bool skip, ref TextPosition position, out bool success)
+		{
+			var value = m_parser.TryParse(skip: false, ref position, out success);
+			return success ? m_convertValueToNextParser(value).TryParse(skip, ref position, out success) : default!;
+		}
+
+		private readonly IParser<TBefore> m_parser;
+		private readonly Func<TBefore, IParser<TAfter>> m_convertValueToNextParser;
+	}
 
 	/// <summary>
 	/// Used to support LINQ query syntax.
