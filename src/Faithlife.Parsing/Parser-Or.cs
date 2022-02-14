@@ -16,8 +16,9 @@ public static partial class Parser
 
 		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
-			IParseResult<T>? firstEmptySuccess = null;
-			IParseResult<T>? bestFailure = null;
+			var hasEmptySuccess = false;
+			T firstEmptySuccessValue = default!;
+			TextPosition? bestFailurePosition = null;
 
 			foreach (var parser in m_parsers)
 			{
@@ -27,7 +28,11 @@ public static partial class Parser
 				{
 					if (currentPosition == position)
 					{
-						firstEmptySuccess ??= ParseResult.Success(currentValue, currentPosition);
+						if (!hasEmptySuccess)
+						{
+							hasEmptySuccess = true;
+							firstEmptySuccessValue = currentValue;
+						}
 					}
 					else
 					{
@@ -36,20 +41,20 @@ public static partial class Parser
 						return currentValue;
 					}
 				}
-				else if (bestFailure is null || currentPosition.Index > bestFailure.NextPosition.Index)
+				else if (bestFailurePosition is null || currentPosition.Index > bestFailurePosition.Value.Index)
 				{
-					bestFailure = ParseResult.Failure<T>(currentPosition);
+					bestFailurePosition = currentPosition;
 				}
 			}
 
-			if (firstEmptySuccess != null)
+			if (hasEmptySuccess)
 			{
 				success = true;
-				return firstEmptySuccess.Value;
+				return firstEmptySuccessValue;
 			}
 
-			if (bestFailure != null)
-				position = bestFailure.NextPosition;
+			if (bestFailurePosition != null)
+				position = bestFailurePosition.Value;
 
 			success = false;
 			return default!;
