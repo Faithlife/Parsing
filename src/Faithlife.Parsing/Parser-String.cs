@@ -16,7 +16,7 @@ public static partial class Parser
 	{
 		public StringParser(string text, StringComparison comparison) => (m_text, m_comparison) = (text, comparison);
 
-		public override string TryParse(ref TextPosition position, out bool success)
+		public override string TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			var inputText = position.Text;
 			var inputIndex = position.Index;
@@ -25,7 +25,7 @@ public static partial class Parser
 			{
 				position = position.WithNextIndex(textLength);
 				success = true;
-				return m_comparison == StringComparison.Ordinal ? m_text : inputText.Substring(inputIndex, textLength);
+				return m_comparison == StringComparison.Ordinal || skip ? m_text : inputText.Substring(inputIndex, textLength);
 			}
 
 			success = false;

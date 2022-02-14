@@ -21,10 +21,10 @@ public static partial class Parser
 			m_convertValueToNextParser = convertValueToNextParser ?? throw new ArgumentNullException(nameof(convertValueToNextParser));
 		}
 
-		public override TAfter TryParse(ref TextPosition position, out bool success)
+		public override TAfter TryParse(bool skip, ref TextPosition position, out bool success)
 		{
-			var value = m_parser.TryParse(ref position, out success);
-			return success ? m_convertValueToNextParser(value).TryParse(ref position, out success) : default!;
+			var value = m_parser.TryParse(skip, ref position, out success);
+			return success ? m_convertValueToNextParser(value).TryParse(skip, ref position, out success) : default!;
 		}
 
 		private readonly IParser<TBefore> m_parser;
@@ -45,13 +45,13 @@ public static partial class Parser
 			m_nextParser = nextParser ?? throw new ArgumentNullException(nameof(nextParser));
 		}
 
-		public override TAfter TryParse(ref TextPosition position, out bool success)
+		public override TAfter TryParse(bool skip, ref TextPosition position, out bool success)
 		{
-			var value = m_parser.TryParse(ref position, out success);
+			var value = m_parser.TryParse(skip, ref position, out success);
 			if (!success)
 				return default!;
 
-			var nextValue = m_nextParser.TryParse(ref position, out success);
+			var nextValue = m_nextParser.TryParse(skip, ref position, out success);
 			if (!success)
 				return default!;
 
@@ -174,10 +174,29 @@ public static partial class Parser
 	public static IParser<T1> ThenSkip<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
 		new ThenSkipTupleParser<T1, T2>(parser, nextParser);
 
-	private sealed class ThenSkipTupleParser<T1, T2> : ThenParser<T1, T2, T1>
+	private sealed class ThenSkipTupleParser<T1, T2> : Parser<T1>
 	{
-		public ThenSkipTupleParser(IParser<T1> parser, IParser<T2> nextParser) : base(parser, nextParser) { }
-		protected override T1 CombineValues(T1 value, T2 nextValue) => value;
+		public ThenSkipTupleParser(IParser<T1> parser, IParser<T2> nextParser)
+		{
+			m_parser = parser ?? throw new ArgumentNullException(nameof(parser));
+			m_nextParser = nextParser ?? throw new ArgumentNullException(nameof(nextParser));
+		}
+
+		public override T1 TryParse(bool skip, ref TextPosition position, out bool success)
+		{
+			var value = m_parser.TryParse(skip, ref position, out success);
+			if (!success)
+				return default!;
+
+			m_nextParser.TryParse(skip: true, ref position, out success);
+			if (!success)
+				return default!;
+
+			return value;
+		}
+
+		private readonly IParser<T1> m_parser;
+		private readonly IParser<T2> m_nextParser;
 	}
 
 	/// <summary>
@@ -186,10 +205,29 @@ public static partial class Parser
 	public static IParser<T2> SkipThen<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
 		new SkipThenTupleParser<T1, T2>(parser, nextParser);
 
-	private sealed class SkipThenTupleParser<T1, T2> : ThenParser<T1, T2, T2>
+	private sealed class SkipThenTupleParser<T1, T2> : Parser<T2>
 	{
-		public SkipThenTupleParser(IParser<T1> parser, IParser<T2> nextParser) : base(parser, nextParser) { }
-		protected override T2 CombineValues(T1 value, T2 nextValue) => nextValue;
+		public SkipThenTupleParser(IParser<T1> parser, IParser<T2> nextParser)
+		{
+			m_parser = parser ?? throw new ArgumentNullException(nameof(parser));
+			m_nextParser = nextParser ?? throw new ArgumentNullException(nameof(nextParser));
+		}
+
+		public override T2 TryParse(bool skip, ref TextPosition position, out bool success)
+		{
+			m_parser.TryParse(skip: true, ref position, out success);
+			if (!success)
+				return default!;
+
+			var nextValue = m_nextParser.TryParse(skip, ref position, out success);
+			if (!success)
+				return default!;
+
+			return nextValue;
+		}
+
+		private readonly IParser<T1> m_parser;
+		private readonly IParser<T2> m_nextParser;
 	}
 
 	/// <summary>
@@ -206,10 +244,10 @@ public static partial class Parser
 	{
 		public SelectParser(IParser<TBefore> parser, Func<TBefore, TAfter> convertValue) => (m_parser, m_convertValue) = (parser, convertValue);
 
-		public override TAfter TryParse(ref TextPosition position, out bool success)
+		public override TAfter TryParse(bool skip, ref TextPosition position, out bool success)
 		{
-			var value = m_parser.TryParse(ref position, out success);
-			return success ? m_convertValue(value) : default!;
+			var value = m_parser.TryParse(skip, ref position, out success);
+			return success && !skip ? m_convertValue(value) : default!;
 		}
 
 		private readonly IParser<TBefore> m_parser;
@@ -230,9 +268,9 @@ public static partial class Parser
 	{
 		public SuccessParser(IParser<TBefore> parser, TAfter value) => (m_parser, m_value) = (parser, value);
 
-		public override TAfter TryParse(ref TextPosition position, out bool success)
+		public override TAfter TryParse(bool skip, ref TextPosition position, out bool success)
 		{
-			m_parser.TryParse(ref position, out success);
+			m_parser.TryParse(skip: true, ref position, out success);
 			return success ? m_value : default!;
 		}
 

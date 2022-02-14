@@ -11,9 +11,9 @@ public static partial class Parser
 	{
 		public EndParser(IParser<T> parser) => m_parser = parser;
 
-		public override T TryParse(ref TextPosition position, out bool success)
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
-			var value = m_parser.TryParse(ref position, out success);
+			var value = m_parser.TryParse(skip, ref position, out success);
 			if (!success || position.IsAtEnd())
 				return value;
 
@@ -33,9 +33,9 @@ public static partial class Parser
 	{
 		public NamedParser(IParser<T> parser, string name) => (m_parser, m_name) = (parser, name);
 
-		public override T TryParse(ref TextPosition position, out bool success)
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
-			var value = m_parser.TryParse(ref position, out success);
+			var value = m_parser.TryParse(skip, ref position, out success);
 			if (!success)
 				position.ReportNamedFailure(m_name);
 			return value;
@@ -54,10 +54,10 @@ public static partial class Parser
 	{
 		public PositionedParser(IParser<T> parser) => m_parser = parser;
 
-		public override Positioned<T> TryParse(ref TextPosition position, out bool success)
+		public override Positioned<T> TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			var startPosition = position;
-			var value = m_parser.TryParse(ref position, out success);
+			var value = m_parser.TryParse(skip, ref position, out success);
 			return success ? new Positioned<T>(value, startPosition, position.Index - startPosition.Index) : default!;
 		}
 
@@ -74,10 +74,10 @@ public static partial class Parser
 	{
 		public RefParser(Func<IParser<T>> parserGenerator) => m_parserGenerator = parserGenerator;
 
-		public override T TryParse(ref TextPosition position, out bool success)
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			m_parser ??= m_parserGenerator();
-			return m_parser.TryParse(ref position, out success);
+			return m_parser.TryParse(skip, ref position, out success);
 		}
 
 		private readonly Func<IParser<T>> m_parserGenerator;
@@ -93,7 +93,7 @@ public static partial class Parser
 	{
 		public SuccessParser(T value) => m_value = value;
 
-		public override T TryParse(ref TextPosition position, out bool success)
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			success = true;
 			return m_value;
@@ -111,11 +111,11 @@ public static partial class Parser
 	{
 		public WhereParser(IParser<T> parser, Func<T, bool> predicate) => (m_parser, m_predicate) = (parser, predicate);
 
-		public override T TryParse(ref TextPosition position, out bool success)
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			var startPosition = position;
 
-			var value = m_parser.TryParse(ref position, out success);
+			var value = m_parser.TryParse(skip: false, ref position, out success);
 			if (!success || m_predicate(value))
 				return value;
 

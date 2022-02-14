@@ -9,7 +9,7 @@ public static partial class Parser
 
 	private abstract class CharParser : Parser<char>
 	{
-		public override char TryParse(ref TextPosition position, out bool success)
+		public override char TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			if (!position.IsAtEnd())
 			{

@@ -59,7 +59,7 @@ public static partial class Parser
 	{
 		public RepeatParser(IParser<T> parser, int atLeast, int? atMost) => (m_parser, m_atLeast, m_atMost) = (parser, atLeast, atMost);
 
-		public override IReadOnlyList<T> TryParse(ref TextPosition position, out bool success)
+		public override IReadOnlyList<T> TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			var hasValue = false;
 			T value = default!;
@@ -72,18 +72,21 @@ public static partial class Parser
 				if (repeated >= m_atMost)
 					break;
 				var currentPosition = remainder;
-				var currentValue = m_parser.TryParse(ref currentPosition, out var currentSuccess);
+				var currentValue = m_parser.TryParse(skip, ref currentPosition, out var currentSuccess);
 				if (!currentSuccess || currentPosition == remainder)
 					break;
-				if (!hasValue)
+				if (!skip)
 				{
-					value = currentValue;
-					hasValue = true;
-				}
-				else
-				{
-					values ??= new List<T> { value };
-					values.Add(currentValue);
+					if (!hasValue)
+					{
+						value = currentValue;
+						hasValue = true;
+					}
+					else
+					{
+						values ??= new List<T> { value };
+						values.Add(currentValue);
+					}
 				}
 				remainder = currentPosition;
 				repeated++;
@@ -93,7 +96,7 @@ public static partial class Parser
 			{
 				position = remainder;
 				success = true;
-				return values != null ? values : hasValue ? new[] { value } : Array.Empty<T>();
+				return skip ? default! : values != null ? values : hasValue ? new[] { value } : Array.Empty<T>();
 			}
 
 			success = false;

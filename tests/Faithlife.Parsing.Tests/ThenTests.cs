@@ -43,4 +43,12 @@ public class ThenTests
 		var tuple8 = tuple7.Then(Parser.Char('h'));
 		tuple8.TryParse("abcdefgh").ShouldSucceed(('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'));
 	}
+
+	[Fact]
+	public void TestSelectSkipped()
+	{
+		var parser = Parser.Char('a').Many().String().Select(x => x.Length);
+		parser.TryParse("aabc").ShouldSucceed(2);
+		parser.Success(true).TryParse("aabc").ShouldSucceed(true);
+	}
 }

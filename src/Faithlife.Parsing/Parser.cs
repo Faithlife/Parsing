@@ -26,7 +26,7 @@ public static partial class Parser
 	public static bool TryParse<T>(this IParser<T> parser, string text, int startIndex, out T value)
 	{
 		var position = new TextPosition(text, startIndex);
-		var successValue = parser.TryParse(ref position, out var success);
+		var successValue = parser.TryParse(skip: false, ref position, out var success);
 		value = success ? successValue : default!;
 		return success;
 	}
@@ -42,7 +42,7 @@ public static partial class Parser
 	public static T Parse<T>(this IParser<T> parser, string text, int startIndex)
 	{
 		var position = new TextPosition(text, startIndex);
-		var value = parser.TryParse(ref position, out var success);
+		var value = parser.TryParse(skip: false, ref position, out var success);
 		if (!success)
 			throw new ParseException(ParseResult.Failure<T>(position));
 		return value;
@@ -61,7 +61,7 @@ public static partial class Parser
 			m_parse = parse;
 		}
 
-		public override T TryParse(ref TextPosition position, out bool success)
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			var parseResult = m_parse(position);
 			position = parseResult.NextPosition;
@@ -83,12 +83,12 @@ public abstract class Parser<T> : IParser<T>
 	/// </summary>
 	public IParseResult<T> TryParse(TextPosition position)
 	{
-		var value = TryParse(ref position, out var success);
+		var value = TryParse(skip: false, ref position, out var success);
 		return success ? ParseResult.Success(value, position) : ParseResult.Failure<T>(position);
 	}
 
 	/// <summary>
 	/// Parses text.
 	/// </summary>
-	public abstract T TryParse(ref TextPosition position, out bool success);
+	public abstract T TryParse(bool skip, ref TextPosition position, out bool success);
 }

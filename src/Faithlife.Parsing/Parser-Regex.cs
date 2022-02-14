@@ -26,7 +26,7 @@ public static partial class Parser
 	{
 		public RegexParser(Regex regex) => m_regex = regex;
 
-		public override Match TryParse(ref TextPosition position, out bool success)
+		public override Match TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			var inputIndex = position.Index;
 			var inputText = position.Text;

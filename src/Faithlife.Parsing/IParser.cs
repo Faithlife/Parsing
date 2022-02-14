@@ -14,5 +14,5 @@ public interface IParser<out T>
 	/// <summary>
 	/// Attempts to parse the text at the specified position into an instance of type T.
 	/// </summary>
-	T TryParse(ref TextPosition position, out bool success);
+	T TryParse(bool skip, ref TextPosition position, out bool success);
 }

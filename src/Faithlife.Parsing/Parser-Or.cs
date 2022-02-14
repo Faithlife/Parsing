@@ -14,7 +14,7 @@ public static partial class Parser
 	{
 		public OrParser(IEnumerable<IParser<T>> parsers) => m_parsers = parsers.ToArray();
 
-		public override T TryParse(ref TextPosition position, out bool success)
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			IParseResult<T>? firstEmptySuccess = null;
 			IParseResult<T>? bestFailure = null;
@@ -22,7 +22,7 @@ public static partial class Parser
 			foreach (var parser in m_parsers)
 			{
 				var currentPosition = position;
-				var currentValue = parser.TryParse(ref currentPosition, out var currentSuccess);
+				var currentValue = parser.TryParse(skip, ref currentPosition, out var currentSuccess);
 				if (currentSuccess)
 				{
 					if (currentPosition == position)
