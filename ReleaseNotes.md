@@ -1,5 +1,16 @@
 # Release Notes
 
+## 3.0.0
+
+* **Breaking:** Add new method to `IParser<T>` that improves performance of chained parsers.
+  * Upgrading to version 3 should be safe except when `IParser<T>` has been implemented directly. Custom parsers should now derive from `Parser<T>`.
+* Add `bool`-returning `TryParse` overloads.
+* Add optimized `Then` overloads for building tuples.
+* Add `Capture`.
+* Add single-parameter `Bracketed`.
+* Default to culture invariant regular expressions.
+* Miscellaneous optimizations.
+
 ## 2.3.0
 
 * Add `Then` overloads with better performance.
