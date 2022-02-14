@@ -26,6 +26,12 @@ public class ThenTests
 	}
 
 	[Fact]
+	public void TestAppendSkipped()
+	{
+		Parser.Char('a').Repeat(2).Append(Parser.Char('b')).Success(true).TryParse("aabc").ShouldSucceed(true, 3);
+	}
+
+	[Fact]
 	public void ThenTuple()
 	{
 		var tuple2 = Parser.Char('a').Then(Parser.Char('b'));

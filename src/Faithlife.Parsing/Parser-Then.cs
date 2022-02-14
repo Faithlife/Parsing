@@ -55,7 +55,7 @@ public static partial class Parser
 			if (!success)
 				return default!;
 
-			return CombineValues(value, nextValue);
+			return skip ? default! : CombineValues(value, nextValue);
 		}
 
 		protected abstract TAfter CombineValues(T1 value, T2 nextValue);
