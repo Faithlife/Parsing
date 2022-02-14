@@ -19,17 +19,29 @@ public static partial class Parser
 	public static IParser<Match> Regex(string pattern, RegexOptions regexOptions)
 	{
 		// turn off multiline mode for '^'; wrap pattern in non-capturing group to ensure ungrouped '|' works properly
-		var regex = new Regex("(?-m:^)(?:" + pattern + ")", regexOptions);
+		return new RegexParser(new Regex("(?-m:^)(?:" + pattern + ")", regexOptions));
+	}
 
-		return Create(position =>
+	private sealed class RegexParser : Parser<Match>
+	{
+		public RegexParser(Regex regex) => m_regex = regex;
+
+		public override Match TryParse(ref TextPosition position, out bool success)
 		{
 			var inputIndex = position.Index;
 			var inputText = position.Text;
-			var match = regex.Match(inputText, inputIndex, inputText.Length - inputIndex);
+			var match = m_regex.Match(inputText, inputIndex, inputText.Length - inputIndex);
 			if (match.Success)
-				return ParseResult.Success(match, position.WithNextIndex(match.Length));
+			{
+				position = position.WithNextIndex(match.Length);
+				success = true;
+				return match;
+			}
 
-			return ParseResult.Failure<Match>(position);
-		});
+			success = false;
+			return default!;
+		}
+
+		private readonly Regex m_regex;
 	}
 }

@@ -8,31 +8,54 @@ public static partial class Parser
 	/// <remarks>The first successful parser that advances the text position is returned.
 	/// Otherwise, the first successful parser that does not advance the text position is returned.
 	/// Otherwise, the failure that advanced the text position farthest is returned.</remarks>
-	public static IParser<T> Or<T>(IEnumerable<IParser<T>> parsers)
+	public static IParser<T> Or<T>(IEnumerable<IParser<T>> parsers) => new OrParser<T>(parsers);
+
+	private sealed class OrParser<T> : Parser<T>
 	{
-		return Create(position =>
+		public OrParser(IEnumerable<IParser<T>> parsers) => m_parsers = parsers.ToArray();
+
+		public override T TryParse(ref TextPosition position, out bool success)
 		{
 			IParseResult<T>? firstEmptySuccess = null;
 			IParseResult<T>? bestFailure = null;
 
-			foreach (var parser in parsers)
+			foreach (var parser in m_parsers)
 			{
-				var result = parser.TryParse(position);
-				if (result.Success)
+				var currentPosition = position;
+				var currentValue = parser.TryParse(ref currentPosition, out var currentSuccess);
+				if (currentSuccess)
 				{
-					if (result.NextPosition == position)
-						firstEmptySuccess ??= result;
+					if (currentPosition == position)
+					{
+						firstEmptySuccess ??= ParseResult.Success(currentValue, currentPosition);
+					}
 					else
-						return result;
+					{
+						position = currentPosition;
+						success = true;
+						return currentValue;
+					}
 				}
-				else if (bestFailure is null || result.NextPosition.Index > bestFailure.NextPosition.Index)
+				else if (bestFailure is null || currentPosition.Index > bestFailure.NextPosition.Index)
 				{
-					bestFailure = result;
+					bestFailure = ParseResult.Failure<T>(currentPosition);
 				}
 			}
 
-			return firstEmptySuccess ?? bestFailure ?? ParseResult.Failure<T>(position);
-		});
+			if (firstEmptySuccess != null)
+			{
+				success = true;
+				return firstEmptySuccess.Value;
+			}
+
+			if (bestFailure != null)
+				position = bestFailure.NextPosition;
+
+			success = false;
+			return default!;
+		}
+
+		private readonly IParser<T>[] m_parsers;
 	}
 
 	/// <summary>

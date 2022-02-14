@@ -5,19 +5,30 @@ public static partial class Parser
 	/// <summary>
 	/// Parses a single character if the specified predicate returns true.
 	/// </summary>
-	public static IParser<char> Char(Func<char, bool> test)
+	public static IParser<char> Char(Func<char, bool> test) => new CharParser(test);
+
+	private sealed class CharParser : Parser<char>
 	{
-		return Create(position =>
+		public CharParser(Func<char, bool> test) => m_test = test;
+
+		public override char TryParse(ref TextPosition position, out bool success)
 		{
 			if (!position.IsAtEnd())
 			{
 				var current = position.GetCurrentChar();
-				if (test(current))
-					return ParseResult.Success(current, position.WithNextIndex());
+				if (m_test(current))
+				{
+					success = true;
+					position = position.WithNextIndex();
+					return current;
+				}
 			}
 
-			return ParseResult.Failure<char>(position);
-		});
+			success = false;
+			return default;
+		}
+
+		private readonly Func<char, bool> m_test;
 	}
 
 	/// <summary>

@@ -14,14 +14,63 @@ public static partial class Parser
 			throw new ArgumentNullException(nameof(parser));
 		if (convertValueToNextParser is null)
 			throw new ArgumentNullException(nameof(convertValueToNextParser));
-		return Create(position => parser.TryParse(position).MapSuccess(result => convertValueToNextParser(result.Value).TryParse(result.NextPosition)));
+		return new ThenCreateParser<TBefore, TAfter>(parser, convertValueToNextParser);
+	}
+
+	private sealed class ThenCreateParser<TBefore, TAfter> : Parser<TAfter>
+	{
+		public ThenCreateParser(IParser<TBefore> parser, Func<TBefore, IParser<TAfter>> convertValueToNextParser)
+		{
+			m_parser = parser;
+			m_convertValueToNextParser = convertValueToNextParser;
+		}
+
+		public override TAfter TryParse(ref TextPosition position, out bool success)
+		{
+			var value = m_parser.TryParse(ref position, out success);
+			return success ? m_convertValueToNextParser(value).TryParse(ref position, out success) : default!;
+		}
+
+		private readonly IParser<TBefore> m_parser;
+		private readonly Func<TBefore, IParser<TAfter>> m_convertValueToNextParser;
 	}
 
 	/// <summary>
 	/// Executes one parser after another.
 	/// </summary>
-	public static IParser<(T1, T2)> Then<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser) =>
-		parser.Then(nextParser, (value, nextValue) => (value, nextValue));
+	public static IParser<(TBefore1, TBefore2)> Then<TBefore1, TBefore2>(this IParser<TBefore1> parser, IParser<TBefore2> nextParser)
+	{
+		if (parser is null)
+			throw new ArgumentNullException(nameof(parser));
+		if (nextParser is null)
+			throw new ArgumentNullException(nameof(nextParser));
+		return new ThenTupleParser<TBefore1, TBefore2>(parser, nextParser);
+	}
+
+	private sealed class ThenTupleParser<TBefore1, TBefore2> : Parser<(TBefore1, TBefore2)>
+	{
+		public ThenTupleParser(IParser<TBefore1> parser, IParser<TBefore2> nextParser)
+		{
+			m_parser = parser;
+			m_nextParser = nextParser;
+		}
+
+		public override (TBefore1, TBefore2) TryParse(ref TextPosition position, out bool success)
+		{
+			var value = m_parser.TryParse(ref position, out success);
+			if (!success)
+				return default!;
+
+			var nextValue = m_nextParser.TryParse(ref position, out success);
+			if (!success)
+				return default!;
+
+			return (value, nextValue);
+		}
+
+		private readonly IParser<TBefore1> m_parser;
+		private readonly IParser<TBefore2> m_nextParser;
+	}
 
 	/// <summary>
 	/// Executes one parser after another.
@@ -81,7 +130,21 @@ public static partial class Parser
 	{
 		if (convertValue is null)
 			throw new ArgumentNullException(nameof(convertValue));
-		return Create(position => parser.TryParse(position).MapSuccess(result => ParseResult.Success(convertValue(result.Value), result.NextPosition)));
+		return new SelectParser<TBefore, TAfter>(parser, convertValue);
+	}
+
+	private sealed class SelectParser<TBefore, TAfter> : Parser<TAfter>
+	{
+		public SelectParser(IParser<TBefore> parser, Func<TBefore, TAfter> convertValue) => (m_parser, m_convertValue) = (parser, convertValue);
+
+		public override TAfter TryParse(ref TextPosition position, out bool success)
+		{
+			var value = m_parser.TryParse(ref position, out success);
+			return success ? m_convertValue(value) : default!;
+		}
+
+		private readonly IParser<TBefore> m_parser;
+		private readonly Func<TBefore, TAfter> m_convertValue;
 	}
 
 	/// <summary>
@@ -91,7 +154,21 @@ public static partial class Parser
 	{
 		if (parser is null)
 			throw new ArgumentNullException(nameof(parser));
-		return Create(position => parser.TryParse(position).MapSuccess(result => ParseResult.Success(value, result.NextPosition)));
+		return new SuccessParser<TBefore, TAfter>(parser, value);
+	}
+
+	private sealed class SuccessParser<TBefore, TAfter> : Parser<TAfter>
+	{
+		public SuccessParser(IParser<TBefore> parser, TAfter value) => (m_parser, m_value) = (parser, value);
+
+		public override TAfter TryParse(ref TextPosition position, out bool success)
+		{
+			m_parser.TryParse(ref position, out success);
+			return success ? m_value : default!;
+		}
+
+		private readonly IParser<TBefore> m_parser;
+		private readonly TAfter m_value;
 	}
 
 	/// <summary>

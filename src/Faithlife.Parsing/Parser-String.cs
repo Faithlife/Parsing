@@ -10,18 +10,30 @@ public static partial class Parser
 	/// <summary>
 	/// Parses the specified string using the specified string comparison.
 	/// </summary>
-	public static IParser<string> String(string text, StringComparison comparison)
+	public static IParser<string> String(string text, StringComparison comparison) => new StringParser(text, comparison);
+
+	private sealed class StringParser : Parser<string>
 	{
-		return Create(position =>
+		public StringParser(string text, StringComparison comparison) => (m_text, m_comparison) = (text, comparison);
+
+		public override string TryParse(ref TextPosition position, out bool success)
 		{
 			var inputText = position.Text;
 			var inputIndex = position.Index;
-			var textLength = text.Length;
-			if (string.Compare(inputText, inputIndex, text, 0, textLength, comparison) == 0)
-				return ParseResult.Success(comparison == StringComparison.Ordinal ? text : inputText.Substring(inputIndex, textLength), position.WithNextIndex(textLength));
+			var textLength = m_text.Length;
+			if (string.Compare(inputText, inputIndex, m_text, 0, textLength, m_comparison) == 0)
+			{
+				position = position.WithNextIndex(textLength);
+				success = true;
+				return m_comparison == StringComparison.Ordinal ? m_text : inputText.Substring(inputIndex, textLength);
+			}
 
-			return ParseResult.Failure<string>(position);
-		});
+			success = false;
+			return default!;
+		}
+
+		private readonly string m_text;
+		private readonly StringComparison m_comparison;
 	}
 
 	/// <summary>
