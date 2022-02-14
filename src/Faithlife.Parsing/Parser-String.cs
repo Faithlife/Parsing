@@ -3,6 +3,28 @@ namespace Faithlife.Parsing;
 public static partial class Parser
 {
 	/// <summary>
+	/// Captures the parsed text as a string.
+	/// </summary>
+	public static IParser<string> Capture<T>(this IParser<T> parser) => new CaptureParser<T>(parser);
+
+	private sealed class CaptureParser<T> : Parser<string>
+	{
+		public CaptureParser(IParser<T> parser)
+		{
+			m_parser = parser;
+		}
+
+		public override string TryParse(bool skip, ref TextPosition position, out bool success)
+		{
+			var index = position.Index;
+			m_parser.TryParse(skip: true, ref position, out success);
+			return success && !skip ? position.Text.Substring(index, position.Index - index) : default!;
+		}
+
+		private readonly IParser<T> m_parser;
+	}
+
+	/// <summary>
 	/// Parses the specified string using ordinal (case-sensitive) comparison.
 	/// </summary>
 	public static IParser<string> String(string text) => String(text, StringComparison.Ordinal);

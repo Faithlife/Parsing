@@ -56,6 +56,13 @@ public class StringTests
 	}
 
 	[Fact]
+	public void CaptureString()
+	{
+		var parser = Parser.String("abc").Chars().Capture();
+		parser.TryParse("abcd").ShouldSucceed("abc", 3);
+	}
+
+	[Fact]
 	public void ConcatStrings()
 	{
 		var parser = Parser.String("abc").Many().Concat();
