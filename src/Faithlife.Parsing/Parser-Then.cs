@@ -55,7 +55,7 @@ public static partial class Parser
 			m_nextParser = nextParser;
 		}
 
-		protected override (T1, T2) TryParse(ref TextPosition position, out bool success)
+		public override (T1, T2) TryParse(ref TextPosition position, out bool success)
 		{
 			var value = m_parser.TryParse(ref position, out success);
 			if (!success)
@@ -68,8 +68,8 @@ public static partial class Parser
 			return (value, nextValue);
 		}
 
-		private readonly IFastParser<T1> m_parser;
-		private readonly IFastParser<T2> m_nextParser;
+		private readonly IParser<T1> m_parser;
+		private readonly IParser<T2> m_nextParser;
 	}
 
 	/// <summary>
