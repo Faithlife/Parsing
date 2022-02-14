@@ -90,5 +90,12 @@ public abstract class Parser<T> : IParser<T>
 	/// <summary>
 	/// Parses text.
 	/// </summary>
+	/// <param name="skip">True if the parsed value will not be used.</param>
+	/// <param name="position">The position in the text where parsing starts and finishes.</param>
+	/// <param name="success">True if parsing was successful.</param>
+	/// <returns>The parsed value, or <c>default</c> if parsing failed.</returns>
+	/// <remarks>The odd signature allows <see cref="IParser{T}" /> to be covariant on <c>T</c>.
+	/// Call the <c>TryParse</c> and <c>Parse</c> extension methods on <see cref="Parser" />
+	/// when actually parsing text.</remarks>
 	public abstract T TryParse(bool skip, ref TextPosition position, out bool success);
 }

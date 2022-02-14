@@ -71,7 +71,7 @@ public static partial class Parser
 	}
 
 	/// <summary>
-	/// Parses any digit (as determined by System.Char.IsDigit).
+	/// Parses any digit (as determined by <see cref="char.IsDigit(char)" />).
 	/// </summary>
 	public static readonly IParser<char> Digit = new DigitParser();
 
@@ -81,7 +81,7 @@ public static partial class Parser
 	}
 
 	/// <summary>
-	/// Parses any letter (as determined by System.Char.IsLetter).
+	/// Parses any letter (as determined by <see cref="char.IsLetter(char)" />).
 	/// </summary>
 	public static readonly IParser<char> Letter = new LetterParser();
 
@@ -91,7 +91,7 @@ public static partial class Parser
 	}
 
 	/// <summary>
-	/// Parses any letter or digit (as determined by System.Char.IsLetterOrDigit).
+	/// Parses any letter or digit (as determined by <see cref="char.IsLetterOrDigit(char)" />).
 	/// </summary>
 	public static readonly IParser<char> LetterOrDigit = new LetterOrDigitParser();
 
@@ -101,7 +101,7 @@ public static partial class Parser
 	}
 
 	/// <summary>
-	/// Parses any whitespace character (as determined by System.Char.IsWhiteSpace).
+	/// Parses any whitespace character (as determined by <see cref="char.IsWhiteSpace(char)" />).
 	/// </summary>
 	public static readonly IParser<char> WhiteSpace = new WhiteSpaceParser();
 
