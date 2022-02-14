@@ -10,4 +10,9 @@ public interface IParser<out T>
 	/// Attempts to parse the text at the specified position into an instance of type T.
 	/// </summary>
 	IParseResult<T> TryParse(TextPosition position);
+
+	/// <summary>
+	/// Attempts to parse the text at the specified position into an instance of type T.
+	/// </summary>
+	T TryParse(ref TextPosition position, out bool success);
 }

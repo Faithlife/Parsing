@@ -30,15 +30,41 @@ public static partial class Parser
 	/// </summary>
 	public static T Parse<T>(this IParser<T> parser, string text, int startIndex) => parser.TryParse(text, startIndex).Value;
 
-	private sealed class SimpleParser<T> : IParser<T>
+	private sealed class SimpleParser<T> : Parser<T>
 	{
 		public SimpleParser(Func<TextPosition, IParseResult<T>> parse)
 		{
 			m_parse = parse;
 		}
 
-		public IParseResult<T> TryParse(TextPosition position) => m_parse(position);
+		public override T TryParse(ref TextPosition position, out bool success)
+		{
+			var parseResult = m_parse(position);
+			position = parseResult.NextPosition;
+			success = parseResult.Success;
+			return success ? parseResult.Value : default!;
+		}
 
 		private readonly Func<TextPosition, IParseResult<T>> m_parse;
 	}
+}
+
+/// <summary>
+/// Base class for parsers.
+/// </summary>
+public abstract class Parser<T> : IParser<T>
+{
+	/// <summary>
+	/// Parses text.
+	/// </summary>
+	public IParseResult<T> TryParse(TextPosition position)
+	{
+		var value = TryParse(ref position, out var success);
+		return success ? ParseResult.Success(value, position) : ParseResult.Failure<T>(position);
+	}
+
+	/// <summary>
+	/// Parses text.
+	/// </summary>
+	public abstract T TryParse(ref TextPosition position, out bool success);
 }

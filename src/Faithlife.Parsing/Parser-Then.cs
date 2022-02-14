@@ -35,7 +35,7 @@ public static partial class Parser
 		return new ThenParser<T1, T2, TAfter>(parser, nextParser, combineValues);
 	}
 
-	private sealed class ThenParser<T1, T2, TAfter> : IParser<TAfter>
+	private sealed class ThenParser<T1, T2, TAfter> : Parser<TAfter>
 	{
 		public ThenParser(IParser<T1> parser, IParser<T2> nextParser, Func<T1, T2, TAfter> combineValues)
 		{
@@ -44,17 +44,17 @@ public static partial class Parser
 			m_combineValues = combineValues;
 		}
 
-		public IParseResult<TAfter> TryParse(TextPosition position)
+		public override TAfter TryParse(ref TextPosition position, out bool success)
 		{
-			var result = m_parser.TryParse(position);
-			if (!result.Success)
-				return ParseResult.Failure<TAfter>(result.NextPosition);
+			var value = m_parser.TryParse(ref position, out success);
+			if (!success)
+				return default!;
 
-			var nextResult = m_nextParser.TryParse(result.NextPosition);
-			if (!nextResult.Success)
-				return ParseResult.Failure<TAfter>(nextResult.NextPosition);
+			var nextValue = m_nextParser.TryParse(ref position, out success);
+			if (!success)
+				return default!;
 
-			return ParseResult.Success(m_combineValues(result.Value, nextResult.Value), nextResult.NextPosition);
+			return m_combineValues(value, nextValue);
 		}
 
 		private readonly IParser<T1> m_parser;
