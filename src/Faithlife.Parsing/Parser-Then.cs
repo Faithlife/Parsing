@@ -23,7 +23,7 @@ public static partial class Parser
 
 		public override TAfter TryParse(bool skip, ref TextPosition position, out bool success)
 		{
-			var value = m_parser.TryParse(skip, ref position, out success);
+			var value = m_parser.TryParse(skip: false, ref position, out success);
 			return success ? m_convertValueToNextParser(value).TryParse(skip, ref position, out success) : default!;
 		}
 
