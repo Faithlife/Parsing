@@ -16,6 +16,22 @@ public static partial class Parser
 	public static IParseResult<T> TryParse<T>(this IParser<T> parser, string text, int startIndex) => parser.TryParse(new TextPosition(text, startIndex));
 
 	/// <summary>
+	/// Attempts to parse the specified text.
+	/// </summary>
+	public static bool TryParse<T>(this IParser<T> parser, string text, out T value) => parser.TryParse(text, 0, out value);
+
+	/// <summary>
+	/// Attempts to parse the specified text at the specified start index.
+	/// </summary>
+	public static bool TryParse<T>(this IParser<T> parser, string text, int startIndex, out T value)
+	{
+		var position = new TextPosition(text, startIndex);
+		var successValue = parser.TryParse(ref position, out var success);
+		value = success ? successValue : default!;
+		return success;
+	}
+
+	/// <summary>
 	/// Parses the specified text, throwing <see cref="ParseException" /> on failure.
 	/// </summary>
 	public static T Parse<T>(this IParser<T> parser, string text) => parser.Parse(text, 0);
