@@ -5,11 +5,18 @@ namespace Faithlife.Parsing.Tests;
 public class CommonTests
 {
 	[Fact]
-	public void ResultShouldAlwaysSucceed()
+	public void SuccessShouldAlwaysSucceed()
 	{
 		Parser.Success(true).TryParse("").ShouldSucceed(true, 0);
 		Parser.Success(true).TryParse("x").ShouldSucceed(true, 0);
 		Parser.Success(true).TryParse("xabc").ShouldSucceed(true, 0);
+	}
+
+	[Fact]
+	public void TryParseOverload()
+	{
+		Parser.Success(1).TryParse("", out var value).ShouldBe(true);
+		value.ShouldBe(1);
 	}
 
 	[Fact]
