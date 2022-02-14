@@ -14,4 +14,12 @@ public class WhereTests
 		parser.TryParse("xabA", 1).ShouldSucceed("abA", 4);
 		parser.TryParse("xAbA", 1).ShouldFail(1);
 	}
+
+	[Fact]
+	public void TestWhereSkipped()
+	{
+		var parser = Parser.Char('a').Many().String().Where(x => x.Length > 1);
+		parser.TryParse("aabc").ShouldSucceed("aa");
+		parser.Success(true).TryParse("aabc").ShouldSucceed(true);
+	}
 }

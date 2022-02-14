@@ -35,8 +35,8 @@ public static class ParseResult
 	/// <summary>
 	/// Maps a successful parse result into another parse result (success or failure).
 	/// </summary>
-	public static IParseResult<TAfter> MapSuccess<TBefore, TAfter>(this IParseResult<TBefore> result, Func<IParseResult<TBefore>, IParseResult<TAfter>> convert)
-		=> result.Success ? convert(result) : Failure<TAfter>(result.NextPosition);
+	public static IParseResult<TAfter> MapSuccess<TBefore, TAfter>(this IParseResult<TBefore> result, Func<IParseResult<TBefore>, IParseResult<TAfter>> convert) =>
+		result.Success ? convert(result) : Failure<TAfter>(result.NextPosition);
 
 	/// <summary>
 	/// Creates a message for the parse result.
@@ -45,25 +45,21 @@ public static class ParseResult
 	public static string ToMessage(this IParseResult result)
 	{
 		if (result.Success)
-		{
 			return $"success at {result.NextPosition.GetLineColumn()}";
-		}
-		else
+
+		var stringBuilder = new StringBuilder();
+
+		stringBuilder.Append($"failure at {result.NextPosition.GetLineColumn()}");
+
+		foreach (var namedFailureGroup in result.GetNamedFailures().Distinct()
+			.GroupBy(x => x.Position.GetLineColumn())
+			.OrderByDescending(x => x.Key.LineNumber).ThenByDescending(x => x.Key.ColumnNumber)
+			.Select(x => new { Position = x.Key, Names = x.Select(y => y.Name).Distinct().ToArray() }))
 		{
-			var stringBuilder = new StringBuilder();
-
-			stringBuilder.Append($"failure at {result.NextPosition.GetLineColumn()}");
-
-			foreach (var namedFailureGroup in result.GetNamedFailures().Distinct()
-				.GroupBy(x => x.Position.GetLineColumn())
-				.OrderByDescending(x => x.Key.LineNumber).ThenByDescending(x => x.Key.ColumnNumber)
-				.Select(x => new { Position = x.Key, Names = x.Select(y => y.Name).Distinct().ToArray() }))
-			{
-				stringBuilder.Append($"; expected {string.Join(" or ", namedFailureGroup.Names)} at {namedFailureGroup.Position}");
-			}
-
-			return stringBuilder.ToString();
+			stringBuilder.Append($"; expected {string.Join(" or ", namedFailureGroup.Names)} at {namedFailureGroup.Position}");
 		}
+
+		return stringBuilder.ToString();
 	}
 
 	private sealed class SuccessResult<T> : IParseResult<T>

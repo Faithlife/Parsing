@@ -15,7 +15,7 @@ public static partial class Parser
 	/// <summary>
 	/// Always succeeds. The value is a collection of at most the specified number of successfully parsed items.
 	/// </summary>
-	public static IParser<IReadOnlyList<T>> AtMost<T>(this IParser<T> parser, int atMost) => parser.DoRepeat(0, atMost);
+	public static IParser<IReadOnlyList<T>> AtMost<T>(this IParser<T> parser, int atMost) => new RepeatParser<T>(parser, 0, atMost);
 
 	/// <summary>
 	/// Always succeeds. The value is a collection of as many items as can be successfully parsed.
@@ -30,17 +30,17 @@ public static partial class Parser
 	/// <summary>
 	/// Succeeds if the parser succeeds at least the specified number of times. The value is a collection of as many items as can be successfully parsed.
 	/// </summary>
-	public static IParser<IReadOnlyList<T>> AtLeast<T>(this IParser<T> parser, int atLeast) => parser.DoRepeat(atLeast, null);
+	public static IParser<IReadOnlyList<T>> AtLeast<T>(this IParser<T> parser, int atLeast) => new RepeatParser<T>(parser, atLeast, null);
 
 	/// <summary>
 	/// Succeeds if the parser succeeds the specified number of times. The value is a collection of the parsed items.
 	/// </summary>
-	public static IParser<IReadOnlyList<T>> Repeat<T>(this IParser<T> parser, int exactly) => parser.DoRepeat(exactly, exactly);
+	public static IParser<IReadOnlyList<T>> Repeat<T>(this IParser<T> parser, int exactly) => new RepeatParser<T>(parser, exactly, exactly);
 
 	/// <summary>
 	/// Succeeds if the parser succeeds the specified number of times. The value is a collection of the parsed items.
 	/// </summary>
-	public static IParser<IReadOnlyList<T>> Repeat<T>(this IParser<T> parser, int atLeast, int atMost) => parser.DoRepeat(atLeast, atMost);
+	public static IParser<IReadOnlyList<T>> Repeat<T>(this IParser<T> parser, int atLeast, int atMost) => new RepeatParser<T>(parser, atLeast, atMost);
 
 	/// <summary>
 	/// Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item.
@@ -55,9 +55,11 @@ public static partial class Parser
 	public static IParser<IReadOnlyList<TValue>> DelimitedAllowTrailing<TValue, TDelimiter>(this IParser<TValue> parser, IParser<TDelimiter> delimiter) =>
 		parser.Once().Then(parser.PrecededBy(delimiter).Many().FollowedBy(delimiter.OrDefault()), (first, rest) => first.Concat(rest).ToList());
 
-	private static IParser<IReadOnlyList<T>> DoRepeat<T>(this IParser<T> parser, int atLeast, int? atMost)
+	private sealed class RepeatParser<T> : Parser<IReadOnlyList<T>>
 	{
-		return Create(position =>
+		public RepeatParser(IParser<T> parser, int atLeast, int? atMost) => (m_parser, m_atLeast, m_atMost) = (parser, atLeast, atMost);
+
+		public override IReadOnlyList<T> TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			var hasValue = false;
 			T value = default!;
@@ -67,28 +69,42 @@ public static partial class Parser
 
 			while (true)
 			{
-				if (repeated >= atMost)
+				if (repeated >= m_atMost)
 					break;
-				var result = parser.TryParse(remainder);
-				if (!result.Success || result.NextPosition == remainder)
+				var currentPosition = remainder;
+				var currentValue = m_parser.TryParse(skip, ref currentPosition, out var currentSuccess);
+				if (!currentSuccess || currentPosition == remainder)
 					break;
-				if (!hasValue)
+				if (!skip)
 				{
-					value = result.Value;
-					hasValue = true;
+					if (!hasValue)
+					{
+						value = currentValue;
+						hasValue = true;
+					}
+					else
+					{
+						values ??= new List<T> { value };
+						values.Add(currentValue);
+					}
 				}
-				else
-				{
-					values ??= new List<T> { value };
-					values.Add(result.Value);
-				}
-				remainder = result.NextPosition;
+				remainder = currentPosition;
 				repeated++;
 			}
 
-			return repeated >= atLeast
-				? ParseResult.Success<IReadOnlyList<T>>(values != null ? values : hasValue ? new[] { value } : Array.Empty<T>(), remainder)
-				: ParseResult.Failure<IReadOnlyList<T>>(position);
-		});
+			if (repeated >= m_atLeast)
+			{
+				position = remainder;
+				success = true;
+				return skip ? default! : values != null ? values : hasValue ? new[] { value } : Array.Empty<T>();
+			}
+
+			success = false;
+			return default!;
+		}
+
+		private readonly IParser<T> m_parser;
+		private readonly int m_atLeast;
+		private readonly int? m_atMost;
 	}
 }

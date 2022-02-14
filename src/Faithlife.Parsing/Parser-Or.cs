@@ -8,31 +8,59 @@ public static partial class Parser
 	/// <remarks>The first successful parser that advances the text position is returned.
 	/// Otherwise, the first successful parser that does not advance the text position is returned.
 	/// Otherwise, the failure that advanced the text position farthest is returned.</remarks>
-	public static IParser<T> Or<T>(IEnumerable<IParser<T>> parsers)
-	{
-		return Create(position =>
-		{
-			IParseResult<T>? firstEmptySuccess = null;
-			IParseResult<T>? bestFailure = null;
+	public static IParser<T> Or<T>(IEnumerable<IParser<T>> parsers) => new OrParser<T>(parsers);
 
-			foreach (var parser in parsers)
+	private sealed class OrParser<T> : Parser<T>
+	{
+		public OrParser(IEnumerable<IParser<T>> parsers) => m_parsers = parsers.ToArray();
+
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
+		{
+			var hasEmptySuccess = false;
+			T firstEmptySuccessValue = default!;
+			TextPosition? bestFailurePosition = null;
+
+			foreach (var parser in m_parsers)
 			{
-				var result = parser.TryParse(position);
-				if (result.Success)
+				var currentPosition = position;
+				var currentValue = parser.TryParse(skip, ref currentPosition, out var currentSuccess);
+				if (currentSuccess)
 				{
-					if (result.NextPosition == position)
-						firstEmptySuccess ??= result;
+					if (currentPosition == position)
+					{
+						if (!hasEmptySuccess)
+						{
+							hasEmptySuccess = true;
+							firstEmptySuccessValue = currentValue;
+						}
+					}
 					else
-						return result;
+					{
+						position = currentPosition;
+						success = true;
+						return currentValue;
+					}
 				}
-				else if (bestFailure is null || result.NextPosition.Index > bestFailure.NextPosition.Index)
+				else if (bestFailurePosition is null || currentPosition.Index > bestFailurePosition.Value.Index)
 				{
-					bestFailure = result;
+					bestFailurePosition = currentPosition;
 				}
 			}
 
-			return firstEmptySuccess ?? bestFailure ?? ParseResult.Failure<T>(position);
-		});
+			if (hasEmptySuccess)
+			{
+				success = true;
+				return firstEmptySuccessValue;
+			}
+
+			if (bestFailurePosition != null)
+				position = bestFailurePosition.Value;
+
+			success = false;
+			return default!;
+		}
+
+		private readonly IParser<T>[] m_parsers;
 	}
 
 	/// <summary>
@@ -40,7 +68,7 @@ public static partial class Parser
 	/// </summary>
 	/// <remarks>The first successful parser that advances the text position is returned.
 	/// Otherwise, the first successful parser that does not advance the text position is returned.
-	/// Otherwise, the first failure is returned.</remarks>
+	/// Otherwise, the failure that advanced the text position farthest is returned.</remarks>
 	public static IParser<T> Or<T>(params IParser<T>[] parsers) => Or((IEnumerable<IParser<T>>) parsers);
 
 	/// <summary>
@@ -48,7 +76,7 @@ public static partial class Parser
 	/// </summary>
 	/// <remarks>The first successful parser that advances the text position is returned.
 	/// Otherwise, the first successful parser that does not advance the text position is returned.
-	/// Otherwise, the first failure is returned.</remarks>
+	/// Otherwise, the failure that advanced the text position farthest is returned.</remarks>
 	public static IParser<T> Or<T>(this IParser<T> first, IParser<T> second) => Or(new[] { first, second });
 
 	/// <summary>
@@ -57,7 +85,7 @@ public static partial class Parser
 	public static IParser<T> OrDefault<T>(this IParser<T> parser) => parser.OrDefault(default!);
 
 	/// <summary>
-	/// Succeeds with the default value if the parser fails.
+	/// Succeeds with the specified value if the parser fails.
 	/// </summary>
 	public static IParser<T> OrDefault<T>(this IParser<T> parser, T value) => parser.Or(Success(value));
 
