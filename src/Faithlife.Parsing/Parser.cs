@@ -23,7 +23,14 @@ public static partial class Parser
 	/// <summary>
 	/// Parses the specified text at the specified start index, throwing <see cref="ParseException" /> on failure.
 	/// </summary>
-	public static T Parse<T>(this IParser<T> parser, string text, int startIndex) => parser.TryParse(text, startIndex).Value;
+	public static T Parse<T>(this IParser<T> parser, string text, int startIndex)
+	{
+		var position = new TextPosition(text, startIndex);
+		var value = parser.TryParse(ref position, out var success);
+		if (!success)
+			throw new ParseException(ParseResult.Failure<T>(position));
+		return value;
+	}
 
 	/// <summary>
 	/// Creates a parser from a delegate.
