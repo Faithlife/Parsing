@@ -9,7 +9,26 @@ public class CommonTests
 	{
 		Parser.Success(true).TryParse("").ShouldSucceed(true, 0);
 		Parser.Success(true).TryParse("x").ShouldSucceed(true, 0);
-		Parser.Success(true).TryParse("xabc").ShouldSucceed(true, 0);
+	}
+
+	[Fact]
+	public void SuccessOnSuccess()
+	{
+		Parser.Char('x').Success(true).TryParse("x").ShouldSucceed(true, 1);
+	}
+
+	[Fact]
+	public void FailureShouldAlwaysFail()
+	{
+		Parser.Failure<bool>().TryParse("").ShouldFail(0);
+		Parser.Failure<bool>().TryParse("x").ShouldFail(0);
+	}
+
+	[Fact]
+	public void FailureOnSuccessOrFailure()
+	{
+		Parser.Char('x').Failure().TryParse("x").ShouldFail(1);
+		Parser.Char('x').Failure().TryParse("y").ShouldFail(0);
 	}
 
 	[Fact]

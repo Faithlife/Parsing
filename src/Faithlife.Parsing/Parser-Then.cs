@@ -237,6 +237,12 @@ public static partial class Parser
 		parser.SkipThen(Success(value));
 
 	/// <summary>
+	/// Fails even if the parser is successful.
+	/// </summary>
+	public static IParser<T> Failure<T>(this IParser<T> parser) =>
+		parser.SkipThen(Failure<T>());
+
+	/// <summary>
 	/// Concatenates the two successfully parsed collections.
 	/// </summary>
 	public static IParser<IReadOnlyList<T>> Concat<T>(this IParser<IEnumerable<T>> firstParser, IParser<IEnumerable<T>> secondParser) =>
