@@ -233,26 +233,8 @@ public static partial class Parser
 	/// <summary>
 	/// Succeeds with the specified value if the parser is successful.
 	/// </summary>
-	public static IParser<TAfter> Success<TBefore, TAfter>(this IParser<TBefore> parser, TAfter value)
-	{
-		if (parser is null)
-			throw new ArgumentNullException(nameof(parser));
-		return new SuccessParser<TBefore, TAfter>(parser, value);
-	}
-
-	private sealed class SuccessParser<TBefore, TAfter> : Parser<TAfter>
-	{
-		public SuccessParser(IParser<TBefore> parser, TAfter value) => (m_parser, m_value) = (parser, value);
-
-		public override TAfter TryParse(bool skip, ref TextPosition position, out bool success)
-		{
-			m_parser.TryParse(skip: true, ref position, out success);
-			return success ? m_value : default!;
-		}
-
-		private readonly IParser<TBefore> m_parser;
-		private readonly TAfter m_value;
-	}
+	public static IParser<TAfter> Success<TBefore, TAfter>(this IParser<TBefore> parser, TAfter value) =>
+		parser.SkipThen(Success(value));
 
 	/// <summary>
 	/// Concatenates the two successfully parsed collections.
