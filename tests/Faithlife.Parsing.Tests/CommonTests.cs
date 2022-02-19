@@ -27,7 +27,7 @@ public class CommonTests
 	[Fact]
 	public void FailureOnSuccessOrFailure()
 	{
-		Parser.Char('x').Failure().TryParse("x").ShouldFail(1);
+		Parser.Char('x').Failure().TryParse("x").ShouldFail(0);
 		Parser.Char('x').Failure().TryParse("y").ShouldFail(0);
 	}
 

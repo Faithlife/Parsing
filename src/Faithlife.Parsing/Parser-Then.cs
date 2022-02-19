@@ -239,8 +239,22 @@ public static partial class Parser
 	/// <summary>
 	/// Fails even if the parser is successful.
 	/// </summary>
-	public static IParser<T> Failure<T>(this IParser<T> parser) =>
-		parser.SkipThen(Failure<T>());
+	public static IParser<T> Failure<T>(this IParser<T> parser) => new ThenFailureParser<T>(parser);
+
+	private sealed class ThenFailureParser<T> : Parser<T>
+	{
+		public ThenFailureParser(IParser<T> parser) => m_parser = parser;
+
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
+		{
+			var endPosition = position;
+			m_parser.TryParse(skip: true, ref endPosition, out _);
+			success = false;
+			return default!;
+		}
+
+		private readonly IParser<T> m_parser;
+	}
 
 	/// <summary>
 	/// Concatenates the two successfully parsed collections.
