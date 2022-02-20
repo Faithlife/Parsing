@@ -143,4 +143,24 @@ public static partial class Parser
 		private readonly IParser<T> m_parser;
 		private readonly Func<T, bool> m_predicate;
 	}
+
+	/// <summary>
+	/// Fails if the parser succeeds, and succeeds with the default value if it fails.
+	/// </summary>
+	public static IParser<T> Not<T>(this IParser<T> parser) => new NotParser<T>(parser);
+
+	private sealed class NotParser<T> : Parser<T>
+	{
+		public NotParser(IParser<T> parser) => m_parser = parser;
+
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
+		{
+			var endPosition = position;
+			m_parser.TryParse(skip: true, ref endPosition, out success);
+			success = !success;
+			return default!;
+		}
+
+		private readonly IParser<T> m_parser;
+	}
 }

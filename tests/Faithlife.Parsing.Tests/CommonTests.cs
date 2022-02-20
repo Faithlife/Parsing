@@ -51,6 +51,18 @@ public class CommonTests
 	}
 
 	[Fact]
+	public void NotSuccessShouldFail()
+	{
+		Parser.Char('x').Not().TryParse("x").ShouldFail(0);
+	}
+
+	[Fact]
+	public void NotFailureShouldSucceedWithDefault()
+	{
+		Parser.Char('x').Not().TryParse("y").ShouldSucceed('\0', 0);
+	}
+
+	[Fact]
 	public void ParseThrowsOnFailure()
 	{
 		try
