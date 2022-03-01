@@ -10,7 +10,7 @@ public interface IParseResult<out T> : IParseResult
 
 | name | description |
 | --- | --- |
-| [Value](IParseResult-1/Value.md) { get; } | The parsed object instance. Throws a ParseException if the parsing was not successful. |
+| [Value](IParseResult-1/Value.md) { get; } | The parsed object instance. Throws [`ParseException`](./ParseException.md) if the parsing was not successful. |
 
 ## See Also
 

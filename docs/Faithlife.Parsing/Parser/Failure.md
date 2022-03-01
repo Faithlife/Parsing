@@ -1,9 +1,9 @@
-# Parser.OrDefault&lt;T&gt; method (1 of 2)
+# Parser.Failure&lt;T&gt; method (1 of 2)
 
-Succeeds with the default value if the parser fails.
+Succeeds with the specified value without advancing the text position.
 
 ```csharp
-public static IParser<T> OrDefault<T>(this IParser<T> parser)
+public static IParser<T> Failure<T>()
 ```
 
 ## See Also
@@ -14,12 +14,12 @@ public static IParser<T> OrDefault<T>(this IParser<T> parser)
 
 ---
 
-# Parser.OrDefault&lt;T&gt; method (2 of 2)
+# Parser.Failure&lt;T&gt; method (2 of 2)
 
-Succeeds with the specified value if the parser fails.
+Fails even if the parser is successful.
 
 ```csharp
-public static IParser<T> OrDefault<T>(this IParser<T> parser, T value)
+public static IParser<T> Failure<T>(this IParser<T> parser)
 ```
 
 ## See Also

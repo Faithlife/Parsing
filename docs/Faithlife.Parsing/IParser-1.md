@@ -10,11 +10,14 @@ public interface IParser<out T>
 
 | name | description |
 | --- | --- |
-| [TryParse](IParser-1/TryParse.md)(…) | Attempts to parse the text at the specified position into an instance of type T. |
+| [TryParse](IParser-1/TryParse.md)(…) | Attempts to parse the text at the specified position into an instance of type T. (2 methods) |
+
+## Remarks
+
+To parse text, call one of the `Parse` or `TryParse` overloads on [`Parser`](./Parser.md). To create a parser, assemble it from the many parsers provided by [`Parser`](./Parser.md) or derive a new parser from [`Parser`](./Parser-1.md).
 
 ## See Also
 
-* class [Parser](./Parser.md)
 * namespace [Faithlife.Parsing](../Faithlife.Parsing.md)
 * [IParser.cs](https://github.com/Faithlife/Parsing/tree/master/src/Faithlife.Parsing/IParser.cs)
 

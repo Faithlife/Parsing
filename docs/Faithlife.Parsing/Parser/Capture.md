@@ -1,9 +1,9 @@
-# Parser.LetterOrDigit field
+# Parser.Capture&lt;T&gt; method
 
-Parses any letter or digit (as determined by Char)).
+Captures the parsed text as a string.
 
 ```csharp
-public static readonly IParser<char> LetterOrDigit;
+public static IParser<string> Capture<T>(this IParser<T> parser)
 ```
 
 ## See Also

@@ -1,6 +1,6 @@
 # IParseResult.Value property
 
-The parsed object instance. Throws a ParseException if the parsing was not successful.
+The parsed object instance. Throws [`ParseException`](../ParseException.md) if the parsing was not successful.
 
 ```csharp
 public object? Value { get; }

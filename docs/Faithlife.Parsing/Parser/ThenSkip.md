@@ -1,9 +1,9 @@
-# Parser.LetterOrDigit field
+# Parser.ThenSkip&lt;T1,T2&gt; method
 
-Parses any letter or digit (as determined by Char)).
+Executes one parser after another, ignoring the output of the second parser.
 
 ```csharp
-public static readonly IParser<char> LetterOrDigit;
+public static IParser<T1> ThenSkip<T1, T2>(this IParser<T1> parser, IParser<T2> nextParser)
 ```
 
 ## See Also

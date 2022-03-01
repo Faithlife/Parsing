@@ -1,4 +1,4 @@
-# IParser&lt;T&gt;.TryParse method
+# IParser&lt;T&gt;.TryParse method (1 of 2)
 
 Attempts to parse the text at the specified position into an instance of type T.
 
@@ -6,9 +6,33 @@ Attempts to parse the text at the specified position into an instance of type T.
 public IParseResult<T> TryParse(TextPosition position)
 ```
 
+## Remarks
+
+To parse text, call one of the `Parse` or `TryParse` overloads on [`Parser`](../Parser.md).
+
 ## See Also
 
 * interface [IParseResult&lt;T&gt;](../IParseResult-1.md)
+* struct [TextPosition](../TextPosition.md)
+* interface [IParser&lt;T&gt;](../IParser-1.md)
+* namespace [Faithlife.Parsing](../../Faithlife.Parsing.md)
+
+---
+
+# IParser&lt;T&gt;.TryParse method (2 of 2)
+
+Attempts to parse the text at the specified position into an instance of type T.
+
+```csharp
+public T TryParse(bool skip, ref TextPosition position, out bool success)
+```
+
+## Remarks
+
+To parse text, call one of the `Parse` or `TryParse` overloads on [`Parser`](../Parser.md).
+
+## See Also
+
 * struct [TextPosition](../TextPosition.md)
 * interface [IParser&lt;T&gt;](../IParser-1.md)
 * namespace [Faithlife.Parsing](../../Faithlife.Parsing.md)

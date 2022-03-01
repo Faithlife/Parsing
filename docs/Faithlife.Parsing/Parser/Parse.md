@@ -1,6 +1,6 @@
 # Parser.Parse&lt;T&gt; method (1 of 2)
 
-Parses the specified text, throwing ParseException on failure.
+Parses the specified text, throwing [`ParseException`](../ParseException.md) on failure.
 
 ```csharp
 public static T Parse<T>(this IParser<T> parser, string text)
@@ -16,7 +16,7 @@ public static T Parse<T>(this IParser<T> parser, string text)
 
 # Parser.Parse&lt;T&gt; method (2 of 2)
 
-Parses the specified text at the specified start index, throwing ParseException on failure.
+Parses the specified text at the specified start index, throwing [`ParseException`](../ParseException.md) on failure.
 
 ```csharp
 public static T Parse<T>(this IParser<T> parser, string text, int startIndex)

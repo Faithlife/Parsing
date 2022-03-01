@@ -1,6 +1,6 @@
 # Parser.Digit field
 
-Parses any digit (as determined by System.Char.IsDigit).
+Parses any digit (as determined by Char)).
 
 ```csharp
 public static readonly IParser<char> Digit;

@@ -6,6 +6,10 @@ Creates a parser from a delegate.
 public static IParser<T> Create<T>(Func<TextPosition, IParseResult<T>> parse)
 ```
 
+## Remarks
+
+For maximum performance, derive from [`Parser`](../Parser-1.md).
+
 ## See Also
 
 * interface [IParser&lt;T&gt;](../IParser-1.md)

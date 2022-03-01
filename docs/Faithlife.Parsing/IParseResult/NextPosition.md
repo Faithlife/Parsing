@@ -1,6 +1,6 @@
 # IParseResult.NextPosition property
 
-The text position at the end of the parsed value.
+The text position at the end of the parsed value (or at the point of failure).
 
 ```csharp
 public TextPosition NextPosition { get; }

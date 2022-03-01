@@ -10,9 +10,9 @@ public interface IParseResult
 
 | name | description |
 | --- | --- |
-| [NextPosition](IParseResult/NextPosition.md) { get; } | The text position at the end of the parsed value. |
+| [NextPosition](IParseResult/NextPosition.md) { get; } | The text position at the end of the parsed value (or at the point of failure). |
 | [Success](IParseResult/Success.md) { get; } | True if the parsing was successful. |
-| [Value](IParseResult/Value.md) { get; } | The parsed object instance. Throws a ParseException if the parsing was not successful. |
+| [Value](IParseResult/Value.md) { get; } | The parsed object instance. Throws [`ParseException`](./ParseException.md) if the parsing was not successful. |
 
 ## See Also
 

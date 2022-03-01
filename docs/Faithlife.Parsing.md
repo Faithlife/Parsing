@@ -10,6 +10,7 @@
 | struct [LineColumn](./Faithlife.Parsing/LineColumn.md) | A line and column number. |
 | class [NamedFailure](./Faithlife.Parsing/NamedFailure.md) | A named parsing failure. |
 | class [ParseException](./Faithlife.Parsing/ParseException.md) | Thrown when parsing fails. |
+| abstract class [Parser&lt;T&gt;](./Faithlife.Parsing/Parser-1.md) | Base class for parsers. |
 | static class [Parser](./Faithlife.Parsing/Parser.md) | Helper methods for creating and executing parsers. |
 | static class [ParseResult](./Faithlife.Parsing/ParseResult.md) | Helper methods for parse results. |
 | class [Positioned&lt;T&gt;](./Faithlife.Parsing/Positioned-1.md) | Wraps a text position and length around a parsed value. |

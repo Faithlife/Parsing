@@ -1,6 +1,6 @@
 # Parser.WhiteSpace field
 
-Parses any whitespace character (as determined by System.Char.IsWhiteSpace).
+Parses any whitespace character (as determined by Char)).
 
 ```csharp
 public static readonly IParser<char> WhiteSpace;

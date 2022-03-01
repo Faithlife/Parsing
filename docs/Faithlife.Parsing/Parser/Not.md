@@ -1,9 +1,9 @@
-# Parser.LetterOrDigit field
+# Parser.Not&lt;T&gt; method
 
-Parses any letter or digit (as determined by Char)).
+Fails if the parser succeeds, and succeeds with the default value if it fails.
 
 ```csharp
-public static readonly IParser<char> LetterOrDigit;
+public static IParser<T> Not<T>(this IParser<T> parser)
 ```
 
 ## See Also
