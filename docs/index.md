@@ -6,9 +6,9 @@
 
 ## Overview
 
-This library is inspired by, adapted from, and owes its existence to the [Sprache](https://github.com/sprache/Sprache) C# library. Be sure to consult the [Sprache documentation](https://github.com/sprache/Sprache/blob/master/README.md) for more information about the overall strategy used by Faithlife.Parsing, as well as various examples, tutorials, and acknowledgements. Particular thanks go to [Nicholas Blumhardt](http://nblumhardt.com), the author of Sprache.
+This library is inspired by, adapted from, and owes its existence to the [Sprache](https://github.com/sprache/Sprache) C# library. Be sure to consult the [Sprache documentation](https://github.com/sprache/Sprache/blob/develop/README.md) for more information about the overall strategy used by Faithlife.Parsing, as well as various examples, tutorials, and acknowledgements. Particular thanks go to [Nicholas Blumhardt](http://nblumhardt.com), the author of Sprache. Other similar libraries include [Parlot](https://github.com/sebastienros/parlot), [Pidgin](https://github.com/benjamin-hodgson/Pidgin), and [Superpower](https://github.com/datalust/superpower).
 
-Faithlife.Parsing allows you to define complex parsers in just a few lines of C#. Ease of parser creation is the only advantage of Faithlife.Parsing over more robust parsing libraries. This library is not fast, not efficient, probably not safe for potentially hostile user input, and does not have great error reporting. Use at your own risk.
+Faithlife.Parsing allows you to define complex parsers in just a few lines of C#. Use Faithlife.Parsing instead of other parsing libraries if you prefer the API. Performance is much improved as of version 3, though not as fast as Parlot. This library might not be safe for hostile user input, so use at your own risk.
 
 The Faithlife.Parsing library includes [parsers for JSON](Faithlife.Parsing.Json/JsonParsers.md). Reading this code is a good way to learn how complex parsers are constructed, but you should definitely prefer specialized JSON parsers for production work.
 
@@ -16,7 +16,7 @@ The Faithlife.Parsing library includes [parsers for JSON](Faithlife.Parsing.Json
 
 Faithlife.Parsing should be installed [via NuGet](https://www.nuget.org/packages/Faithlife.Parsing).
 
-This library is compatible with most .NET platforms via [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
+This library is compatible with most .NET platforms via [.NET Standard 2.0/2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
 
 ## Using a parser
 
@@ -37,11 +37,22 @@ Debug.Assert(integerResult.Success);
 Debug.Assert(integerResult.Value == 123);
 ```
 
-If [Success](Faithlife.Parsing/IParseResult/Success.md) is false, the parsing failed. Accessing the [Value](Faithlife.Parsing/IParseResult-1/Value.md) property will throw a [ParseException](Faithlife.Parsing/ParseException.md).
+If [Success](Faithlife.Parsing/IParseResult/Success.md) is false, the parsing failed. Accessing the [Value](Faithlife.Parsing/IParseResult-1/Value.md) property will throw a [ParseException](Faithlife.Parsing/ParseException.md). Consider using the [GetValueOrDefault](Faithlife.Parsing/ParseResult/GetValueOrDefault.md) extension method if the result might be a failure.
 
 ```csharp
 IParseResult<int> noIntegerResult = integerParser.TryParse("abc123");
 Debug.Assert(!noIntegerResult.Success);
+```
+
+If you don't need the [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md), call a [TryParse](Faithlife.Parsing/Parser/TryParse.md) overload that returns a `bool` and provides the result via `out` parameter.
+
+```csharp
+bool success = integerParser.TryParse("123abc", out var value);
+Debug.Assert(success);
+Debug.Assert(value == 123);
+success = integerParser.TryParse("abc123", out value);
+Debug.Assert(!success);
+Debug.Assert(value == 0);
 ```
 
 [Parse](Faithlife.Parsing/Parser/Parse.md) returns the successfully parsed value of type `T` directly.
@@ -78,7 +89,13 @@ Debug.Assert(noIntegerResult.NextPosition.Index == 0);
 
 ## Character parsers
 
-Use [Parser.Char](Faithlife.Parsing/Parser/Char.md) to parse a character that matches the specified predicate.
+Use [Parser.Char](Faithlife.Parsing/Parser/Char.md) to parse a character that matches the specified character or predicate.
+
+```csharp
+IParser<char> oneParser = Parser.Char('1');
+Debug.Assert(oneParser.Parse("123") == '1');
+Debug.Assert(!oneParser.TryParse("234").Success);
+```
 
 ```csharp
 IParser<char> digitParser = Parser.Char(ch => ch >= '0' && ch <= '9');
@@ -103,6 +120,16 @@ Specify `StringComparison.OrdinalIgnoreCase` if desired.
 ```csharp
 IParser<string> noParser = Parser.String("no", StringComparison.OrdinalIgnoreCase);
 Debug.Assert(noParser.Parse("No way") == "No");
+```
+
+## End parser
+
+Use [Parser.End](Faithlife.Parsing/Parser/End.md) to match the end of the parsed string.
+
+```csharp
+IParser<string> justYesParser = Parser.String("yes").End();
+Debug.Assert(justYesParser.Parse("yes") == "yes");
+Debug.Assert(!justYesParser.TryParse("yesno").Success);
 ```
 
 ## Repeating parsers
@@ -133,7 +160,7 @@ The following parser (used above) matches a digit, converts the digit to an inte
 IParser<int> CreateIntegerParser()
 {
     return Parser.Char(ch => ch >= '0' && ch <= '9')
-        .Select(ch => (int)ch - '0')
+        .Select(ch => (int) ch - '0')
         .AtLeastOnce()
         .Select(digits => digits.Aggregate(0, (x, y) => x * 10 + y));
 }
@@ -159,6 +186,13 @@ IParser<string> keywordsParser = Parser.Letter.AtLeastOnce().String()
 Debug.Assert(keywordsParser.Parse("public  static readonly") == "public,static,readonly");
 ```
 
+The most efficient way to convert any parser into a parser that returns the matching string is to use [Capture](Faithlife.Parsing/Parser/Capture.md).
+
+```csharp
+IParser<string> idParser = Parser.Letter.Once().Then(Parser.Letter.Or(Parser.Digit).Many()).Capture();
+Debug.Assert(idParser.Parse("id123") == "id123");
+```
+
 ## Chaining parsers
 
 The [SelectMany](Faithlife.Parsing/Parser/SelectMany.md) extension method allows LINQ query syntax to be used to chain parsers, one after another, and combine the results of each parsing.
@@ -172,10 +206,22 @@ IParser<int> simpleAdder =
 Debug.Assert(simpleAdder.Parse("7+8") == 15);
 ```
 
+Use [Then](Faithlife.Parsing/Parser/Then.md) for better performance, which takes chains two parsers and creates a tuple from their values, potentially building a tuple of as many as eight values.
+
+```csharp
+IParser<int> thenAdder = integerParser
+    .Then(Parser.Char('+'))
+    .Then(integerParser)
+    .Select(x => x.Item1 + x.Item3);
+Debug.Assert(thenAdder.Parse("7+8") == 15);
+```
+
 Other extension methods are useful for chaining parsers when the result of one of them is not used.
 
+* [ThenSkip](Faithlife.Parsing/Parser/ThenSkip.md) – Chains two parsers, ignoring the result of the second.
+* [SkipThen](Faithlife.Parsing/Parser/SkipThen.md) – Chains two parsers, ignoring the result of the first.
 * [PrecededBy](Faithlife.Parsing/Parser/PrecededBy.md) – Requires that a parser succeed beforehand.
-* [FollowedBy](Faithlife.Parsing/Parser/FollowedBy.md) – Requires that a parser succeed afterward.
+* [FollowedBy](Faithlife.Parsing/Parser/FollowedBy.md) – Requires that a parser succeed afterward. (Identical to [ThenSkip](Faithlife.Parsing/Parser/ThenSkip.md).)
 * [Bracketed](Faithlife.Parsing/Parser/Bracketed.md) – Calls [PrecededBy](Faithlife.Parsing/Parser/PrecededBy.md) and [FollowedBy](Faithlife.Parsing/Parser/FollowedBy.md).
 * [TrimStart](Faithlife.Parsing/Parser/TrimStart.md) – Ignores whitespace beforehand, if any.
 * [TrimEnd](Faithlife.Parsing/Parser/TrimEnd.md) – Ignores whitespace afterward, if any.
@@ -186,6 +232,8 @@ IParser<IReadOnlyList<int>> tupleParser =
     integerParser.Trim().Delimited(Parser.Char(',')).Bracketed(Parser.Char('('), Parser.Char(')')).Trim();
 Debug.Assert(tupleParser.Parse(" (7, 8, 9) ").SequenceEqual(new[] { 7, 8, 9 }));
 ```
+
+Finally, [Concat](Faithlife.Parsing/Parser/Concat.md) can be used to chain a collection parser to another collection parser, and [Append](Faithlife.Parsing/Parser/Append.md) can be used to chain a collection parser to an item parser.
 
 ## Either-or parsers
 
@@ -205,6 +253,8 @@ Debug.Assert(yesNoMaybeParser.Parse("no") == false);
 Debug.Assert(yesNoMaybeParser.Parse("maybe") == null);
 ```
 
+Use [OrDefault](Faithlife.Parsing/Parser/OrDefault.md) or [OrEmpty](Faithlife.Parsing/Parser/OrEmpty.md) to create an optional parser.
+
 ## Filtering parsers
 
 You can restrict the values that can be produced by a parser by using [Where](Faithlife.Parsing/Parser/Where.md) (or `where` in LINQ query syntax).
@@ -217,9 +267,9 @@ Debug.Assert(!positiveParser.TryParse("0").Success);
 
 ## Regular expressions
 
-Use [Parser.Regex](Faithlife.Parsing/Parser/Regex.md) to create a parser that matches the specified regular expression. The regular expression is automatically anchored to start where the text is being parsed.
+Use [Parser.Regex](Faithlife.Parsing/Parser/Regex.md) to create a parser that matches the specified regular expression. The regular expression is automatically anchored to start where the text is being parsed. `RegexOptions.CultureInvariant` is used by default.
 
-Regular expressions in .NET are extremely powerful; use them to simplify your parsers whenever possible.
+Regular expressions in .NET are extremely powerful; use them to simplify complex parser chains.
 
 ```csharp
 IParser<double> numberParser = Parser
@@ -228,6 +278,22 @@ IParser<double> numberParser = Parser
 Debug.Assert(numberParser.Parse("6.0221409e+23") == 6.0221409e+23);
 ```
 
+## Operator parsers
+
+Use [Parser.ChainUnary](Faithlife.Parsing/Parser/ChainUnary.md) to create a left-associative unary operator.
+
+Use [Parser.ChainBinary](Faithlife.Parsing/Parser/ChainBinary.md) to create a left-associative binary operator.
+
+## Negative parsers
+
+Use [Parser.Not](Faithlife.Parsing/Parser/Not.md) to create a parser that only succeeds if the associated parser fails.
+
+Use [Parser.Failure](Faithlife.Parsing/Parser/Failure.md) to create a parser that always fails.
+
+## Circular dependencies
+
+Use [Parser.Ref](Faithlife.Parsing/Parser/Ref.md) when a circular dependency is needed. Avoid left recursion, which will result in a stack overflow at runtime.
+
 ## Syntax error reporting
 
 To improve syntax errors, give parsers a name with the [Named](Faithlife.Parsing/Parser/Named.md) extension method.
@@ -235,6 +301,8 @@ To improve syntax errors, give parsers a name with the [Named](Faithlife.Parsing
 ```csharp
 IParser<double> namedNumberParser = numberParser.Named("number");
 ```
+
+Access all of the named failures programmatically with the [GetNamedFailures](Faithlife.Parsing/ParseResult/GetNamedFailures.md) extension method on [IParseResult](Faithlife.Parsing/IParseResult.md).
 
 ## Semantic error reporting
 
@@ -256,14 +324,16 @@ Debug.Assert(positionedNumber.Length == 4);
 
 ## Low-level parsers
 
-As stated earlier, a parser is an implementation of [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md). Most parsers are created by using the existing parsers documented above, but it is possible to create a custom parser by implementing [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md).
+As stated earlier, a parser is an implementation of [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md). Most parsers are created by using the existing parsers documented above, but it is possible to create a custom parser.
 
-[IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md) has a single method named [TryParse](Faithlife.Parsing/IParser-1/TryParse.md). It takes a single argument of type [TextPosition](Faithlife.Parsing/TextPosition.md), whose [Text](Faithlife.Parsing/TextPosition/Text.md) is the text being parsed and whose [Index](Faithlife.Parsing/TextPosition/Index.md) is the zero-based index into the text where the parsing should begin. [TryParse](Faithlife.Parsing/IParser-1/TryParse.md) returns an [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md), as documented earlier.
+The simplest way to create a custom parser is with [Parser.Create](Faithlife.Parsing/Parser/Create.md).
 
-You can create a class that implements [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md), but it is usually easier to call [Parser.Create](Faithlife.Parsing/Parser/Create.md), which implements [TryParse](Faithlife.Parsing/IParser-1/TryParse.md) with the specified `Func<TextPosition, IParserResult<T>>`.
-
-Your parser should investigate the text, starting at the index specified by the [Index](Faithlife.Parsing/TextPosition/Index.md) property of the [TextPosition](Faithlife.Parsing/TextPosition.md), and determine if it can successfully parse that text.
+Your parser should investigate the text, starting at the zero-based index specified by the [Index](Faithlife.Parsing/TextPosition/Index.md) property of the [TextPosition](Faithlife.Parsing/TextPosition.md), and determine if it can successfully parse that text.
 
 If it can, the parser should return a successful [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md) via the [ParseResult.Success](Faithlife.Parsing/ParseResult/Success.md) method. Call it with the corresponding value of type `T` and the position just past the end of the text that was parsed. Use the [WithNextIndex](Faithlife.Parsing/TextPosition/WithNextIndex.md) method on the [TextPosition](Faithlife.Parsing/TextPosition.md) to create a text position at the desired index.
 
 If the parser fails, it should return a failed [IParseResult&lt;T&gt;](Faithlife.Parsing/IParseResult-1.md) via the [ParseResult.Failure](Faithlife.Parsing/ParseResult/Failure.md) method.
+
+For maximum performance, create a new parser by deriving from [Parser&lt;T&gt;](Faithlife.Parsing/Parser-1.md) and implementing the abstract [TryParse](Faithlife.Parsing/Parser-1/TryParse.md) method, which is designed to avoid allocations as much as possible.
+
+Don't create a custom parser by implementing [IParser&lt;T&gt;](Faithlife.Parsing/IParser-1.md) directly.
