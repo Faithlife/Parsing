@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.1.0
+
+* Add standalone `End`.
+
 ## 3.0.0
 
 * **Breaking:** Add new method to `IParser<T>` that improves performance of chained parsers.
