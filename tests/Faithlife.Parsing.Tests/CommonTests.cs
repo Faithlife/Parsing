@@ -42,12 +42,14 @@ public class CommonTests
 	public void EndShouldSucceedAtEnd()
 	{
 		Parser.Success(true).End().TryParse("x", 1).ShouldSucceed(true, 1);
+		Parser.End(true).TryParse("x", 1).ShouldSucceed(true, 1);
 	}
 
 	[Fact]
 	public void EndShouldFailNotAtEnd()
 	{
 		Parser.Success(true).End().TryParse("xabc", 1).ShouldFail(1);
+		Parser.End(true).TryParse("xabc", 1).ShouldFail(1);
 	}
 
 	[Fact]

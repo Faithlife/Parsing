@@ -5,11 +5,11 @@ public static partial class Parser
 	/// <summary>
 	/// Succeeds only at the end of the text.
 	/// </summary>
-	public static IParser<T> End<T>(this IParser<T> parser) => new EndParser<T>(parser);
+	public static IParser<T> End<T>(this IParser<T> parser) => new ThenEndParser<T>(parser);
 
-	private sealed class EndParser<T> : Parser<T>
+	private sealed class ThenEndParser<T> : Parser<T>
 	{
-		public EndParser(IParser<T> parser) => m_parser = parser;
+		public ThenEndParser(IParser<T> parser) => m_parser = parser;
 
 		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
@@ -22,6 +22,24 @@ public static partial class Parser
 		}
 
 		private readonly IParser<T> m_parser;
+	}
+
+	/// <summary>
+	/// Succeeds with the specified value only at the end of the text.
+	/// </summary>
+	public static IParser<T> End<T>(T value) => new EndParser<T>(value);
+
+	private sealed class EndParser<T> : Parser<T>
+	{
+		public EndParser(T value) => m_value = value;
+
+		public override T TryParse(bool skip, ref TextPosition position, out bool success)
+		{
+			success = position.IsAtEnd();
+			return success ? m_value : default!;
+		}
+
+		private readonly T m_value;
 	}
 
 	/// <summary>
@@ -103,7 +121,7 @@ public static partial class Parser
 	}
 
 	/// <summary>
-	/// Succeeds with the specified value without advancing the text position.
+	/// Always fails.
 	/// </summary>
 	public static IParser<T> Failure<T>() => FailureParser<T>.Instance;
 
