@@ -1,6 +1,6 @@
 # Parser.Letter field
 
-Parses any letter (as determined by Char)).
+Parses any letter (as determined by `char.IsLetter`).
 
 ```csharp
 public static readonly IParser<char> Letter;

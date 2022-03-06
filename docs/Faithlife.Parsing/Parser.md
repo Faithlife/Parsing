@@ -11,10 +11,10 @@ public static class Parser
 | name | description |
 | --- | --- |
 | static readonly [AnyChar](Parser/AnyChar.md) | Parses any character; i.e. only fails at the end of the text. |
-| static readonly [Digit](Parser/Digit.md) | Parses any digit (as determined by Char)). |
-| static readonly [Letter](Parser/Letter.md) | Parses any letter (as determined by Char)). |
-| static readonly [LetterOrDigit](Parser/LetterOrDigit.md) | Parses any letter or digit (as determined by Char)). |
-| static readonly [WhiteSpace](Parser/WhiteSpace.md) | Parses any whitespace character (as determined by Char)). |
+| static readonly [Digit](Parser/Digit.md) | Parses any digit (as determined by `char.IsDigit`). |
+| static readonly [Letter](Parser/Letter.md) | Parses any letter (as determined by `char.IsLetter`). |
+| static readonly [LetterOrDigit](Parser/LetterOrDigit.md) | Parses any letter or digit (as determined by `char.IsLetterOrDigit`). |
+| static readonly [WhiteSpace](Parser/WhiteSpace.md) | Parses any whitespace character (as determined by `char.IsWhiteSpace`). |
 | static [AnyCharExcept](Parser/AnyCharExcept.md)(…) | Parses any character except the specified character. |
 | static [Append&lt;T&gt;](Parser/Append.md)(…) | Appends a successfully parsed value to the end of a successfully parsed collection. |
 | static [AtLeast&lt;T&gt;](Parser/AtLeast.md)(…) | Succeeds if the parser succeeds at least the specified number of times. The value is a collection of as many items as can be successfully parsed. |
@@ -33,8 +33,8 @@ public static class Parser
 | static [Create&lt;T&gt;](Parser/Create.md)(…) | Creates a parser from a delegate. |
 | static [Delimited&lt;TValue,TDelimiter&gt;](Parser/Delimited.md)(…) | Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item. |
 | static [DelimitedAllowTrailing&lt;TValue,TDelimiter&gt;](Parser/DelimitedAllowTrailing.md)(…) | Succeeds if the specified parser succeeds at least once, requiring and ignoring the specified delimiter between each item, and allowing a single optional trailing delimiter. |
-| static [End&lt;T&gt;](Parser/End.md)(…) | Succeeds only at the end of the text. |
-| static [Failure&lt;T&gt;](Parser/Failure.md)() | Succeeds with the specified value without advancing the text position. |
+| static [End&lt;T&gt;](Parser/End.md)(…) | Succeeds only at the end of the text. (2 methods) |
+| static [Failure&lt;T&gt;](Parser/Failure.md)() | Always fails. |
 | static [Failure&lt;T&gt;](Parser/Failure.md)(…) | Fails even if the parser is successful. |
 | static [FollowedBy&lt;TValue,TFollowing&gt;](Parser/FollowedBy.md)(…) | Succeeds if the specified parser also succeeds afterward (ignoring its result). |
 | static [Join](Parser/Join.md)(…) | Joins the successfully parsed collection of strings into a single successfully parsed string using the specified separator. |

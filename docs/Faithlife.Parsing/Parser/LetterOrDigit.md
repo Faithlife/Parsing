@@ -1,6 +1,6 @@
 # Parser.LetterOrDigit field
 
-Parses any letter or digit (as determined by Char)).
+Parses any letter or digit (as determined by `char.IsLetterOrDigit`).
 
 ```csharp
 public static readonly IParser<char> LetterOrDigit;

@@ -1,6 +1,6 @@
 # Parser.Failure&lt;T&gt; method (1 of 2)
 
-Succeeds with the specified value without advancing the text position.
+Always fails.
 
 ```csharp
 public static IParser<T> Failure<T>()
