@@ -79,6 +79,12 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 
 	internal void ReportNamedFailure(string name) => m_source.ReportNamedFailure(name, m_index);
 
+	internal int RefDepth
+	{
+		get => m_source.RefDepth;
+		set => m_source.RefDepth = value;
+	}
+
 	private TextPosition(TextSource source, int index)
 	{
 		m_source = source;
@@ -125,6 +131,8 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 
 			return new LineColumn(lineIndex + 1, index - m_startOfLineIndices[lineIndex] + 1);
 		}
+
+		public int RefDepth { get; set; }
 
 		private static readonly Regex s_startOfLineRegex = new Regex("^", RegexOptions.Multiline);
 

@@ -146,4 +146,18 @@ public class CommonTests
 		});
 		parser.Parse("!!!").ShouldBe(3);
 	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void MaxRefDepth(bool success)
+	{
+		const int depth = 100;
+		IParser<char> parser = null!;
+		parser = Parser.Ref(() => parser, maxDepth: success ? depth : depth - 1, maxDepthFailureName: nameof(MaxRefDepth)).Bracketed(Parser.Char('('), Parser.Char(')')).Or(Parser.Char('x'));
+		var result = parser.End().TryParse(new string('(', depth) + "x" + new string(')', depth));
+		result.Success.ShouldBe(success);
+		if (!success)
+			result.GetNamedFailures().Single().Name.ShouldBe(nameof(MaxRefDepth));
+	}
 }

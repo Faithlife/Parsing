@@ -88,17 +88,48 @@ public static partial class Parser
 	/// <remarks>Avoid left recursion, which will result in a stack overflow at runtime.</remarks>
 	public static IParser<T> Ref<T>(Func<IParser<T>> parserGenerator) => new RefParser<T>(parserGenerator);
 
+	/// <summary>
+	/// Refers to another parser indirectly. This allows circular compile-time dependency between parsers.
+	/// </summary>
+	/// <remarks>Fails if the total depth of all <c>Ref</c> parsers exceeds the specified maximum.
+	/// Avoid left recursion, which will result in a stack overflow at runtime.</remarks>
+	public static IParser<T> Ref<T>(Func<IParser<T>> parserGenerator, int maxDepth) => new RefParser<T>(parserGenerator, maxDepth);
+
+	/// <summary>
+	/// Refers to another parser indirectly. This allows circular compile-time dependency between parsers.
+	/// </summary>
+	/// <remarks>Fails with the specified named failure if the total depth of all <c>Ref</c> parsers exceeds the specified maximum.
+	/// Avoid left recursion, which will result in a stack overflow at runtime.</remarks>
+	public static IParser<T> Ref<T>(Func<IParser<T>> parserGenerator, int maxDepth, string maxDepthFailureName) => new RefParser<T>(parserGenerator, maxDepth, maxDepthFailureName);
+
 	private sealed class RefParser<T> : Parser<T>
 	{
-		public RefParser(Func<IParser<T>> parserGenerator) => m_parserGenerator = parserGenerator;
+		public RefParser(Func<IParser<T>> parserGenerator, int maxDepth = int.MaxValue, string? maxDepthFailureName = null) =>
+			(m_parserGenerator, m_maxDepth, m_maxDepthFailureName) = (parserGenerator, maxDepth, maxDepthFailureName);
 
 		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			m_parser ??= m_parserGenerator();
-			return m_parser.TryParse(skip, ref position, out success);
+
+			position.RefDepth += 1;
+			if (position.RefDepth > m_maxDepth)
+			{
+				if (m_maxDepthFailureName is not null)
+					position.ReportNamedFailure(m_maxDepthFailureName);
+				success = false;
+				return default!;
+			}
+
+			var value = m_parser.TryParse(skip, ref position, out success);
+
+			position.RefDepth -= 1;
+
+			return value;
 		}
 
 		private readonly Func<IParser<T>> m_parserGenerator;
+		private readonly int m_maxDepth;
+		private readonly string? m_maxDepthFailureName;
 		private IParser<T>? m_parser;
 	}
 
