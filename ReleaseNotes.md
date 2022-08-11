@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.2.0
+
+* Add maximum depth support to `Ref`.
+
 ## 3.1.0
 
 * Add standalone `End`.
