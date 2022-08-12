@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.3.0
+
+* Support unary/binary operators with less recursion.
+
 ## 3.2.0
 
 * Add maximum depth support to `Ref`.
