@@ -7,9 +7,16 @@ public class ChainTests
 {
 	[Theory]
 	[InlineData("2 + 3", 5)]
+	[InlineData("2 + 3 + 4", 9)]
 	[InlineData("4 - 2 + 1", 3)]
+	[InlineData("10 - 5 - 2", 3)]
 	[InlineData("2 * 3", 6)]
 	[InlineData("-1", -1)]
+	[InlineData("--1", 1)]
+	[InlineData("---1", -1)]
+	[InlineData("+1", 1)]
+	[InlineData("++1", 1)]
+	[InlineData("+++1", 1)]
 	[InlineData("2 + 3 * 4", 14)]
 	[InlineData("-(2 + 3) * 4", -20)]
 	[InlineData("-1 - -4 / 2", 1)]
@@ -28,7 +35,7 @@ public class ChainTests
 				"-" => node.Children.Count == 1 ? -Eval(node.Children[0]) : Eval(node.Children[0]) - Eval(node.Children[1]),
 				"*" => Eval(node.Children[0]) * Eval(node.Children[1]),
 				"/" => Eval(node.Children[0]) / Eval(node.Children[1]),
-				"+" => Eval(node.Children[0]) + Eval(node.Children[1]),
+				"+" => node.Children.Select(Eval).Sum(),
 				_ => int.Parse(node.Value, CultureInfo.InvariantCulture),
 			};
 	}
@@ -47,8 +54,12 @@ public class ChainTests
 	private static IParser<ExpressionNode> Expression { get; } =
 		Parser.Ref(() => Expression!).Bracketed(Op("("), Op(")")).Or(Name).Or(Number)
 			.ChainUnary(Op("-").Trim(), (x, y) => new ExpressionNode(x, y))
+			.ChainUnaryList(Op("+").Trim(), (_, y) => y)
 			.ChainBinary(Op("*").Or(Op("/")).Trim(), (x, y, z) => new ExpressionNode(x, y, z))
-			.ChainBinary(Op("+").Or(Op("-")).Trim(), (x, y, z) => new ExpressionNode(x, y, z));
+			.ChainBinaryList(Op("+").Or(Op("-")).Trim(),
+				(node, opsAndNodes) => (opsAndNodes.Count > 1 && opsAndNodes.Select(x => x.Item1).All(x => x == "+"))
+					? new ExpressionNode("+", opsAndNodes.Select(x => x.Item2).Prepend(node).ToArray())
+					: opsAndNodes.Aggregate(node, (n, opAndNode) => new ExpressionNode(opAndNode.Item1, n, opAndNode.Item2)));
 
 	private class ExpressionNode
 	{
