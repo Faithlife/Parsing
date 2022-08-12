@@ -25,7 +25,9 @@ public static class Parser
 | static [Bracketed&lt;TValue,TPreceding,TFollowing&gt;](Parser/Bracketed.md)(…) | Succeeds if the specified parsers succeed beforehand and afterward (ignoring their results). |
 | static [Capture&lt;T&gt;](Parser/Capture.md)(…) | Captures the parsed text as a string. |
 | static [ChainBinary&lt;TValue,TOperator&gt;](Parser/ChainBinary.md)(…) | Chains a left-associative binary operator to the parser. |
+| static [ChainBinaryList&lt;TValue,TOperator&gt;](Parser/ChainBinaryList.md)(…) | Chains a left-associative binary operator to the parser. |
 | static [ChainUnary&lt;TValue,TOperator&gt;](Parser/ChainUnary.md)(…) | Chains a left-associative unary operator to the parser. |
+| static [ChainUnaryList&lt;TValue,TOperator&gt;](Parser/ChainUnaryList.md)(…) | Chains a left-associative unary operator to the parser. |
 | static [Char](Parser/Char.md)(…) | Parses a single character if the specified predicate returns true. (2 methods) |
 | static [Chars](Parser/Chars.md)(…) | Maps a successfully parsed string into a successfully parsed collection of characters. |
 | static [Concat](Parser/Concat.md)(…) | Concatenates the successfully parsed collection of strings into a single successfully parsed string. |
