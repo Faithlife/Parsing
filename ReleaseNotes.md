@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.4.0
+
+* Add optional failure name to `Where`.
+
 ## 3.3.0
 
 * Support unary/binary operators with less recursion.
