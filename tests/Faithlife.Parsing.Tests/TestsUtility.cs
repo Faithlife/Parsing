@@ -29,10 +29,13 @@ public static class TestsUtility
 			Assert.Equal(remainderIndex.Value, actual.NextPosition.Index);
 	}
 
-	public static void ShouldFail<T>(this IParseResult<T> actual, int? remainderIndex = null)
+	public static void ShouldFail<T>(this IParseResult<T> actual, int? remainderIndex = null, string[]? failureNames = null)
 	{
 		Assert.False(actual.Success, "parse succeeded");
 		if (remainderIndex != null)
 			Assert.Equal(remainderIndex.Value, actual.NextPosition.Index);
+
+		if (failureNames != null)
+			Assert.Equal(failureNames, actual.GetNamedFailures().Select(x => x.Name));
 	}
 }

@@ -22,4 +22,12 @@ public class WhereTests
 		parser.TryParse("aabc").ShouldSucceed("aa");
 		parser.Success(true).TryParse("aabc").ShouldSucceed(true);
 	}
+
+	[Fact]
+	public void TestNamedWhere()
+	{
+		var parser = Parser.String("aba", StringComparison.OrdinalIgnoreCase).Where(x => x[0] != x[2], "nope");
+		parser.TryParse("x", 1).ShouldFail(1, Array.Empty<string>());
+		parser.TryParse("xaba", 1).ShouldFail(1, new[] { "nope" });
+	}
 }

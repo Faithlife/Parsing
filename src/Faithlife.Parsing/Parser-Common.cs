@@ -172,25 +172,38 @@ public static partial class Parser
 	/// </summary>
 	public static IParser<T> Where<T>(this IParser<T> parser, Func<T, bool> predicate) => new WhereParser<T>(parser, predicate);
 
+	/// <summary>
+	/// Fails if the specified predicate returns false for the successfully parsed value.
+	/// </summary>
+	public static IParser<T> Where<T>(this IParser<T> parser, Func<T, bool> predicate, string failureName) => new WhereParser<T>(parser, predicate, failureName);
+
 	private sealed class WhereParser<T> : Parser<T>
 	{
-		public WhereParser(IParser<T> parser, Func<T, bool> predicate) => (m_parser, m_predicate) = (parser, predicate);
+		public WhereParser(IParser<T> parser, Func<T, bool> predicate, string? failureName = null) => (m_parser, m_predicate, m_failureName) = (parser, predicate, failureName);
 
 		public override T TryParse(bool skip, ref TextPosition position, out bool success)
 		{
 			var startPosition = position;
 
 			var value = m_parser.TryParse(skip: false, ref position, out success);
-			if (!success || m_predicate(value))
+			if (!success)
 				return value;
 
-			position = startPosition;
-			success = false;
-			return default!;
+			if (!m_predicate(value))
+			{
+				position = startPosition;
+				success = false;
+				if (m_failureName is not null)
+					position.ReportNamedFailure(m_failureName);
+				return default!;
+			}
+
+			return value;
 		}
 
 		private readonly IParser<T> m_parser;
 		private readonly Func<T, bool> m_predicate;
+		private readonly string? m_failureName;
 	}
 
 	/// <summary>
