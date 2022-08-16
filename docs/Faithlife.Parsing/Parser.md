@@ -73,7 +73,7 @@ public static class Parser
 | static [TrimEnd&lt;T&gt;](Parser/TrimEnd.md)(…) | Succeeds if the specified parser succeeds, ignoring any whitespace characters afterward. |
 | static [TrimStart&lt;T&gt;](Parser/TrimStart.md)(…) | Succeeds if the specified parser succeeds, ignoring any whitespace characters beforehand. |
 | static [TryParse&lt;T&gt;](Parser/TryParse.md)(…) | Attempts to parse the specified text. (4 methods) |
-| static [Where&lt;T&gt;](Parser/Where.md)(…) | Fails if the specified predicate returns false for the successfully parsed value. |
+| static [Where&lt;T&gt;](Parser/Where.md)(…) | Fails if the specified predicate returns false for the successfully parsed value. (2 methods) |
 
 ## See Also
 

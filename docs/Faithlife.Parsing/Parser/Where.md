@@ -1,9 +1,26 @@
-# Parser.Where&lt;T&gt; method
+# Parser.Where&lt;T&gt; method (1 of 2)
 
 Fails if the specified predicate returns false for the successfully parsed value.
 
 ```csharp
 public static IParser<T> Where<T>(this IParser<T> parser, Func<T, bool> predicate)
+```
+
+## See Also
+
+* interface [IParser&lt;T&gt;](../IParser-1.md)
+* class [Parser](../Parser.md)
+* namespace [Faithlife.Parsing](../../Faithlife.Parsing.md)
+
+---
+
+# Parser.Where&lt;T&gt; method (2 of 2)
+
+Fails if the specified predicate returns false for the successfully parsed value.
+
+```csharp
+public static IParser<T> Where<T>(this IParser<T> parser, Func<T, bool> predicate, 
+    string failureName)
 ```
 
 ## See Also
