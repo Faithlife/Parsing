@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.4.1
+
+* Add .NET 6 target.
+
 ## 3.4.0
 
 * Add optional failure name to `Where`.
