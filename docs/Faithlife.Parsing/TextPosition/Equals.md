@@ -3,7 +3,7 @@
 Checks for equality.
 
 ```csharp
-public override bool Equals(object obj)
+public override bool Equals(object? obj)
 ```
 
 ## See Also
