@@ -53,7 +53,7 @@ public readonly struct TextPosition : IEquatable<TextPosition>
 	/// <summary>
 	/// Checks for equality.
 	/// </summary>
-	public override bool Equals(object obj) => obj is TextPosition position && Equals(position);
+	public override bool Equals(object? obj) => obj is TextPosition position && Equals(position);
 
 	/// <summary>
 	/// Gets the hash code.
