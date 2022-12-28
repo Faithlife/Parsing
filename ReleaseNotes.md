@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.5.0
+
+* Support parsing with `Regex` instances.
+
 ## 3.4.1
 
 * Add .NET 6 target.
