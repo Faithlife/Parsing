@@ -13,7 +13,7 @@ public static class JsonParsers
 	/// Parses a JSON number into a 64-bit integer. Fails if the number has a decimal point or exponent.
 	/// </summary>
 	public static readonly IParser<long> JsonInteger = Parser
-		.Regex(@"-?(0|[1-9][0-9]*)(?![0-9.eE])", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture)
+		.Regex("-?(0|[1-9][0-9]*)(?![0-9.eE])", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture)
 		.Trim()
 		.Select(match => long.Parse(match.ToString(), CultureInfo.InvariantCulture))
 		.Named("integer");
@@ -22,7 +22,7 @@ public static class JsonParsers
 	/// Parses a JSON number into a double-precision floating-point number.
 	/// </summary>
 	public static readonly IParser<double> JsonDouble = Parser
-		.Regex(@"-?(0|[1-9][0-9]*)(.[0-9]+)?([eE][-+]?[0-9]+)?(?![0-9.eE])", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture)
+		.Regex("-?(0|[1-9][0-9]*)(.[0-9]+)?([eE][-+]?[0-9]+)?(?![0-9.eE])", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture)
 		.Trim()
 		.Select(match => double.Parse(match.ToString(), CultureInfo.InvariantCulture))
 		.Named("double");

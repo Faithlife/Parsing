@@ -43,10 +43,10 @@ public class ChainTests
 	private static ExpressionNode Parse(string text) => Expression.End().Parse(text);
 
 	private static IParser<ExpressionNode> Name { get; } =
-		Parser.Regex(@"[A-Za-z_][A-Za-z0-9_]*").Select(x => new ExpressionNode(x.Value));
+		Parser.Regex("[A-Za-z_][A-Za-z0-9_]*").Select(x => new ExpressionNode(x.Value));
 
 	private static IParser<ExpressionNode> Number { get; } =
-		Parser.Regex(@"[0-9]+").Select(x => new ExpressionNode(x.Value));
+		Parser.Regex("[0-9]+").Select(x => new ExpressionNode(x.Value));
 
 	private static IParser<string> Op(string op) =>
 		Parser.String(op, StringComparison.Ordinal).Trim();
