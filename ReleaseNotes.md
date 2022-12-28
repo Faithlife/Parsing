@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.5.1
+
+* Add package README.
+
 ## 3.5.0
 
 * Support parsing with `Regex` instances.
