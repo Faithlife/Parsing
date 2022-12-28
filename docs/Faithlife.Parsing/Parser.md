@@ -51,7 +51,7 @@ public static class Parser
 | static [Positioned&lt;T&gt;](Parser/Positioned.md)(…) | Wraps the text position and length around a successfully parsed value. |
 | static [PrecededBy&lt;TValue,TPreceding&gt;](Parser/PrecededBy.md)(…) | Succeeds if the specified parser also succeeds beforehand (ignoring its result). |
 | static [Ref&lt;T&gt;](Parser/Ref.md)(…) | Refers to another parser indirectly. This allows circular compile-time dependency between parsers. (3 methods) |
-| static [Regex](Parser/Regex.md)(…) | Succeeds if the specified regular expression pattern matches the text. (2 methods) |
+| static [Regex](Parser/Regex.md)(…) | Succeeds if the specified regular expression pattern matches the text. (3 methods) |
 | static [Repeat&lt;T&gt;](Parser/Repeat.md)(…) | Succeeds if the parser succeeds the specified number of times. The value is a collection of the parsed items. (2 methods) |
 | static [Select&lt;TBefore,TAfter&gt;](Parser/Select.md)(…) | Converts any successfully parsed value. |
 | static [SelectMany&lt;TBefore,TDuring,TAfter&gt;](Parser/SelectMany.md)(…) | Used to support LINQ query syntax. |
