@@ -22,6 +22,12 @@ public static partial class Parser
 		return new RegexParser(new Regex("(?-m:^)(?:" + pattern + ")", regexOptions));
 	}
 
+	/// <summary>
+	/// Succeeds if the specified regular expression matches the text.
+	/// </summary>
+	/// <remarks>The regular expression should be anchored at the beginning of the text (via <c>^</c>).</remarks>
+	public static IParser<Match> Regex(Regex regex) => new RegexParser(regex);
+
 	private sealed class RegexParser : Parser<Match>
 	{
 		public RegexParser(Regex regex) => m_regex = regex;
