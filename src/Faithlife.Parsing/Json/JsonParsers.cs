@@ -39,7 +39,9 @@ public static class JsonParsers
 	/// </summary>
 	[SuppressMessage("ReSharper", "RedundantEnumerableCastCall", Justification = "Cast needed for .NET Standard 2.0.")]
 	public static readonly IParser<string> JsonString = Parser
-		.Regex(@"""(\\(?:[""\\/bfnrt]|u[0-9a-fA-F]{4})|[^""\\]+)*""", RegexOptions.CultureInvariant)
+		.Regex("""
+			"(\\(?:["\\/bfnrt]|u[0-9a-fA-F]{4})|[^"\\]+)*"
+			""", RegexOptions.CultureInvariant)
 		.Trim()
 		.Select(match => string.Concat(match.Groups[1].Captures.Cast<Capture>().Select(x => UnescapeString(x.ToString()))))
 		.Named("string");

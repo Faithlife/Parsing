@@ -8,12 +8,13 @@ public class JsonDtoTests
 	[Fact]
 	public void JsonToDto()
 	{
-		const string json = @"
-				{
-					""id"": 42,
-					""name"": ""widget"",
-					""dimensions"": [ 3, 4, 5 ]
-				}";
+		const string json = """
+			{
+				"id": 42,
+				"name": "widget",
+				"dimensions": [ 3, 4, 5 ]
+			}
+			""";
 
 		var widget = WidgetParser.Parse(json);
 		widget.Id.ShouldBe(42);

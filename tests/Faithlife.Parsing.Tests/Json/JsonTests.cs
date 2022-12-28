@@ -99,14 +99,15 @@ public class JsonTests
 	[Fact]
 	public void JsonValueSuccess()
 	{
-		const string json = @"
-{
-	""id"": 42,
-	""names"": [
-		{ ""first"": ""Alice"", ""last"": ""Wonderland"" },
-		{ ""first"": ""Bob"", ""last"": ""Smith"" }
-	]
-}";
+		const string json = """
+			{
+				"id": 42,
+				"names": [
+					{ "first": "Alice", "last": "Wonderland" },
+					{ "first": "Bob", "last": "Smith" }
+				]
+			}
+			""";
 
 		var value = (IReadOnlyList<KeyValuePair<string, object>>) JsonParsers.JsonValue.TryParse(json).Value!;
 		value[0].Key.ShouldBe("id");
