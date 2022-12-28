@@ -1,3 +1,5 @@
+#pragma warning disable CA1852
+
 return BuildRunner.Execute(args, build =>
 {
 	var gitLogin = new GitLoginInfo("faithlifebuildbot", Environment.GetEnvironmentVariable("BUILD_BOT_PASSWORD") ?? "");
