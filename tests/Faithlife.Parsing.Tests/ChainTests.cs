@@ -61,7 +61,7 @@ public class ChainTests
 					? new ExpressionNode("+", opsAndNodes.Select(x => x.Item2).Prepend(node).ToArray())
 					: opsAndNodes.Aggregate(node, (n, opAndNode) => new ExpressionNode(opAndNode.Item1, n, opAndNode.Item2)));
 
-	private class ExpressionNode
+	private sealed class ExpressionNode
 	{
 		public ExpressionNode(string value, params ExpressionNode[] children) => (Value, Children) = (value, children);
 		public string Value { get; }
