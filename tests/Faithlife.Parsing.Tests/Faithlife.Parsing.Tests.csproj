@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <ProjectReference Include="..\..\src\Faithlife.Parsing\Faithlife.Parsing.csproj" />
   </ItemGroup>
 
