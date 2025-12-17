@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Faithlife.Build" Version="5.17.2" />
+    <PackageReference Include="NuGet.Common" Version="6.4.2" />
   </ItemGroup>
 
 </Project>
