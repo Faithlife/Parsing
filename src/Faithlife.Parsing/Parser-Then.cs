@@ -211,8 +211,7 @@ public static partial class Parser
 	/// </summary>
 	public static IParser<TAfter> Select<TBefore, TAfter>(this IParser<TBefore> parser, Func<TBefore, TAfter> convertValue)
 	{
-		if (convertValue is null)
-			throw new ArgumentNullException(nameof(convertValue));
+		ArgumentNullException.ThrowIfNull(convertValue);
 		return new SelectParser<TBefore, TAfter>(parser, convertValue);
 	}
 
@@ -297,10 +296,8 @@ public static partial class Parser
 	/// </summary>
 	public static IParser<TAfter> SelectMany<TBefore, TDuring, TAfter>(this IParser<TBefore> parser, Func<TBefore, IParser<TDuring>> selector, Func<TBefore, TDuring, TAfter> projector)
 	{
-		if (selector is null)
-			throw new ArgumentNullException(nameof(selector));
-		if (projector is null)
-			throw new ArgumentNullException(nameof(projector));
+		ArgumentNullException.ThrowIfNull(selector);
+		ArgumentNullException.ThrowIfNull(projector);
 		return parser.Then(t => selector(t).Select(u => projector(t, u)));
 	}
 }
