@@ -92,14 +92,14 @@ public class JsonTests
 	public void JsonObjectSuccess()
 	{
 		JsonParsers.JsonBoolean.JsonPropertyOf().JsonObjectOf().TryParse("{}").ShouldSucceed(Array.Empty<KeyValuePair<string, bool>>());
-		JsonParsers.JsonBoolean.JsonPropertyOf().JsonObjectOf().TryParse("{\r\n\t\"yes\": true,\r\n\t\"no\": false\r\n}")
+		JsonParsers.JsonBoolean.JsonPropertyOf().JsonObjectOf().TryParse(/*lang=json,strict*/ "{\r\n\t\"yes\": true,\r\n\t\"no\": false\r\n}")
 			.ShouldSucceed(new[] { new KeyValuePair<string, bool>("yes", true), new KeyValuePair<string, bool>("no", false) });
 	}
 
 	[Fact]
 	public void JsonValueSuccess()
 	{
-		const string json = """
+		const string json = /*lang=json,strict*/ """
 			{
 				"id": 42,
 				"names": [

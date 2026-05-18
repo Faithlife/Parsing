@@ -8,7 +8,7 @@ public class JsonDtoTests
 	[Fact]
 	public void JsonToDto()
 	{
-		const string json = """
+		const string json = /*lang=json,strict*/ """
 			{
 				"id": 42,
 				"name": "widget",

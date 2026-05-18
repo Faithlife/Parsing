@@ -35,7 +35,7 @@ public class ChainTests
 				"-" => node.Children.Count == 1 ? -Eval(node.Children[0]) : Eval(node.Children[0]) - Eval(node.Children[1]),
 				"*" => Eval(node.Children[0]) * Eval(node.Children[1]),
 				"/" => Eval(node.Children[0]) / Eval(node.Children[1]),
-				"+" => node.Children.Select(Eval).Sum(),
+				"+" => node.Children.Sum(Eval),
 				_ => int.Parse(node.Value, CultureInfo.InvariantCulture),
 			};
 	}
