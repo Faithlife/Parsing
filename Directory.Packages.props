@@ -1,8 +1,16 @@
-<!-- DO NOT EDIT: faithlife-dotnet-library-targets-properties convention -->
-<PropertyGroup>
-  <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-  <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-  <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageVersion Include="xunit" Version="2.8.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.1" />
+  </ItemGroup>
+  <!-- DO NOT EDIT: faithlife-dotnet-library-targets-properties convention -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+  </PropertyGroup>
+  <!-- END DO NOT EDIT -->
   <!-- DO NOT EDIT: faithlife-dotnet-library-targets-analyzers convention -->
   <ItemGroup>
     <GlobalPackageReference Include="Faithlife.Analyzers" Version="1.*" />
@@ -10,5 +18,4 @@
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.*-*" />
   </ItemGroup>
   <!-- END DO NOT EDIT -->
-</PropertyGroup>
-<!-- END DO NOT EDIT -->
+</Project>
