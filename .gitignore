@@ -1,6 +1,3 @@
-bin/
-obj/
-release/
 .vs/
 .idea/
 *.cache
@@ -15,4 +12,11 @@ _ReSharper*
 .DS_Store
 Thumbs.db
 *.log
+# END DO NOT EDIT
+
+# DO NOT EDIT: gitignore-dotnet convention
+artifacts/
+bin/
+obj/
+release/
 # END DO NOT EDIT
