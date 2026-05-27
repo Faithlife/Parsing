@@ -1,15 +1,21 @@
+# DO NOT EDIT: gitignore-common convention
+.DS_Store
+Thumbs.db
+*.log
+# END DO NOT EDIT
+
+# DO NOT EDIT: gitignore-dotnet convention
+artifacts/
 bin/
 obj/
 release/
+# END DO NOT EDIT
+
+# DO NOT EDIT: gitignore-ide convention
 .vs/
 .idea/
-Thumbs.db
 *.cache
-*.log
 *.user
 *.userprefs
-*.ncrunchproject
-*.ncrunchsolution
-nCrunchTemp*
 _ReSharper*
-.DS_Store
+# END DO NOT EDIT

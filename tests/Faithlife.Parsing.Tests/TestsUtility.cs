@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Faithlife.Parsing.Tests;
 
-public static class TestsUtility
+internal static class TestsUtility
 {
 	public static void ShouldBe<T>(this T actual, T expected)
 	{
