@@ -1,5 +1,9 @@
 # Release Notes
 
+## 3.5.3
+
+* Restore .NET Standard 2.0 support.
+
 ## 3.5.2
 
 * Update package README.
